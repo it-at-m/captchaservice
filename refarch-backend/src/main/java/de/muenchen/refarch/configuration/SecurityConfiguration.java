@@ -41,13 +41,19 @@ public class SecurityConfiguration {
                         // allow access to /actuator/health/readiness for OpenShift Readiness Check
                         AntPathRequestMatcher.antMatcher("/actuator/health/readiness"),
                         // allow access to /actuator/metrics for Prometheus monitoring in OpenShift
-                        AntPathRequestMatcher.antMatcher("/actuator/metrics"))
+                        AntPathRequestMatcher.antMatcher("/actuator/metrics"),
+                        // allow access to captcha routes
+                        AntPathRequestMatcher.antMatcher("/api/v1/captcha/challenge"),
+                        AntPathRequestMatcher.antMatcher("/api/v1/captcha/verify"))
                         .permitAll())
                 .authorizeHttpRequests((requests) -> requests.requestMatchers("/**")
                         .authenticated())
                 .oauth2ResourceServer(httpSecurityOAuth2ResourceServerConfigurer -> httpSecurityOAuth2ResourceServerConfigurer
                         .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(new JwtUserInfoAuthenticationConverter(
-                                new UserInfoAuthoritiesService(securityProperties.userInfoUri(), restTemplateBuilder)))));
+                                new UserInfoAuthoritiesService(securityProperties.userInfoUri(), restTemplateBuilder)))))
+                .csrf(csrf -> csrf.ignoringRequestMatchers(
+                        AntPathRequestMatcher.antMatcher("/api/v1/captcha/challenge"),
+                        AntPathRequestMatcher.antMatcher("/api/v1/captcha/verify")));
 
         return http.build();
     }

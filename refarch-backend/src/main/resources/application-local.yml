@@ -35,3 +35,9 @@ security:
   # possible values: none, all, changing (With changing, only changing requests such as POST, PUT, DELETE are logged)
   requestLogging: all
   userInfoUri: ${sso.url}/auth/realms/${sso.realm}/protocol/openid-connect/userinfo
+
+captcha:
+  hmac-key: secret
+  sites:
+    - site-key: test
+      secret: test

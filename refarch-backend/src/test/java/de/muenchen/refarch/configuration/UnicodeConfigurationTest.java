@@ -1,7 +1,6 @@
 package de.muenchen.refarch.configuration;
 
 import de.muenchen.refarch.MicroServiceApplication;
-import de.muenchen.refarch.TestConstants;
 import de.muenchen.refarch.theentity.TheEntity;
 import de.muenchen.refarch.theentity.TheEntityRepository;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +20,7 @@ import java.util.UUID;
 
 import static de.muenchen.refarch.TestConstants.SPRING_TEST_PROFILE;
 import static de.muenchen.refarch.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.refarch.TestConstants.TESTCONTAINERS_POSTGRES_IMAGE;
 import static de.muenchen.refarch.TestConstants.TheEntityDto;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -36,7 +36,7 @@ class UnicodeConfigurationTest {
     @ServiceConnection
     @SuppressWarnings("unused")
     private static final PostgreSQLContainer<?> POSTGRE_SQL_CONTAINER = new PostgreSQLContainer<>(
-            DockerImageName.parse(TestConstants.TESTCONTAINERS_POSTGRES_IMAGE));
+            DockerImageName.parse(TESTCONTAINERS_POSTGRES_IMAGE));
 
     private static final String ENTITY_ENDPOINT_URL = "/theEntities";
 

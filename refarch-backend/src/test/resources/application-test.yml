@@ -8,3 +8,9 @@ security:
   # Currently only dummy values, will later be changed for testing security.
   requestLogging: all
   userInfoUri: NotNeeded
+
+captcha:
+  hmac-key: secret
+  sites:
+    - site-key: test_site
+      secret: test_secret

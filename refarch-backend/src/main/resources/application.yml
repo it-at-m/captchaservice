@@ -59,3 +59,7 @@ info:
   build:
     java.version: @java.version@
     spring-cloud.version: @spring-cloud-dependencies.version@
+
+captcha:
+  hmac-key: null
+  sites: []
