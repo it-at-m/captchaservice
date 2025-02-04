@@ -1,7 +1,6 @@
 package de.muenchen.refarch.controller.captcha;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.muenchen.refarch.TestConstants;
 import lombok.SneakyThrows;
 import org.altcha.altcha.Altcha;
 import org.junit.jupiter.api.Test;
@@ -10,14 +9,10 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import static de.muenchen.refarch.TestConstants.SPRING_NO_SECURITY_PROFILE;
 import static de.muenchen.refarch.TestConstants.SPRING_TEST_PROFILE;
@@ -39,12 +34,6 @@ class CaptchaControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Container
-    @ServiceConnection
-    @SuppressWarnings("unused")
-    private static final PostgreSQLContainer<?> POSTGRE_SQL_CONTAINER = new PostgreSQLContainer<>(
-            DockerImageName.parse(TestConstants.TESTCONTAINERS_POSTGRES_IMAGE));
 
     private static final String TEST_HMAC_KEY = "secret";
     private static final String TEST_PAYLOAD = "payload";
