@@ -8,9 +8,11 @@ import java.util.List;
 
 @ConfigurationProperties(prefix = "captcha")
 @Validated
-public record CaptchaProperties(@NotBlank String hmacKey, List<CaptchaSite> sites) {
-    public CaptchaProperties(final String hmacKey, final List<CaptchaSite> sites) {
+public record CaptchaProperties(@NotBlank String hmacKey, long ttlSeconds, List<CaptchaSite> sites, long sourceAddressWindowSeconds) {
+    public CaptchaProperties(final String hmacKey, final long ttlSeconds, final List<CaptchaSite> sites, final long sourceAddressWindowSeconds) {
         this.hmacKey = hmacKey;
+        this.ttlSeconds = ttlSeconds;
         this.sites = List.copyOf(sites);
+        this.sourceAddressWindowSeconds = sourceAddressWindowSeconds;
     }
 }

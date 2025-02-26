@@ -1,4 +1,4 @@
-package de.muenchen.refarch.controller.captcha;
+package de.muenchen.refarch.controller.captcha.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

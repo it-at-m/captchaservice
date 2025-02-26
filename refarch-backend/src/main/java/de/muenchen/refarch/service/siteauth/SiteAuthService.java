@@ -1,4 +1,4 @@
-package de.muenchen.refarch.service.captcha;
+package de.muenchen.refarch.service.siteauth;
 
 import de.muenchen.refarch.configuration.captcha.CaptchaProperties;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ public class SiteAuthService {
         this.captchaProperties = captchaProperties;
     }
 
-    public boolean authorizeSite(final String siteKey, final String siteSecret) {
+    public boolean isAuthorized(final String siteKey, final String siteSecret) {
         return captchaProperties
                 .sites()
                 .stream()

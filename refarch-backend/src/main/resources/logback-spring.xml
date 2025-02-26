@@ -71,5 +71,6 @@
 
     </springProfile>
 
+    <logger name="de.muenchen.refarch.configuration.nfcconverter" level="WARN" />
 
 </configuration>

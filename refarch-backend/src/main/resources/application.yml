@@ -56,3 +56,4 @@ info:
 captcha:
   hmac-key: null
   sites: []
+  ttl-seconds: 1200

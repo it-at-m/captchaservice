@@ -9,3 +9,10 @@ captcha:
   sites:
     - site-key: test_site
       secret: test_secret
+      difficulty-map:
+        - minVisits: 0
+          maxNumber: 1000
+        - minVisits: 2
+          maxNumber: 2000
+        - minVisits: 3
+          maxNumber: 3000
