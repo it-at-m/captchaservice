@@ -9,12 +9,12 @@
         <relativePath/>
     </parent>
 
-    <groupId>de.muenchen.refarch</groupId>
-    <artifactId>refarch-backend</artifactId>
+    <groupId>de.muenchen.captchaservice</groupId>
+    <artifactId>captchaservice-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>refarch_backend</name>
-    <description>This is the default starting project for a backend project based on the reference architecture of it@M</description>
-    <url>https://github.com/it-at-m/refarch-templates</url>
+    <name>captchaservice_backend</name>
+    <description></description>
+    <url>https://github.com/it-at-m/captchaservice</url>
 
     <properties>
         <!-- Compilation -->
@@ -278,8 +278,8 @@
     </dependencies>
 
     <scm>
-        <connection>scm:git:https://github.com/it-at-m/refarch-templates.git</connection>
-        <developerConnection>scm:git:https://github.com/it-at-m/refarch-templates.git</developerConnection>
+        <connection>scm:git:https://github.com/it-at-m/captchaservice.git</connection>
+        <developerConnection>scm:git:https://github.com/it-at-m/captchaservice.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
