@@ -32,11 +32,10 @@ public class DifficultyService {
     }
 
     public long getDifficultyForSourceAddress(final String siteKey, final SourceAddress sourceAddress) {
-        final Optional<CaptchaSite> captchaSiteOptional = captchaProperties.sites().stream().filter(site -> site.siteKey().equals(siteKey)).findFirst();
-        if (captchaSiteOptional.isEmpty()) {
+        final CaptchaSite captchaSite = captchaProperties.sites().get(siteKey);
+        if (captchaSite == null) {
             throw new IllegalArgumentException("siteKey not found");
         }
-        final CaptchaSite captchaSite = captchaSiteOptional.get();
         final String sourceAddressHash = sourceAddress.getHash();
         final long sourceVisitCount = sourceAddresses.keySet().stream().filter(s -> s.startsWith(String.format("%s_", sourceAddressHash))).count();
         final Optional<DifficultyItem> difficultyItem = captchaSite

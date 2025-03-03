@@ -24,5 +24,5 @@ security:
 captcha:
   hmac-key: secret
   sites:
-    - site-key: test
+    test:
       secret: test

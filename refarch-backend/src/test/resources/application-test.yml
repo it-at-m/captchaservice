@@ -7,7 +7,7 @@ security:
 captcha:
   hmac-key: secret
   sites:
-    - site-key: test_site
+    test_site:
       secret: test_secret
       difficulty-map:
         - minVisits: 0

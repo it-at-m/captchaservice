@@ -1,6 +1,7 @@
 package de.muenchen.captchaservice.service.siteauth;
 
 import de.muenchen.captchaservice.configuration.captcha.CaptchaProperties;
+import de.muenchen.captchaservice.configuration.captcha.CaptchaSite;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,10 +14,9 @@ public class SiteAuthService {
     }
 
     public boolean isAuthorized(final String siteKey, final String siteSecret) {
-        return captchaProperties
-                .sites()
-                .stream()
-                .anyMatch(site -> site.siteKey().equals(siteKey) && site.secret().equals(siteSecret));
+        final CaptchaSite site = captchaProperties.sites().get(siteKey);
+        if (site == null) return false;
+        return site.secret().equals(siteSecret);
     }
 
 }
