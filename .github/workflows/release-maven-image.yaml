@@ -17,7 +17,6 @@ on:
         required: true
         options:
           - refarch-backend
-          - refarch-eai
 
 jobs:
   release-maven:
