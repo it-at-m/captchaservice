@@ -56,10 +56,7 @@ body:
       multiple: true
       description: Name(s) of the affected template(s) (if applicable)
       options:
-        - refarch-frontend
-        - refarch-backend
-        - refarch-eai
-        - refarch-webcomponent
+        - captchaservice-backend
     validations:
       required: false
   - type: input

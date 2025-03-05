@@ -14,13 +14,4 @@
   - head-branch: [ '^sec', '-security-' ]
 "Template: Backend":
   - changed-files:
-    - any-glob-to-any-file: ['refarch-backend/**']
-"Template: EAI":
-  - changed-files:
-      - any-glob-to-any-file: ['refarch-eai/**']
-"Template: Frontend":
-  - changed-files:
-      - any-glob-to-any-file: ['refarch-frontend/**']
-"Template: Webcomponent":
-  - changed-files:
-      - any-glob-to-any-file: ['refarch-webcomponent/**']
+    - any-glob-to-any-file: ['captchaservice-backend/**']

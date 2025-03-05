@@ -19,10 +19,7 @@ body:
       multiple: true
       description: Affected documentation parts
       options:
-        - refarch-frontend
-        - refarch-backend
-        - refarch-eai
-        - refarch-webcomponent
+        - captchaservice-backend
         - Other
     validations:
       required: true
