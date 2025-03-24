@@ -56,4 +56,5 @@ info:
 captcha:
   hmac-key: null
   sites: {}
-  ttl-seconds: 1200
+  captcha-timeout-seconds: 1200
+  source-address-window-seconds: 1800

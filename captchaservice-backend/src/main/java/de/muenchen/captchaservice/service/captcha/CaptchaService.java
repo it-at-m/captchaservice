@@ -2,6 +2,7 @@ package de.muenchen.captchaservice.service.captcha;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
+import de.muenchen.captchaservice.common.HazelcastConstants;
 import de.muenchen.captchaservice.configuration.captcha.CaptchaProperties;
 import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.service.difficulty.DifficultyService;
@@ -23,7 +24,7 @@ public class CaptchaService {
     public CaptchaService(final CaptchaProperties captchaProperties, final DifficultyService difficultyService, final HazelcastInstance hazelcastInstance) {
         this.captchaProperties = captchaProperties;
         this.difficultyService = difficultyService;
-        invalidatedPayloads = hazelcastInstance.getMap("INVALIDATED_PAYLOADS");
+        invalidatedPayloads = hazelcastInstance.getMap(HazelcastConstants.INVALIDATED_PAYLOADS);
     }
 
     public Altcha.Challenge createChallenge(final String siteKey, final SourceAddress sourceAddress) {
@@ -33,7 +34,7 @@ public class CaptchaService {
         options.algorithm = Altcha.Algorithm.SHA256;
         options.hmacKey = captchaProperties.hmacKey();
         options.maxNumber = difficulty;
-        options.expires = (System.currentTimeMillis() / 1000) + captchaProperties.ttlSeconds();
+        options.expires = (System.currentTimeMillis() / 1000) + captchaProperties.captchaTimeoutSeconds();
         try {
             return Altcha.createChallenge(options);
         } catch (Exception e) {
@@ -60,7 +61,7 @@ public class CaptchaService {
 
     public void invalidatePayload(final Altcha.Payload payload) {
         final String payloadHash = getPayloadHash(payload);
-        invalidatedPayloads.set(payloadHash, "", captchaProperties.ttlSeconds(), TimeUnit.SECONDS);
+        invalidatedPayloads.set(payloadHash, "", captchaProperties.captchaTimeoutSeconds(), TimeUnit.SECONDS);
         log.debug("Invalidated payloadHash: {}", payloadHash);
     }
 

@@ -2,6 +2,7 @@ package de.muenchen.captchaservice.service.difficulty;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
+import de.muenchen.captchaservice.common.HazelcastConstants;
 import de.muenchen.captchaservice.configuration.captcha.CaptchaProperties;
 import de.muenchen.captchaservice.configuration.captcha.CaptchaSite;
 import de.muenchen.captchaservice.configuration.captcha.DifficultyItem;
@@ -22,7 +23,7 @@ public class DifficultyService {
 
     public DifficultyService(final CaptchaProperties captchaProperties, final HazelcastInstance hazelcastInstance) {
         this.captchaProperties = captchaProperties;
-        sourceAddresses = hazelcastInstance.getMap("SOURCE_ADDRESSES");
+        sourceAddresses = hazelcastInstance.getMap(HazelcastConstants.SOURCE_ADDRESSES);
     }
 
     public void pokeSourceAddress(final SourceAddress sourceAddress) {

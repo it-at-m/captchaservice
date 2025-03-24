@@ -1,10 +1,10 @@
-package de.muenchen.captchaservice.configuration;
+package de.muenchen.captchaservice.configuration.hazelcast;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
-@ConfigurationProperties("refarch.hazelcast")
+@ConfigurationProperties("hazelcast")
 public class HazelcastProperties {
     /**
      * Name of the hazelcast cluster.
@@ -19,4 +19,9 @@ public class HazelcastProperties {
      * Required for running hazelcast inside kubernetes.
      */
     private String serviceName;
+
+    /**
+     * General timeout for Hazelcast data.
+     */
+    private int timeoutSeconds = 86400;
 }

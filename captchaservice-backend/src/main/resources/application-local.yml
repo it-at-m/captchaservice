@@ -26,3 +26,6 @@ captcha:
   sites:
     test:
       secret: test
+      difficulty-map:
+        - min-visits: 0
+          max-number: 1000

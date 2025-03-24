@@ -1,11 +1,11 @@
-package de.muenchen.captchaservice.configuration;
+package de.muenchen.captchaservice.configuration.hazelcast;
 
 import com.hazelcast.config.*;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import de.muenchen.captchaservice.common.HazelcastConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -22,12 +22,12 @@ public class HazelcastConfiguration {
 
     @Bean
     @Profile({ "!hazelcast-k8s" })
-    public Config localConfig(@Value("${spring.session.timeout:1000}") final int timeout) {
+    public Config localConfig() {
         final Config hazelcastConfig = new Config();
         hazelcastConfig.setClusterName(hazelcastProperties.getClusterName());
         hazelcastConfig.setInstanceName(hazelcastProperties.getInstanceName());
 
-        addSessionTimeoutToHazelcastConfig(hazelcastConfig, timeout);
+        addSessionTimeoutToHazelcastConfig(hazelcastConfig);
 
         final NetworkConfig networkConfig = hazelcastConfig.getNetworkConfig();
 
@@ -42,12 +42,12 @@ public class HazelcastConfiguration {
 
     @Bean
     @Profile({ "hazelcast-k8s" })
-    public Config config(@Value("${spring.session.timeout:1000}") final int timeout) {
+    public Config config() {
         final Config hazelcastConfig = new Config();
         hazelcastConfig.setClusterName(hazelcastProperties.getClusterName());
         hazelcastConfig.setInstanceName(hazelcastProperties.getInstanceName());
 
-        addSessionTimeoutToHazelcastConfig(hazelcastConfig, timeout);
+        addSessionTimeoutToHazelcastConfig(hazelcastConfig);
 
         hazelcastConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
         hazelcastConfig.getNetworkConfig().getJoin().getKubernetesConfig().setEnabled(true)
@@ -64,15 +64,19 @@ public class HazelcastConfiguration {
      * time to live.
      *
      * @param hazelcastConfig to add the timeout.
-     * @param sessionTimeout for security session.
      */
-    private void addSessionTimeoutToHazelcastConfig(final Config hazelcastConfig, final int sessionTimeout) {
-        final MapConfig sessionConfig = new MapConfig();
-        sessionConfig.setName("SOURCE_ADDRESSES");
-        sessionConfig.setTimeToLiveSeconds(sessionTimeout);
-        sessionConfig.getEvictionConfig().setEvictionPolicy(EvictionPolicy.LRU);
+    private void addSessionTimeoutToHazelcastConfig(final Config hazelcastConfig) {
+        final MapConfig invalidatedPayloadsConfig = new MapConfig();
+        invalidatedPayloadsConfig.setName(HazelcastConstants.INVALIDATED_PAYLOADS);
+        invalidatedPayloadsConfig.setTimeToLiveSeconds(hazelcastProperties.getTimeoutSeconds());
+        invalidatedPayloadsConfig.getEvictionConfig().setEvictionPolicy(EvictionPolicy.LRU);
+        hazelcastConfig.addMapConfig(invalidatedPayloadsConfig);
 
-        hazelcastConfig.addMapConfig(sessionConfig);
+        final MapConfig sourceAddressesConfig = new MapConfig();
+        sourceAddressesConfig.setName(HazelcastConstants.SOURCE_ADDRESSES);
+        sourceAddressesConfig.setTimeToLiveSeconds(hazelcastProperties.getTimeoutSeconds());
+        sourceAddressesConfig.getEvictionConfig().setEvictionPolicy(EvictionPolicy.LRU);
+        hazelcastConfig.addMapConfig(sourceAddressesConfig);
     }
 
 }
