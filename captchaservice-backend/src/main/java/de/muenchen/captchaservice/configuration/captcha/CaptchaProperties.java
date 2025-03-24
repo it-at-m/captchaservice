@@ -12,7 +12,7 @@ public record CaptchaProperties(@NotBlank String hmacKey, long ttlSeconds, Map<S
     public CaptchaProperties(final String hmacKey, final long ttlSeconds, final Map<String, CaptchaSite> sites, final long sourceAddressWindowSeconds) {
         this.hmacKey = hmacKey;
         this.ttlSeconds = ttlSeconds;
-        this.sites = Map.copyOf(sites);
+        this.sites = sites != null ? Map.copyOf(sites) : Map.of();
         this.sourceAddressWindowSeconds = sourceAddressWindowSeconds;
     }
 }
