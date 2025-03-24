@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
-@ConfigurationProperties("hazelcast")
+@ConfigurationProperties("captcha.hazelcast")
 public class HazelcastProperties {
     /**
      * Name of the hazelcast cluster.
