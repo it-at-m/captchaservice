@@ -4,6 +4,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import de.muenchen.captchaservice.common.HazelcastConstants;
 import de.muenchen.captchaservice.configuration.captcha.CaptchaProperties;
+import de.muenchen.captchaservice.configuration.captcha.CaptchaSite;
 import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.service.difficulty.DifficultyService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.altcha.altcha.Altcha;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -43,8 +45,8 @@ public class CaptchaService {
         return null;
     }
 
-    public boolean verify(final Altcha.Payload payload) {
-        if (isPayloadInvalidated(payload)) {
+    public boolean verify(final String siteKey, final Altcha.Payload payload) {
+        if (isPayloadInvalidated(siteKey, payload)) {
             return false;
         }
         try {
@@ -61,12 +63,16 @@ public class CaptchaService {
 
     public void invalidatePayload(final Altcha.Payload payload) {
         final String payloadHash = getPayloadHash(payload);
-        invalidatedPayloads.set(payloadHash, "", captchaProperties.captchaTimeoutSeconds(), TimeUnit.SECONDS);
+        invalidatedPayloads.set(String.format("%s_%s_%s", payloadHash, System.currentTimeMillis(), UUID.randomUUID()), "",
+                captchaProperties.captchaTimeoutSeconds(), TimeUnit.SECONDS);
         log.debug("Invalidated payloadHash: {}", payloadHash);
     }
 
-    public boolean isPayloadInvalidated(final Altcha.Payload payload) {
-        return invalidatedPayloads.containsKey(getPayloadHash(payload));
+    public boolean isPayloadInvalidated(final String siteKey, final Altcha.Payload payload) {
+        CaptchaSite site = captchaProperties.sites().get(siteKey);
+        String payloadHash = getPayloadHash(payload);
+        final long payloadHashCount = invalidatedPayloads.keySet().stream().filter(s -> s.startsWith(String.format("%s_", payloadHash))).count();
+        return payloadHashCount >= site.maxVerifiesPerPayload();
     }
 
     private static String getPayloadHash(final Altcha.Payload payload) {

@@ -40,7 +40,7 @@ public class CaptchaController {
             throw new UnauthorizedException("Wrong credentials.");
         }
 
-        final boolean isValid = captchaService.verify(request.getPayload());
+        final boolean isValid = captchaService.verify(request.getSiteKey(), request.getPayload());
         return new PostVerifyResponse(isValid);
     }
 }
