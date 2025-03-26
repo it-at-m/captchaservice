@@ -6,14 +6,14 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.4.4</version>
-        <relativePath/>
+        <relativePath />
     </parent>
 
     <groupId>de.muenchen.captchaservice</groupId>
     <artifactId>captchaservice-backend</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>captchaservice_backend</name>
-    <description></description>
+    <description />
     <url>https://github.com/it-at-m/captchaservice</url>
 
     <properties>
@@ -280,7 +280,7 @@
     <scm>
         <connection>scm:git:https://github.com/it-at-m/captchaservice.git</connection>
         <developerConnection>scm:git:https://github.com/it-at-m/captchaservice.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>captchaservice-backend-1.0.0</tag>
     </scm>
 
     <build>
