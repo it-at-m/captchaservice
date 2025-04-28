@@ -273,7 +273,7 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
-            <version>5.3.8</version>
+            <version>5.5.0</version>
         </dependency>
     </dependencies>
 
