@@ -1,7 +1,7 @@
 package de.muenchen.captchaservice;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings({ "PMD.TestClassWithoutTestCases", "PMD.DataClass" })
@@ -12,5 +12,18 @@ public final class TestConstants {
     public static final String SPRING_NO_SECURITY_PROFILE = "no-security";
 
     public static final String SPRING_JSON_LOGGING_PROFILE = "json-logging";
+
+    public static final String TESTCONTAINERS_POSTGRES_IMAGE = "postgres:16.0-alpine3.18";
+
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = true)
+    @ToString(callSuper = true)
+    public static class TheEntityDto extends RepresentationModel {
+
+        private String textAttribute;
+
+    }
 
 }

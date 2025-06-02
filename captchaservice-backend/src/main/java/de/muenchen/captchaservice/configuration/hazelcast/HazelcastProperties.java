@@ -23,5 +23,5 @@ public class HazelcastProperties {
     /**
      * General timeout for Hazelcast data.
      */
-    private int timeoutSeconds = 86400;
+    private int timeoutSeconds = 86_400;
 }

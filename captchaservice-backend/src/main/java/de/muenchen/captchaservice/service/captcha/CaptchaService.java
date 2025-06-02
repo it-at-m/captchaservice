@@ -69,8 +69,8 @@ public class CaptchaService {
     }
 
     public boolean isPayloadInvalidated(final String siteKey, final Altcha.Payload payload) {
-        CaptchaSite site = captchaProperties.sites().get(siteKey);
-        String payloadHash = getPayloadHash(payload);
+        final CaptchaSite site = captchaProperties.sites().get(siteKey);
+        final String payloadHash = getPayloadHash(payload);
         final long payloadHashCount = invalidatedPayloads.keySet().stream().filter(s -> s.startsWith(String.format("%s_", payloadHash))).count();
         return payloadHashCount >= site.maxVerifiesPerPayload();
     }

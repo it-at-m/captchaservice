@@ -1,6 +1,21 @@
 server:
   port: 39146
 spring:
+  # Spring JPA
+  jpa:
+    # Logging for database operation
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    password: admin
+    username: admin
+  flyway:
+    locations:
+      - classpath:db/migration/schema
+      - classpath:db/migration/testdata
   security:
     oauth2:
       resourceserver:

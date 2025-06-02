@@ -15,8 +15,7 @@ public class SiteAuthService {
 
     public boolean isAuthorized(final String siteKey, final String siteSecret) {
         final CaptchaSite site = captchaProperties.sites().get(siteKey);
-        if (site == null) return false;
-        return site.secret().equals(siteSecret);
+        return site != null && site.secret().equals(siteSecret);
     }
 
 }
