@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.muenchen.captchaservice.TestConstants;
 import de.muenchen.captchaservice.controller.captcha.request.PostChallengeRequest;
 import de.muenchen.captchaservice.controller.captcha.request.PostVerifyRequest;
-import de.muenchen.captchaservice.util.HazelcastTestUtil;
+import de.muenchen.captchaservice.util.DatabaseTestUtil;
 import lombok.SneakyThrows;
 import org.altcha.altcha.Altcha;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,7 @@ class CaptchaControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private HazelcastTestUtil hazelcastTestUtil;
+    private DatabaseTestUtil databaseTestUtil;
 
     @Test
     void postChallenge_basic() {
@@ -185,7 +185,7 @@ class CaptchaControllerTest {
     @Test
     @SneakyThrows
     void postVerify_expired() {
-        hazelcastTestUtil.resetHazelcastInstance();
+        databaseTestUtil.clearDatabase();
         final PostVerifyRequest request = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_PAYLOAD);
         final String requestBody = objectMapper.writeValueAsString(request);
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {

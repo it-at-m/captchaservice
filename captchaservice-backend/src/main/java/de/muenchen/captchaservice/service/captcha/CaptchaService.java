@@ -1,37 +1,36 @@
 package de.muenchen.captchaservice.service.captcha;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.map.IMap;
-import de.muenchen.captchaservice.common.HazelcastConstants;
 import de.muenchen.captchaservice.configuration.captcha.CaptchaProperties;
 import de.muenchen.captchaservice.configuration.captcha.CaptchaSite;
 import de.muenchen.captchaservice.data.SourceAddress;
+import de.muenchen.captchaservice.entity.InvalidatedPayload;
+import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
 import de.muenchen.captchaservice.service.difficulty.DifficultyService;
 import lombok.extern.slf4j.Slf4j;
 import org.altcha.altcha.Altcha;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.time.Instant;
 
 @Service
 @Slf4j
 public class CaptchaService {
 
     private final CaptchaProperties captchaProperties;
-    private final IMap<String, String> invalidatedPayloads;
+    private final InvalidatedPayloadRepository invalidatedPayloadRepository;
     private final DifficultyService difficultyService;
 
-    public CaptchaService(final CaptchaProperties captchaProperties, final DifficultyService difficultyService, final HazelcastInstance hazelcastInstance) {
+    public CaptchaService(final CaptchaProperties captchaProperties, final DifficultyService difficultyService,
+            InvalidatedPayloadRepository invalidatedPayloadRepository) {
         this.captchaProperties = captchaProperties;
+        this.invalidatedPayloadRepository = invalidatedPayloadRepository;
         this.difficultyService = difficultyService;
-        invalidatedPayloads = hazelcastInstance.getMap(HazelcastConstants.INVALIDATED_PAYLOADS);
     }
 
     public Altcha.Challenge createChallenge(final String siteKey, final SourceAddress sourceAddress) {
         final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
-        difficultyService.pokeSourceAddress(sourceAddress);
+        difficultyService.registerRequest(sourceAddress);
         final Altcha.ChallengeOptions options = new Altcha.ChallengeOptions();
         options.algorithm = Altcha.Algorithm.SHA256;
         options.hmacKey = captchaProperties.hmacKey();
@@ -63,15 +62,15 @@ public class CaptchaService {
 
     public void invalidatePayload(final Altcha.Payload payload) {
         final String payloadHash = getPayloadHash(payload);
-        invalidatedPayloads.set(String.format("%s_%s_%s", payloadHash, System.currentTimeMillis(), UUID.randomUUID()), "",
-                captchaProperties.captchaTimeoutSeconds(), TimeUnit.SECONDS);
+        final InvalidatedPayload invalidatedPayload = new InvalidatedPayload(payloadHash, Instant.now().plusSeconds(captchaProperties.captchaTimeoutSeconds()));
+        invalidatedPayloadRepository.save(invalidatedPayload);
         log.debug("Invalidated payloadHash: {}", payloadHash);
     }
 
     public boolean isPayloadInvalidated(final String siteKey, final Altcha.Payload payload) {
         final CaptchaSite site = captchaProperties.sites().get(siteKey);
         final String payloadHash = getPayloadHash(payload);
-        final long payloadHashCount = invalidatedPayloads.keySet().stream().filter(s -> s.startsWith(String.format("%s_", payloadHash))).count();
+        final long payloadHashCount = invalidatedPayloadRepository.countByPayloadHashIgnoreCaseAndValidUntilGreaterThanEqual(payloadHash, Instant.now());
         return payloadHashCount >= site.maxVerifiesPerPayload();
     }
 

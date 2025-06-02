@@ -2,7 +2,7 @@ package de.muenchen.captchaservice.service.difficulty;
 
 import de.muenchen.captchaservice.TestConstants;
 import de.muenchen.captchaservice.data.SourceAddress;
-import de.muenchen.captchaservice.util.HazelcastTestUtil;
+import de.muenchen.captchaservice.util.DatabaseTestUtil;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,29 +34,29 @@ class DifficultyServiceTest {
     private DifficultyService difficultyService;
 
     @Autowired
-    private HazelcastTestUtil hazelcastTestUtil;
+    private DatabaseTestUtil databaseTestUtil;
 
     @Test
     @SneakyThrows
     void testDifficultyIncrease() {
-        hazelcastTestUtil.resetHazelcastInstance();
+        databaseTestUtil.clearDatabase();
         final SourceAddress sourceAddress = SourceAddress.parse("1.2.3.4");
         long difficulty;
         // --
-        difficultyService.pokeSourceAddress(sourceAddress);
+        difficultyService.registerRequest(sourceAddress);
         difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
         assertEquals(1_000L, difficulty);
         // --
-        difficultyService.pokeSourceAddress(sourceAddress);
+        difficultyService.registerRequest(sourceAddress);
         difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
         assertEquals(2_000L, difficulty);
         // --
-        difficultyService.pokeSourceAddress(sourceAddress);
+        difficultyService.registerRequest(sourceAddress);
         difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
         assertEquals(3_000L, difficulty);
         // --
         for (int i = 0; i < 5; i++) {
-            difficultyService.pokeSourceAddress(sourceAddress);
+            difficultyService.registerRequest(sourceAddress);
         }
         difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
         assertEquals(3_000L, difficulty);
