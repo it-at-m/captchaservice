@@ -6,6 +6,7 @@ import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.entity.InvalidatedPayload;
 import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
 import de.muenchen.captchaservice.service.difficulty.DifficultyService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import org.altcha.altcha.Altcha;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -21,8 +22,9 @@ public class CaptchaService {
     private final InvalidatedPayloadRepository invalidatedPayloadRepository;
     private final DifficultyService difficultyService;
 
+    @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
     public CaptchaService(final CaptchaProperties captchaProperties, final DifficultyService difficultyService,
-            InvalidatedPayloadRepository invalidatedPayloadRepository) {
+            final InvalidatedPayloadRepository invalidatedPayloadRepository) {
         this.captchaProperties = captchaProperties;
         this.invalidatedPayloadRepository = invalidatedPayloadRepository;
         this.difficultyService = difficultyService;

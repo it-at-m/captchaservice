@@ -9,4 +9,8 @@ import java.util.UUID;
 
 public interface InvalidatedPayloadRepository extends PagingAndSortingRepository<InvalidatedPayload, UUID>, CrudRepository<InvalidatedPayload, UUID> {
     long countByPayloadHashIgnoreCaseAndValidUntilGreaterThanEqual(String payloadHash, Instant validUntil);
+
+    long deleteByValidUntilLessThan(Instant validUntil);
+
+    long countByPayloadHash(String payloadHash);
 }

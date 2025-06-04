@@ -6,6 +6,7 @@ import de.muenchen.captchaservice.configuration.captcha.DifficultyItem;
 import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.entity.CaptchaRequest;
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,8 @@ public class DifficultyService {
 
     private final CaptchaRequestRepository captchaRequestRepository;
 
-    public DifficultyService(final CaptchaProperties captchaProperties, CaptchaRequestRepository captchaRequestRepository) {
+    @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
+    public DifficultyService(final CaptchaProperties captchaProperties, final CaptchaRequestRepository captchaRequestRepository) {
         this.captchaProperties = captchaProperties;
         this.captchaRequestRepository = captchaRequestRepository;
     }
