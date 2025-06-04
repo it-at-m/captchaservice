@@ -8,9 +8,9 @@ import java.time.Instant;
 import java.util.UUID;
 
 public interface CaptchaRequestRepository extends PagingAndSortingRepository<CaptchaRequest, UUID>, CrudRepository<CaptchaRequest, UUID> {
-    long countBySourceAddressHashIgnoreCaseAndValidUntilGreaterThanEqual(String sourceAddressHash, Instant validUntil);
+    long countBySourceAddressHashIgnoreCaseAndExpiresAtGreaterThanEqual(String sourceAddressHash, Instant validUntil);
 
-    long deleteByValidUntilLessThan(Instant validUntil);
+    long deleteByExpiresAtLessThan(Instant validUntil);
 
     int countBySourceAddressHashIgnoreCase(String sourceAddressHash);
 }

@@ -15,7 +15,7 @@ import java.time.Instant;
 @Table(
         indexes = {
                 @Index(name = "idx_captcha_request_source_address_hash", columnList = "sourceAddressHash"),
-                @Index(name = "idx_captcha_request_valid_until", columnList = "validUntil")
+                @Index(name = "idx_captcha_request_expires_at", columnList = "expiresAt")
         }
 )
 
@@ -40,6 +40,6 @@ public class CaptchaRequest extends BaseEntity {
     private String sourceAddressHash;
 
     @NotNull
-    private Instant validUntil;
+    private Instant expiresAt;
 
 }

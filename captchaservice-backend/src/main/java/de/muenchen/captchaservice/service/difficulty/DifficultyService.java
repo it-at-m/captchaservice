@@ -41,7 +41,7 @@ public class DifficultyService {
             throw new IllegalArgumentException("siteKey not found");
         }
         final String sourceAddressHash = sourceAddress.getHash();
-        final long sourceVisitCount = captchaRequestRepository.countBySourceAddressHashIgnoreCaseAndValidUntilGreaterThanEqual(sourceAddressHash,
+        final long sourceVisitCount = captchaRequestRepository.countBySourceAddressHashIgnoreCaseAndExpiresAtGreaterThanEqual(sourceAddressHash,
                 Instant.now());
         final Optional<DifficultyItem> difficultyItem = captchaSite
                 .difficultyMap()

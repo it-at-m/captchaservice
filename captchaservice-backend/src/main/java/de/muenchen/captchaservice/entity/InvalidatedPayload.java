@@ -15,7 +15,7 @@ import java.time.Instant;
 @Table(
         indexes = {
                 @Index(name = "idx_invalidated_payload_payload_hash", columnList = "payloadHash"),
-                @Index(name = "idx_invalidated_payload_valid_until", columnList = "validUntil")
+                @Index(name = "idx_invalidated_payload_expires_at", columnList = "expiresAt")
         }
 )
 // Definition of getter, setter, ...
@@ -39,6 +39,6 @@ public class InvalidatedPayload extends BaseEntity {
     private String payloadHash;
 
     @NotNull
-    private Instant validUntil;
+    private Instant expiresAt;
 
 }

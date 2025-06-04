@@ -1,4 +1,4 @@
-package de.muenchen.captchaservice.service.invalidateddate;
+package de.muenchen.captchaservice.service.expireddata;
 
 import de.muenchen.captchaservice.TestConstants;
 import de.muenchen.captchaservice.entity.CaptchaRequest;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
-class InvalidatedDataServiceTest {
+class ExpiredDataServiceTest {
 
     @Container
     @ServiceConnection
@@ -39,36 +39,36 @@ class InvalidatedDataServiceTest {
     @Autowired
     private InvalidatedPayloadRepository invalidatedPayloadRepository;
     @Autowired
-    private InvalidatedDataService invalidatedDataService;
+    private de.muenchen.captchaservice.service.expireddata.ExpiredDataService expiredDataService;
 
     @Test
-    void deleteInvalidatedData() {
+    void deleteExpiredData() {
         databaseTestUtil.clearDatabase();
 
-        final String validHash = DigestUtils.sha256Hex("valid");
-        final String invalidHash = DigestUtils.sha256Hex("invalid");
+        final String notExpiredHash = DigestUtils.sha256Hex("not expired");
+        final String expiredHash = DigestUtils.sha256Hex("expired");
 
-        // Invalid data
-        captchaRequestRepository.save(new CaptchaRequest(validHash, Instant.now().plus(Period.ofDays(1))));
-        captchaRequestRepository.save(new CaptchaRequest(validHash, Instant.now().plus(Period.ofDays(1))));
-        invalidatedPayloadRepository.save(new InvalidatedPayload(validHash, Instant.now().plus(Period.ofDays(1))));
-        invalidatedPayloadRepository.save(new InvalidatedPayload(validHash, Instant.now().plus(Period.ofDays(1))));
+        // Not expired data
+        captchaRequestRepository.save(new CaptchaRequest(notExpiredHash, Instant.now().plus(Period.ofDays(1))));
+        captchaRequestRepository.save(new CaptchaRequest(notExpiredHash, Instant.now().plus(Period.ofDays(1))));
+        invalidatedPayloadRepository.save(new InvalidatedPayload(notExpiredHash, Instant.now().plus(Period.ofDays(1))));
+        invalidatedPayloadRepository.save(new InvalidatedPayload(notExpiredHash, Instant.now().plus(Period.ofDays(1))));
 
-        // Valid data
-        captchaRequestRepository.save(new CaptchaRequest(invalidHash, Instant.now().minus(Period.ofDays(1))));
-        captchaRequestRepository.save(new CaptchaRequest(invalidHash, Instant.now().minus(Period.ofDays(1))));
-        invalidatedPayloadRepository.save(new InvalidatedPayload(invalidHash, Instant.now().minus(Period.ofDays(1))));
-        invalidatedPayloadRepository.save(new InvalidatedPayload(invalidHash, Instant.now().minus(Period.ofDays(1))));
+        // Expired data
+        captchaRequestRepository.save(new CaptchaRequest(expiredHash, Instant.now().minus(Period.ofDays(1))));
+        captchaRequestRepository.save(new CaptchaRequest(expiredHash, Instant.now().minus(Period.ofDays(1))));
+        invalidatedPayloadRepository.save(new InvalidatedPayload(expiredHash, Instant.now().minus(Period.ofDays(1))));
+        invalidatedPayloadRepository.save(new InvalidatedPayload(expiredHash, Instant.now().minus(Period.ofDays(1))));
 
         assertEquals(4, invalidatedPayloadRepository.count());
         assertEquals(4, captchaRequestRepository.count());
 
-        invalidatedDataService.deleteInvalidatedData();
+        expiredDataService.deleteExpiredData();
 
         assertEquals(2, invalidatedPayloadRepository.count());
         assertEquals(2, captchaRequestRepository.count());
-        assertEquals(2, captchaRequestRepository.countBySourceAddressHashIgnoreCase(validHash));
-        assertEquals(2, invalidatedPayloadRepository.countByPayloadHash(validHash));
+        assertEquals(2, captchaRequestRepository.countBySourceAddressHashIgnoreCase(notExpiredHash));
+        assertEquals(2, invalidatedPayloadRepository.countByPayloadHash(notExpiredHash));
     }
 
 }

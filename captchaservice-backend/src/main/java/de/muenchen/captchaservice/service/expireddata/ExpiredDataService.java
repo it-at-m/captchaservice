@@ -1,4 +1,4 @@
-package de.muenchen.captchaservice.service.invalidateddate;
+package de.muenchen.captchaservice.service.expireddata;
 
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
 import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
@@ -11,26 +11,26 @@ import java.time.Instant;
 
 @Service
 @Slf4j
-public class InvalidatedDataService {
+public class ExpiredDataService {
     private final CaptchaRequestRepository captchaRequestRepository;
     private final InvalidatedPayloadRepository invalidatedPayloadRepository;
 
     @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
-    public InvalidatedDataService(final CaptchaRequestRepository captchaRequestRepository, final InvalidatedPayloadRepository invalidatedPayloadRepository) {
+    public ExpiredDataService(final CaptchaRequestRepository captchaRequestRepository, final InvalidatedPayloadRepository invalidatedPayloadRepository) {
         this.captchaRequestRepository = captchaRequestRepository;
         this.invalidatedPayloadRepository = invalidatedPayloadRepository;
     }
 
     @Transactional
-    public void deleteInvalidatedData() {
+    public void deleteExpiredData() {
         Instant now = Instant.now();
-        final long deletedCaptchaRequestCount = captchaRequestRepository.deleteByValidUntilLessThan(now);
+        final long deletedCaptchaRequestCount = captchaRequestRepository.deleteByExpiresAtLessThan(now);
         if (deletedCaptchaRequestCount > 0) {
-            log.info("Deleted {} invalid CaptchaRequests", deletedCaptchaRequestCount);
+            log.info("Deleted {} expired CaptchaRequests", deletedCaptchaRequestCount);
         }
-        final long deletedInvalidatedPayloadCount = invalidatedPayloadRepository.deleteByValidUntilLessThan(now);
+        final long deletedInvalidatedPayloadCount = invalidatedPayloadRepository.deleteByExpiresAtLessThan(now);
         if (deletedInvalidatedPayloadCount > 0) {
-            log.info("Deleted {} invalid InvalidatedPayloads", deletedInvalidatedPayloadCount);
+            log.info("Deleted {} expired InvalidatedPayloads", deletedInvalidatedPayloadCount);
         }
     }
 }
