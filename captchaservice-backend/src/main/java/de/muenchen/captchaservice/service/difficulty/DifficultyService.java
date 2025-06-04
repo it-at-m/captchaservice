@@ -1,35 +1,38 @@
 package de.muenchen.captchaservice.service.difficulty;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.map.IMap;
-import de.muenchen.captchaservice.common.HazelcastConstants;
 import de.muenchen.captchaservice.configuration.captcha.CaptchaProperties;
 import de.muenchen.captchaservice.configuration.captcha.CaptchaSite;
 import de.muenchen.captchaservice.configuration.captcha.DifficultyItem;
 import de.muenchen.captchaservice.data.SourceAddress;
+import de.muenchen.captchaservice.entity.CaptchaRequest;
+import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
 public class DifficultyService {
 
     private final CaptchaProperties captchaProperties;
-    private final IMap<String, String> sourceAddresses;
 
-    public DifficultyService(final CaptchaProperties captchaProperties, final HazelcastInstance hazelcastInstance) {
+    private final CaptchaRequestRepository captchaRequestRepository;
+
+    @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
+    public DifficultyService(final CaptchaProperties captchaProperties, final CaptchaRequestRepository captchaRequestRepository) {
         this.captchaProperties = captchaProperties;
-        sourceAddresses = hazelcastInstance.getMap(HazelcastConstants.SOURCE_ADDRESSES);
+        this.captchaRequestRepository = captchaRequestRepository;
     }
 
-    public void pokeSourceAddress(final SourceAddress sourceAddress) {
+    public void registerRequest(final SourceAddress sourceAddress) {
         final String sourceAddressHash = sourceAddress.getHash();
-        sourceAddresses.set(String.format("%s_%s_%s", sourceAddressHash, System.currentTimeMillis(), UUID.randomUUID()), "",
-                captchaProperties.sourceAddressWindowSeconds(), TimeUnit.SECONDS);
+        final CaptchaRequest captchaRequest = new CaptchaRequest(sourceAddressHash,
+                Instant.now().plusSeconds(captchaProperties.sourceAddressWindowSeconds()));
+        captchaRequestRepository.save(captchaRequest);
+        log.debug("Registered request for source address with hash {}", sourceAddressHash);
     }
 
     public long getDifficultyForSourceAddress(final String siteKey, final SourceAddress sourceAddress) {
@@ -38,7 +41,8 @@ public class DifficultyService {
             throw new IllegalArgumentException("siteKey not found");
         }
         final String sourceAddressHash = sourceAddress.getHash();
-        final long sourceVisitCount = sourceAddresses.keySet().stream().filter(s -> s.startsWith(String.format("%s_", sourceAddressHash))).count();
+        final long sourceVisitCount = captchaRequestRepository.countBySourceAddressHashIgnoreCaseAndExpiresAtGreaterThanEqual(sourceAddressHash,
+                Instant.now());
         final Optional<DifficultyItem> difficultyItem = captchaSite
                 .difficultyMap()
                 .stream()
