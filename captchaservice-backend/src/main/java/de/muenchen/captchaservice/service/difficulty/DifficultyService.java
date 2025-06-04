@@ -32,7 +32,7 @@ public class DifficultyService {
         final CaptchaRequest captchaRequest = new CaptchaRequest(sourceAddressHash,
                 Instant.now().plusSeconds(captchaProperties.sourceAddressWindowSeconds()));
         captchaRequestRepository.save(captchaRequest);
-        log.debug("Poked source address with hash {}", sourceAddressHash);
+        log.debug("Registered request for source address with hash {}", sourceAddressHash);
     }
 
     public long getDifficultyForSourceAddress(final String siteKey, final SourceAddress sourceAddress) {

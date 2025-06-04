@@ -67,7 +67,7 @@ class InvalidatedDataServiceTest {
 
         assertEquals(2, invalidatedPayloadRepository.count());
         assertEquals(2, captchaRequestRepository.count());
-        assertEquals(2, captchaRequestRepository.countBySourceAddressHash(validHash));
+        assertEquals(2, captchaRequestRepository.countBySourceAddressHashIgnoreCase(validHash));
         assertEquals(2, invalidatedPayloadRepository.countByPayloadHash(validHash));
     }
 

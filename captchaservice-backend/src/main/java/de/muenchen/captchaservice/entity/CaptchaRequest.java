@@ -14,7 +14,8 @@ import java.time.Instant;
 @Entity
 @Table(
         indexes = {
-                @Index(name = "idx_captcha_request_source_address_hash", columnList = "sourceAddressHash")
+                @Index(name = "idx_captcha_request_source_address_hash", columnList = "sourceAddressHash"),
+                @Index(name = "idx_captcha_request_valid_until", columnList = "validUntil")
         }
 )
 

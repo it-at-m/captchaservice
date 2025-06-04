@@ -1,7 +1,17 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      # schema is managed by Flyway, only validate
+      ddl-auto: validate
+  flyway:
+    locations:
+      - classpath:db/migration/schema
+
+# Uncomment for testing purposes
+#spring:
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
 
 security:
   # possible values: none, all, changing (With changing, only changing requests such as POST, PUT, DELETE are logged)

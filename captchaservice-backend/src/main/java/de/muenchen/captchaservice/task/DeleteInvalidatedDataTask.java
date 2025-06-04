@@ -20,6 +20,10 @@ public class DeleteInvalidatedDataTask {
 
     @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
     public void deleteInvalidatedData() {
-        invalidatedDataService.deleteInvalidatedData();
+        try {
+            invalidatedDataService.deleteInvalidatedData();
+        } catch (Exception e) {
+            log.error("Failed to delete invalidated data", e);
+        }
     }
 }

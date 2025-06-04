@@ -23,11 +23,12 @@ public class InvalidatedDataService {
 
     @Transactional
     public void deleteInvalidatedData() {
-        final long deletedCaptchaRequestCount = captchaRequestRepository.deleteByValidUntilLessThan(Instant.now());
+        Instant now = Instant.now();
+        final long deletedCaptchaRequestCount = captchaRequestRepository.deleteByValidUntilLessThan(now);
         if (deletedCaptchaRequestCount > 0) {
             log.info("Deleted {} invalid CaptchaRequests", deletedCaptchaRequestCount);
         }
-        final long deletedInvalidatedPayloadCount = invalidatedPayloadRepository.deleteByValidUntilLessThan(Instant.now());
+        final long deletedInvalidatedPayloadCount = invalidatedPayloadRepository.deleteByValidUntilLessThan(now);
         if (deletedInvalidatedPayloadCount > 0) {
             log.info("Deleted {} invalid InvalidatedPayloads", deletedInvalidatedPayloadCount);
         }

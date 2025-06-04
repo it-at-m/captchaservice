@@ -12,5 +12,5 @@ public interface CaptchaRequestRepository extends PagingAndSortingRepository<Cap
 
     long deleteByValidUntilLessThan(Instant validUntil);
 
-    int countBySourceAddressHash(String sourceAddressHash);
+    int countBySourceAddressHashIgnoreCase(String sourceAddressHash);
 }
