@@ -24,6 +24,7 @@ captcha:
   sites:
     test_site:
       secret: test_secret
+      source-address-ipv6-cidr: 64
       difficulty-map:
         - minVisits: 0
           maxNumber: 1000

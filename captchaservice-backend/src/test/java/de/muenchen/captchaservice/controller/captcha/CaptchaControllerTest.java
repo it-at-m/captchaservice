@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.muenchen.captchaservice.TestConstants;
 import de.muenchen.captchaservice.controller.captcha.request.PostChallengeRequest;
 import de.muenchen.captchaservice.controller.captcha.request.PostVerifyRequest;
+import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
 import de.muenchen.captchaservice.util.DatabaseTestUtil;
 import lombok.SneakyThrows;
 import org.altcha.altcha.Altcha;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.MockedStatic;
@@ -25,7 +27,8 @@ import org.testcontainers.utility.DockerImageName;
 import static de.muenchen.captchaservice.TestConstants.SPRING_NO_SECURITY_PROFILE;
 import static de.muenchen.captchaservice.TestConstants.SPRING_TEST_PROFILE;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -65,6 +68,8 @@ class CaptchaControllerTest {
 
     @Autowired
     private DatabaseTestUtil databaseTestUtil;
+    @Autowired
+    private CaptchaRequestRepository captchaRequestRepository;
 
     @Test
     void postChallenge_basic() {
@@ -110,6 +115,7 @@ class CaptchaControllerTest {
     @Test
     @SneakyThrows
     void postChallenge_validIpv4() {
+        databaseTestUtil.clearDatabase();
         final PostChallengeRequest request = new PostChallengeRequest(TEST_SITE_KEY, TEST_SITE_SECRET, "1.2.3.4");
         final String requestBody = objectMapper.writeValueAsString(request);
         mockMvc.perform(
@@ -118,12 +124,14 @@ class CaptchaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        assertEquals(1, captchaRequestRepository.countBySourceAddressHashIgnoreCase(DigestUtils.sha256Hex("1.2.3.4")));
     }
 
     @Test
     @SneakyThrows
     void postChallenge_validIpv6() {
-        final PostChallengeRequest request = new PostChallengeRequest(TEST_SITE_KEY, TEST_SITE_SECRET, "2001:db8::");
+        databaseTestUtil.clearDatabase();
+        final PostChallengeRequest request = new PostChallengeRequest(TEST_SITE_KEY, TEST_SITE_SECRET, "ea28:0fb8:e3f6:2836:dd46:0946:0589:72c2");
         final String requestBody = objectMapper.writeValueAsString(request);
         mockMvc.perform(
                 post("/api/v1/captcha/challenge")
@@ -131,6 +139,7 @@ class CaptchaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        assertEquals(1, captchaRequestRepository.countBySourceAddressHashIgnoreCase(DigestUtils.sha256Hex("ea28:fb8:e3f6:2836:0:0:0:0")));
     }
 
     @Test

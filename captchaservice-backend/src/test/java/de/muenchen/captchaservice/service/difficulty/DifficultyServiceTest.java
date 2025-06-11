@@ -15,7 +15,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import static de.muenchen.captchaservice.TestConstants.SPRING_NO_SECURITY_PROFILE;
 import static de.muenchen.captchaservice.TestConstants.SPRING_TEST_PROFILE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
@@ -40,7 +40,7 @@ class DifficultyServiceTest {
     @SneakyThrows
     void testDifficultyIncrease() {
         databaseTestUtil.clearDatabase();
-        final SourceAddress sourceAddress = SourceAddress.parse("1.2.3.4");
+        final SourceAddress sourceAddress = new SourceAddress("1.2.3.4");
         long difficulty;
         // --
         difficultyService.registerRequest(sourceAddress);
