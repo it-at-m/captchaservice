@@ -1,5 +1,7 @@
 package de.muenchen.captchaservice.util.networkaddresscalculator;
 
+import com.google.common.net.InetAddresses;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -17,7 +19,7 @@ public class NetworkAddressCalculator {
      */
     public static String getNetworkAddress(String address, int netSize) {
         try {
-            InetAddress inetAddress = InetAddress.getByName(address);
+            InetAddress inetAddress = InetAddresses.forString(address);
             byte[] addressBytes = inetAddress.getAddress();
             int addressLengthBits = addressBytes.length * 8;
 
@@ -45,8 +47,7 @@ public class NetworkAddressCalculator {
 
             InetAddress netInetAddress = InetAddress.getByAddress(netAddressBytes);
             return netInetAddress.getHostAddress();
-
-        } catch (UnknownHostException e) {
+        } catch (IllegalArgumentException | UnknownHostException e) {
             throw new InvalidAddressException("Invalid address: " + address, address, e);
         }
     }
