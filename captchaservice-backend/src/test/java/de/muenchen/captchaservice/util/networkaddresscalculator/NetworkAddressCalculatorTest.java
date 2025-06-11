@@ -94,9 +94,9 @@ public class NetworkAddressCalculatorTest {
     @Test
     void testIPv6_NonOctetBoundary() {
         String ip = "2001:db8:85a3:8d3:1319:8a2e:370:7334";
+        // /70 = 4 complete hextets (64 bits) + 6 bits from 5th hextet (1319 -> 1000)
         int netSize = 70; // 64 bits (4 hextets) + 6 bits into the 5th hextet
-        String expected = "2001:db8:85a3:0:400:0:0:0";
-        expected = "2001:db8:85a3:8d3:1000:0:0:0";
+        String expected = "2001:db8:85a3:8d3:1000:0:0:0";
         assertEquals(expected, NetworkAddressCalculator.getNetworkAddress(ip, netSize));
     }
 
