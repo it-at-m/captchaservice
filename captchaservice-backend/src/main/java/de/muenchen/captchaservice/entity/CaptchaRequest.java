@@ -44,10 +44,14 @@ public class CaptchaRequest extends BaseEntity {
     private String sourceAddressHash;
 
     @NotNull
+    private boolean isWhitelisted;
+
+    @NotNull
     private Instant expiresAt;
 
-    public CaptchaRequest(String sourceAddressHash, Instant expiresAt) {
+    public CaptchaRequest(String sourceAddressHash, boolean isWhitelisted, Instant expiresAt) {
         this.sourceAddressHash = sourceAddressHash;
+        this.isWhitelisted = isWhitelisted;
         this.expiresAt = expiresAt;
     }
 

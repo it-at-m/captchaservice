@@ -8,6 +8,7 @@ import de.muenchen.captchaservice.entity.CaptchaRequest;
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -27,15 +28,18 @@ public class DifficultyService {
         this.captchaRequestRepository = captchaRequestRepository;
     }
 
-    public void registerRequest(final SourceAddress sourceAddress) {
+    public void registerRequest(final String siteKey, final SourceAddress sourceAddress) {
         final String sourceAddressHash = sourceAddress.getHash();
-        final CaptchaRequest captchaRequest = new CaptchaRequest(sourceAddressHash,
+        final CaptchaRequest captchaRequest = new CaptchaRequest(sourceAddressHash, isSourceAddressWhitelisted(siteKey, sourceAddress),
                 Instant.now().plusSeconds(captchaProperties.sourceAddressWindowSeconds()));
         captchaRequestRepository.save(captchaRequest);
         log.debug("Registered request for source address with hash {}", sourceAddressHash);
     }
 
     public long getDifficultyForSourceAddress(final String siteKey, final SourceAddress sourceAddress) {
+        if (isSourceAddressWhitelisted(siteKey, sourceAddress)) {
+            return 1L;
+        }
         final CaptchaSite captchaSite = captchaProperties.sites().get(siteKey);
         if (captchaSite == null) {
             throw new IllegalArgumentException("siteKey not found");
@@ -56,6 +60,14 @@ public class DifficultyService {
         final long maxNumber = difficultyItem.get().maxNumber();
         log.debug("Difficulty {} for {} in {} after {} visits", maxNumber, sourceAddressHash, siteKey, sourceVisitCount);
         return maxNumber;
+    }
+
+    public boolean isSourceAddressWhitelisted(final String siteKey, final SourceAddress sourceAddress) {
+        final CaptchaSite captchaSite = captchaProperties.sites().get(siteKey);
+        for (String subnet : captchaSite.whitelistedSourceAddresses()) {
+            if (new IpAddressMatcher(subnet).matches(sourceAddress.getSourceAddress())) return true;
+        }
+        return false;
     }
 
 }

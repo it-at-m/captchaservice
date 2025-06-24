@@ -3,6 +3,7 @@ CREATE TABLE captcha_request
     id                  UUID                     NOT NULL,
     request_at          TIMESTAMP WITH TIME ZONE,
     source_address_hash VARCHAR(64)              NOT NULL,
+    is_whitelisted      BOOLEAN                  NOT NULL,
     expires_at          TIMESTAMP WITH TIME ZONE NOT NULL,
     CONSTRAINT pk_captcharequest PRIMARY KEY (id)
 );

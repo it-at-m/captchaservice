@@ -49,14 +49,14 @@ class ExpiredDataServiceTest {
         final String expiredHash = DigestUtils.sha256Hex("expired");
 
         // Not expired data
-        captchaRequestRepository.save(new CaptchaRequest(notExpiredHash, Instant.now().plus(Period.ofDays(1))));
-        captchaRequestRepository.save(new CaptchaRequest(notExpiredHash, Instant.now().plus(Period.ofDays(1))));
+        captchaRequestRepository.save(new CaptchaRequest(notExpiredHash, false, Instant.now().plus(Period.ofDays(1))));
+        captchaRequestRepository.save(new CaptchaRequest(notExpiredHash, false, Instant.now().plus(Period.ofDays(1))));
         invalidatedPayloadRepository.save(new InvalidatedPayload(notExpiredHash, Instant.now().plus(Period.ofDays(1))));
         invalidatedPayloadRepository.save(new InvalidatedPayload(notExpiredHash, Instant.now().plus(Period.ofDays(1))));
 
         // Expired data
-        captchaRequestRepository.save(new CaptchaRequest(expiredHash, Instant.now().minus(Period.ofDays(1))));
-        captchaRequestRepository.save(new CaptchaRequest(expiredHash, Instant.now().minus(Period.ofDays(1))));
+        captchaRequestRepository.save(new CaptchaRequest(expiredHash, false, Instant.now().minus(Period.ofDays(1))));
+        captchaRequestRepository.save(new CaptchaRequest(expiredHash, false, Instant.now().minus(Period.ofDays(1))));
         invalidatedPayloadRepository.save(new InvalidatedPayload(expiredHash, Instant.now().minus(Period.ofDays(1))));
         invalidatedPayloadRepository.save(new InvalidatedPayload(expiredHash, Instant.now().minus(Period.ofDays(1))));
 
