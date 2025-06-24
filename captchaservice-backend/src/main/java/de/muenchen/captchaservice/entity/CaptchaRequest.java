@@ -8,6 +8,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
 
@@ -15,7 +16,7 @@ import java.time.Instant;
 @Table(
         indexes = {
                 @Index(name = "idx_captcha_request_source_address_hash", columnList = "sourceAddressHash"),
-                @Index(name = "idx_captcha_request_expires_at", columnList = "expiresAt")
+                @Index(name = "idx_captcha_request_source_address_hash_expires_at", columnList = "sourceAddressHash, expiresAt")
         }
 )
 
@@ -25,7 +26,6 @@ import java.time.Instant;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
 public class CaptchaRequest extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
@@ -34,6 +34,10 @@ public class CaptchaRequest extends BaseEntity {
     // Variables //
     // ========= //
 
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Instant requestAt;
+
     @Column(nullable = false, length = 64)
     @NotNull
     @Size(min = 64, max = 64)
@@ -41,5 +45,10 @@ public class CaptchaRequest extends BaseEntity {
 
     @NotNull
     private Instant expiresAt;
+
+    public CaptchaRequest(String sourceAddressHash, Instant expiresAt) {
+        this.sourceAddressHash = sourceAddressHash;
+        this.expiresAt = expiresAt;
+    }
 
 }

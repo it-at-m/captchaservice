@@ -47,7 +47,7 @@ public class DifficultyService {
                 .difficultyMap()
                 .stream()
                 .sorted((o1, o2) -> Math.toIntExact(o2.minVisits() - o1.minVisits()))
-                .filter(di -> di.minVisits() <= sourceVisitCount)
+                .filter(di -> di.minVisits() - 1 <= sourceVisitCount)
                 .findFirst();
         if (difficultyItem.isEmpty()) {
             log.error("No difficulty found site {} with {} visits", siteKey, sourceVisitCount);

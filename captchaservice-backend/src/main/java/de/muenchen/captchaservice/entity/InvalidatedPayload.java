@@ -15,7 +15,7 @@ import java.time.Instant;
 @Table(
         indexes = {
                 @Index(name = "idx_invalidated_payload_payload_hash", columnList = "payloadHash"),
-                @Index(name = "idx_invalidated_payload_expires_at", columnList = "expiresAt")
+                @Index(name = "idx_invalidated_payload_payload_hash_expires_at", columnList = "payloadHash, expiresAt")
         }
 )
 // Definition of getter, setter, ...

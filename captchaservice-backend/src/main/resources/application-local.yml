@@ -39,8 +39,13 @@ security:
 captcha:
   hmac-key: secret
   sites:
+    loadtest:
+      secret: loadtest
+      difficulty-map:
+        - min-visits: 1
+          max-number: 1
     test:
       secret: test
       difficulty-map:
-        - min-visits: 0
+        - min-visits: 1
           max-number: 1000
