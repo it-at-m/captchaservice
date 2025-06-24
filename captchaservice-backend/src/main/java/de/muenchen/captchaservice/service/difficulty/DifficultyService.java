@@ -12,7 +12,9 @@ import org.springframework.security.web.util.matcher.IpAddressMatcher;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
@@ -21,6 +23,8 @@ public class DifficultyService {
     private final CaptchaProperties captchaProperties;
 
     private final CaptchaRequestRepository captchaRequestRepository;
+
+    private final Map<String, IpAddressMatcher> matcherCache = new ConcurrentHashMap<>();
 
     @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
     public DifficultyService(final CaptchaProperties captchaProperties, final CaptchaRequestRepository captchaRequestRepository) {
@@ -65,7 +69,8 @@ public class DifficultyService {
     public boolean isSourceAddressWhitelisted(final String siteKey, final SourceAddress sourceAddress) {
         final CaptchaSite captchaSite = captchaProperties.sites().get(siteKey);
         for (String subnet : captchaSite.whitelistedSourceAddresses()) {
-            if (new IpAddressMatcher(subnet).matches(sourceAddress.getSourceAddress())) return true;
+            IpAddressMatcher matcher = matcherCache.computeIfAbsent(subnet, IpAddressMatcher::new);
+            if (matcher.matches(sourceAddress.getSourceAddress())) return true;
         }
         return false;
     }
