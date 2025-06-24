@@ -43,23 +43,49 @@ class DifficultyServiceTest {
         final SourceAddress sourceAddress = new SourceAddress("1.2.3.4");
         long difficulty;
         // --
-        difficultyService.registerRequest(sourceAddress);
+        difficultyService.registerRequest("test_site", sourceAddress);
         difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
         assertEquals(1_000L, difficulty);
         // --
-        difficultyService.registerRequest(sourceAddress);
+        difficultyService.registerRequest("test_site", sourceAddress);
         difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
         assertEquals(2_000L, difficulty);
         // --
-        difficultyService.registerRequest(sourceAddress);
+        difficultyService.registerRequest("test_site", sourceAddress);
         difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
         assertEquals(3_000L, difficulty);
         // --
         for (int i = 0; i < 5; i++) {
-            difficultyService.registerRequest(sourceAddress);
+            difficultyService.registerRequest("test_site", sourceAddress);
         }
         difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
         assertEquals(3_000L, difficulty);
+    }
+
+    @Test
+    @SneakyThrows
+    void testDifficultyIncreaseWithWhitelistedSourceAddress() {
+        databaseTestUtil.clearDatabase();
+        final SourceAddress sourceAddress = new SourceAddress("10.1.2.3");
+        long difficulty;
+        // --
+        difficultyService.registerRequest("test_site", sourceAddress);
+        difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
+        assertEquals(1L, difficulty);
+        // --
+        difficultyService.registerRequest("test_site", sourceAddress);
+        difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
+        assertEquals(1L, difficulty);
+        // --
+        difficultyService.registerRequest("test_site", sourceAddress);
+        difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
+        assertEquals(1L, difficulty);
+        // --
+        for (int i = 0; i < 5; i++) {
+            difficultyService.registerRequest("test_site", sourceAddress);
+        }
+        difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
+        assertEquals(1L, difficulty);
     }
 
 }

@@ -20,9 +20,9 @@ public class SourceAddressService {
         String networkAddressString;
         InetAddress addr = InetAddresses.forString(sourceAddress);
         if (addr instanceof java.net.Inet4Address) {
-            networkAddressString = NetworkAddressCalculator.getNetworkAddress(sourceAddress, site.sourceAddressIpv4Cidr());
+            networkAddressString = NetworkAddressCalculator.getNetworkAddress(sourceAddress, site.sourceAddressIpv4NetSize());
         } else if (addr instanceof java.net.Inet6Address) {
-            networkAddressString = NetworkAddressCalculator.getNetworkAddress(sourceAddress, site.sourceAddressIpv6Cidr());
+            networkAddressString = NetworkAddressCalculator.getNetworkAddress(sourceAddress, site.sourceAddressIpv6NetSize());
         } else {
             throw new IllegalArgumentException("Unsupported IP address type: " + addr.getClass().getName());
         }
