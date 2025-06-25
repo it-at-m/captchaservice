@@ -11,7 +11,7 @@
 
     <groupId>de.muenchen.captchaservice</groupId>
     <artifactId>captchaservice-backend</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.0</version>
     <name>captchaservice_backend</name>
     <description />
     <url>https://github.com/it-at-m/captchaservice</url>
@@ -328,7 +328,7 @@
     <scm>
         <connection>scm:git:https://github.com/it-at-m/captchaservice.git</connection>
         <developerConnection>scm:git:https://github.com/it-at-m/captchaservice.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>captchaservice-backend-1.2.0</tag>
     </scm>
 
     <build>
