@@ -2,11 +2,15 @@ package de.muenchen.captchaservice.service.captcha;
 
 import de.muenchen.captchaservice.configuration.captcha.CaptchaProperties;
 import de.muenchen.captchaservice.configuration.captcha.CaptchaSite;
+import de.muenchen.captchaservice.data.ExtendedPayload;
 import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.entity.InvalidatedPayload;
 import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
 import de.muenchen.captchaservice.service.difficulty.DifficultyService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.DistributionSummary;
 import lombok.extern.slf4j.Slf4j;
 import org.altcha.altcha.Altcha;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -21,16 +25,25 @@ public class CaptchaService {
     private final CaptchaProperties captchaProperties;
     private final InvalidatedPayloadRepository invalidatedPayloadRepository;
     private final DifficultyService difficultyService;
+    private final Counter challengeCounter;
+    private final Counter verifySuccessCounter;
+    private final DistributionSummary tookTimeSummary;
 
     @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
     public CaptchaService(final CaptchaProperties captchaProperties, final DifficultyService difficultyService,
-            final InvalidatedPayloadRepository invalidatedPayloadRepository) {
+            final InvalidatedPayloadRepository invalidatedPayloadRepository, MeterRegistry meterRegistry) {
         this.captchaProperties = captchaProperties;
         this.invalidatedPayloadRepository = invalidatedPayloadRepository;
         this.difficultyService = difficultyService;
+
+        // Initialize metrics
+        this.challengeCounter = meterRegistry.counter("captcha.challenge.requests");
+        this.verifySuccessCounter = meterRegistry.counter("captcha.verify.success");
+        this.tookTimeSummary = meterRegistry.summary("captcha.verify.took.time");
     }
 
     public Altcha.Challenge createChallenge(final String siteKey, final SourceAddress sourceAddress) {
+        challengeCounter.increment();
         final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
         difficultyService.registerRequest(siteKey, sourceAddress);
         final Altcha.ChallengeOptions options = new Altcha.ChallengeOptions();
@@ -46,13 +59,18 @@ public class CaptchaService {
         return null;
     }
 
-    public boolean verify(final String siteKey, final Altcha.Payload payload) {
+    public boolean verify(final String siteKey, final ExtendedPayload payload) {
         if (isPayloadInvalidated(siteKey, payload)) {
             return false;
         }
         try {
+            if (payload.getTook() != null) {
+                tookTimeSummary.record(payload.getTook());
+            }
+            
             final boolean isValid = Altcha.verifySolution(payload, captchaProperties.hmacKey(), true);
             if (isValid) {
+                verifySuccessCounter.increment();
                 invalidatePayload(payload);
             }
             return isValid;
