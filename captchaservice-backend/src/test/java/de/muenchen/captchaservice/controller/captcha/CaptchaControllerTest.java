@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.muenchen.captchaservice.TestConstants;
 import de.muenchen.captchaservice.controller.captcha.request.PostChallengeRequest;
 import de.muenchen.captchaservice.controller.captcha.request.PostVerifyRequest;
+import de.muenchen.captchaservice.data.ExtendedPayload;
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
 import de.muenchen.captchaservice.util.DatabaseTestUtil;
 import lombok.SneakyThrows;
@@ -49,15 +50,16 @@ class CaptchaControllerTest {
     private static final String TEST_SITE_KEY = "test_site";
     private static final String TEST_SITE_SECRET = "test_secret";
     private static final String TEST_HMAC_KEY = "secret";
-    private static final Altcha.Payload TEST_PAYLOAD;
+    private static final ExtendedPayload TEST_PAYLOAD;
 
     static {
-        TEST_PAYLOAD = new Altcha.Payload();
+        TEST_PAYLOAD = new ExtendedPayload();
         TEST_PAYLOAD.algorithm = "";
         TEST_PAYLOAD.challenge = "";
         TEST_PAYLOAD.number = 1_000_000L;
         TEST_PAYLOAD.salt = "";
         TEST_PAYLOAD.signature = "";
+        TEST_PAYLOAD.setTook(4400L);
     }
 
     @Autowired
