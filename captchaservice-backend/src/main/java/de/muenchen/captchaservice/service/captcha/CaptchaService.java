@@ -67,7 +67,7 @@ public class CaptchaService {
             if (payload.getTook() != null) {
                 tookTimeSummary.record(payload.getTook());
             }
-            
+
             final boolean isValid = Altcha.verifySolution(payload, captchaProperties.hmacKey(), true);
             if (isValid) {
                 verifySuccessCounter.increment();
