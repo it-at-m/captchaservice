@@ -29,6 +29,11 @@ public class CaptchaService {
     private final Counter verifySuccessCounter;
     private final DistributionSummary tookTimeSummary;
 
+    /****
+     * Constructs a CaptchaService with the specified configuration, difficulty service, invalidated payload repository, and metrics registry.
+     *
+     * Initializes internal fields and sets up Micrometer metrics for tracking CAPTCHA challenge requests, successful verifications, and verification durations.
+     */
     @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
     public CaptchaService(final CaptchaProperties captchaProperties, final DifficultyService difficultyService,
             final InvalidatedPayloadRepository invalidatedPayloadRepository, MeterRegistry meterRegistry) {
@@ -42,6 +47,15 @@ public class CaptchaService {
         this.tookTimeSummary = meterRegistry.summary("captcha.verify.took.time");
     }
 
+    /**
+     * Creates a new CAPTCHA challenge for the specified site key and source address.
+     *
+     * Determines the appropriate difficulty based on the source address, configures challenge options, and returns a new Altcha challenge. Returns {@code null} if challenge creation fails.
+     *
+     * @param siteKey the identifier for the CAPTCHA site configuration
+     * @param sourceAddress the address from which the challenge request originates
+     * @return a new Altcha challenge, or {@code null} if creation fails
+     */
     public Altcha.Challenge createChallenge(final String siteKey, final SourceAddress sourceAddress) {
         challengeCounter.increment();
         final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
@@ -59,6 +73,15 @@ public class CaptchaService {
         return null;
     }
 
+    /**
+     * Verifies a CAPTCHA solution for the specified site key and payload.
+     *
+     * If the payload has already been invalidated, returns {@code false}. Records the time taken to solve the CAPTCHA if available. Upon successful verification, increments the verification success counter and invalidates the payload to prevent reuse.
+     *
+     * @param siteKey the site key associated with the CAPTCHA challenge
+     * @param payload the extended payload containing the CAPTCHA solution and metadata
+     * @return {@code true} if the CAPTCHA solution is valid and not previously invalidated; {@code false} otherwise
+     */
     public boolean verify(final String siteKey, final ExtendedPayload payload) {
         if (isPayloadInvalidated(siteKey, payload)) {
             return false;
