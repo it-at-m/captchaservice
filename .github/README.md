@@ -1,3 +1,30 @@
+<!-- General project links -->
+[open-issues]: https://github.com/it-at-m/refarch-templates/issues
+[new-issue]: https://github.com/it-at-m/refarch-templates/issues/new/choose
+[milestones]: https://github.com/it-at-m/refarch-templates/milestones
+[project-board]: https://github.com/orgs/it-at-m/projects/16
+[documentation]: https://refarch-templates.oss.muenchen.de/
+[contribution-documentation]: https://refarch-templates.oss.muenchen.de/contribute.html
+[itm-opensource]: https://opensource.muenchen.de/
+[license]: ../LICENSE
+[code-of-conduct]: ./CODE_OF_CONDUCT.md
+
+<!-- Project specific links -->
+[refarch-documentation]: https://refarch.oss.muenchen.de/
+[refarch-code]: https://github.com/it-at-m/refarch
+[spring-documentation]: https://spring.io/ 
+[vuejs-documentation]:  https://vuejs.org/
+[getting-started-documentation]: https://refarch-templates.oss.muenchen.de/getting-started.html
+[develop-documentation]: https://refarch-templates.oss.muenchen.de/develop.html
+[document-documentation]: https://refarch-templates.oss.muenchen.de/document.html
+[organize-documentation]: https://refarch-templates.oss.muenchen.de/organize.html
+
+<!-- Shields.io links -->
+[documentation-shield]: https://img.shields.io/badge/documentation-blue?style=for-the-badge
+[new-issue-shield]: https://img.shields.io/badge/new%20issue-blue?style=for-the-badge
+[made-with-love-shield]: https://img.shields.io/badge/made%20with%20%E2%9D%A4%20by-it%40M-yellow?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/it-at-m/refarch-templates?style=for-the-badge
+
 # CaptchaService
 
 [![Documentation][documentation-shield]][documentation]
@@ -76,30 +103,30 @@ graph TB
     end
 
     %% Request Flow
-    Client --&gt;|POST /api/v1/challenge| ChallengeEndpoint
-    Client --&gt;|POST /api/v1/verify| VerifyEndpoint
-    Client --&gt; Monitoring
+    Client -->|POST /api/v1/challenge| ChallengeEndpoint
+    Client -->|POST /api/v1/verify| VerifyEndpoint
+    Client --> Monitoring
 
     %% Controller to Services
-    ChallengeEndpoint --&gt; CaptchaService
-    VerifyEndpoint --&gt; CaptchaService
-    ChallengeEndpoint --&gt; SiteAuthService
-    VerifyEndpoint --&gt; SiteAuthService
-    ChallengeEndpoint --&gt; SourceAddressService
+    ChallengeEndpoint --> CaptchaService
+    VerifyEndpoint --> CaptchaService
+    ChallengeEndpoint --> SiteAuthService
+    VerifyEndpoint --> SiteAuthService
+    ChallengeEndpoint --> SourceAddressService
 
     %% Service Interactions
-    CaptchaService --&gt; DifficultyService
-    CaptchaService --&gt; CaptchaRequestRepo
-    CaptchaService --&gt; InvalidatedPayloadRepo
-    CaptchaService --&gt; AltchaLib
+    CaptchaService --> DifficultyService
+    CaptchaService --> CaptchaRequestRepo
+    CaptchaService --> InvalidatedPayloadRepo
+    CaptchaService --> AltchaLib
 
-    DifficultyService --&gt; CaptchaRequestRepo
-    ExpiredDataService --&gt;|Scheduled Cleanup| CaptchaRequestRepo
-    ExpiredDataService --&gt;|Scheduled Cleanup| InvalidatedPayloadRepo
+    DifficultyService --> CaptchaRequestRepo
+    ExpiredDataService -->|Scheduled Cleanup| CaptchaRequestRepo
+    ExpiredDataService -->|Scheduled Cleanup| InvalidatedPayloadRepo
 
     %% Data Layer
-    CaptchaRequestRepo --&gt; CaptchaRequestEntity
-    InvalidatedPayloadRepo --&gt; InvalidatedPayloadEntity
+    CaptchaRequestRepo --> CaptchaRequestEntity
+    InvalidatedPayloadRepo --> InvalidatedPayloadEntity
     CaptchaRequestEntity -.->|JPA/Hibernate| PostgreSQL
     InvalidatedPayloadEntity -.->|JPA/Hibernate| PostgreSQL
 
