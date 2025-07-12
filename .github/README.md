@@ -27,12 +27,12 @@ A Spring Boot microservice that provides proof-of-work CAPTCHA challenges using 
 graph TB
     %% External Client
     Client
-    
+
     %% External Services
     subgraph "External Services"
         PostgreSQL[(PostgreSQL<br/>Database)]
     end
-    
+
     %% Main CaptchaService Application
     subgraph "CaptchaService Application"
 
@@ -46,7 +46,7 @@ graph TB
             ChallengeEndpoint["**postChallenge()**<br/>Create CAPTCHA Challenge"]
             VerifyEndpoint["**postVerify()**<br/>Verify CAPTCHA Solution"]
         end
-        
+
         %% Service Layer
         subgraph "Service Layer"
             CaptchaService["**CaptchaService**<br/>Core CAPTCHA Logic"]
@@ -55,18 +55,18 @@ graph TB
             SourceAddressService["**SourceAddressService**<br/>IP Address Validation"]
             ExpiredDataService["**ExpiredDataService**<br/>Cleanup Scheduler"]
         end
-        
+
         %% Data Layer
         subgraph "Data Layer"
             CaptchaRequestRepo["**CaptchaRequestRepository**<br/>JPA Repository"]
             InvalidatedPayloadRepo["**InvalidatedPayloadRepository**<br/>JPA Repository"]
-            
+
             subgraph "JPA Entities"
                 CaptchaRequestEntity["**CaptchaRequest**<br/>Entity"]
                 InvalidatedPayloadEntity["**InvalidatedPayload**<br/>Entity"]
             end
         end
-        
+
         %% Properties/Configuration
         subgraph "Configuration Properties"
             CaptchaProperties["**CaptchaProperties**<br/>HMAC Key, Sites Config"]
@@ -74,44 +74,44 @@ graph TB
             DifficultyItem["**DifficultyItem**<br/>Difficulty Mappings"]
         end
     end
-    
+
     %% Request Flow
     Client --&gt;|POST /api/v1/challenge| ChallengeEndpoint
     Client --&gt;|POST /api/v1/verify| VerifyEndpoint
     Client --&gt; Monitoring
-    
+
     %% Controller to Services
     ChallengeEndpoint --&gt; CaptchaService
     VerifyEndpoint --&gt; CaptchaService
     ChallengeEndpoint --&gt; SiteAuthService
     VerifyEndpoint --&gt; SiteAuthService
     ChallengeEndpoint --&gt; SourceAddressService
-    
+
     %% Service Interactions
     CaptchaService --&gt; DifficultyService
     CaptchaService --&gt; CaptchaRequestRepo
     CaptchaService --&gt; InvalidatedPayloadRepo
     CaptchaService --&gt; AltchaLib
-    
+
     DifficultyService --&gt; CaptchaRequestRepo
     ExpiredDataService --&gt;|Scheduled Cleanup| CaptchaRequestRepo
     ExpiredDataService --&gt;|Scheduled Cleanup| InvalidatedPayloadRepo
-    
+
     %% Data Layer
     CaptchaRequestRepo --&gt; CaptchaRequestEntity
     InvalidatedPayloadRepo --&gt; InvalidatedPayloadEntity
     CaptchaRequestEntity -.->|JPA/Hibernate| PostgreSQL
     InvalidatedPayloadEntity -.->|JPA/Hibernate| PostgreSQL
-    
+
     %% Configuration Dependencies
     CaptchaService -.->|Uses| CaptchaProperties
     SiteAuthService -.->|Uses| CaptchaProperties
     SourceAddressService -.->|Uses| CaptchaProperties
     DifficultyService -.->|Uses| CaptchaProperties
-    
+
     %% Database Migration
     Flyway -.->|Schema Management| PostgreSQL
-    
+
     class CaptchaService,DifficultyService,SiteAuthService,SourceAddressService,ExpiredDataService service
     class CaptchaRequestRepo,InvalidatedPayloadRepo,CaptchaRequestEntity,InvalidatedPayloadEntity data
     class PostgreSQL,Client external
@@ -139,24 +139,28 @@ graph TB
 ## Quick Start
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/it-at-m/captchaservice.git
    cd captchaservice
    ```
 
 2. **Start the development stack**
+
    ```bash
    cd stack
    docker compose up -d
    ```
 
 3. **Build and run the application**
+
    ```bash
    cd captchaservice-backend
    bash runLocal.sh
    ```
 
 4. **Verify the service is running**
+
    ```bash
    curl http://localhost:8080/actuator/health
    ```
@@ -165,14 +169,14 @@ graph TB
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `SPRING_DATASOURCE_URL` | PostgreSQL connection URL | `jdbc:postgresql://localhost:5432/captchaservice` |
-| `SPRING_DATASOURCE_USERNAME` | Database username | - |
-| `SPRING_DATASOURCE_PASSWORD` | Database password | - |
-| `CAPTCHA_HMAC_KEY` | HMAC key for challenge signing | - |
-| `CAPTCHA_CAPTCHA_TIMEOUT_SECONDS` | Challenge validity period | `300` |
-| `CAPTCHA_SOURCE_ADDRESS_WINDOW_SECONDS` | Source address tracking window | `3600` |
+| Variable                                | Description                    | Default                                           |
+| --------------------------------------- | ------------------------------ | ------------------------------------------------- |
+| `SPRING_DATASOURCE_URL`                 | PostgreSQL connection URL      | `jdbc:postgresql://localhost:5432/captchaservice` |
+| `SPRING_DATASOURCE_USERNAME`            | Database username              | -                                                 |
+| `SPRING_DATASOURCE_PASSWORD`            | Database password              | -                                                 |
+| `CAPTCHA_HMAC_KEY`                      | HMAC key for challenge signing | -                                                 |
+| `CAPTCHA_CAPTCHA_TIMEOUT_SECONDS`       | Challenge validity period      | `300`                                             |
+| `CAPTCHA_SOURCE_ADDRESS_WINDOW_SECONDS` | Source address tracking window | `3600`                                            |
 
 ### Site Configuration
 
@@ -180,24 +184,24 @@ Configure multiple sites in your `application.yml`:
 
 ```yaml
 captcha:
-  hmac-key: secret                      # HMAC key for signing challenges
-  captcha-timeout-seconds: 300          # How long a CAPTCHA challenge is valid
-  source-address-window-seconds: 3600   # How long a source address is stored
+  hmac-key: secret # HMAC key for signing challenges
+  captcha-timeout-seconds: 300 # How long a CAPTCHA challenge is valid
+  source-address-window-seconds: 3600 # How long a source address is stored
   sites:
-    site1:                              # Site key for site1
-      site-secret: "secret1"            # Site secret for site1
-      max-verifies-per-payload: 1       # How many times a payload can be verified
+    site1: # Site key for site1
+      site-secret: "secret1" # Site secret for site1
+      max-verifies-per-payload: 1 # How many times a payload can be verified
       whitelisted_source-addresses:
-        - "192.0.2.0/24"                # Whitelisted IP address range
+        - "192.0.2.0/24" # Whitelisted IP address range
     site2:
       site-secret: "secret2"
       whitelisted_source-addresses:
-        - "192.0.2.0/24"                # Whitelisted IP address range
+        - "192.0.2.0/24" # Whitelisted IP address range
       difficulty-map:
-        - min-visits: 1                 # From the first visit on...
-          max-number: 1000              # ...the difficulty is 1000
-        - min-visits: 10                # From the 10th visit on...
-          max-number: 10000             # ...the difficulty is 10000
+        - min-visits: 1 # From the first visit on...
+          max-number: 1000 # ...the difficulty is 1000
+        - min-visits: 10 # From the 10th visit on...
+          max-number: 10000 # ...the difficulty is 10000
 ```
 
 ## API Documentation
@@ -209,6 +213,7 @@ captcha:
 Creates a new CAPTCHA challenge for the specified site.
 
 **Request Body:**
+
 ```json
 {
   "siteKey": "site1",
@@ -218,6 +223,7 @@ Creates a new CAPTCHA challenge for the specified site.
 ```
 
 **Response:**
+
 ```json
 {
   "algorithm": "SHA-256",
@@ -235,6 +241,7 @@ Creates a new CAPTCHA challenge for the specified site.
 Verifies a CAPTCHA solution payload.
 
 **Request Body:**
+
 ```json
 {
   "siteKey": "site1",
@@ -251,6 +258,7 @@ Verifies a CAPTCHA solution payload.
 ```
 
 **Response:**
+
 ```json
 {
   "valid": true
@@ -266,14 +274,16 @@ Verifies a CAPTCHA solution payload.
 ### Error Responses
 
 **401 Unauthorized** - Invalid site credentials
+
 ```json
 {
   "status": 401,
-  "error": "Authentication Error",
+  "error": "Authentication Error"
 }
 ```
 
 **400 Bad Request** - Invalid request format
+
 ```json
 {
   "status": 400,
@@ -334,4 +344,4 @@ Distributed under the MIT License. See [LICENSE][license] file for more informat
 
 ## Contact
 
-it@M - opensource@muenchen.de
+it@M - <opensource@muenchen.de>
