@@ -34,20 +34,6 @@
 
 A Spring Boot microservice that provides proof-of-work CAPTCHA challenges using the [ALTCHA library](https://altcha.org/). This service offers an alternative to traditional image-based CAPTCHAs with adaptive difficulty management and multi-tenant support.
 
-## Table of Contents
-
-- [Architecture](#architecture)
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [Configuration](#configuration)
-- [API Documentation](#api-documentation)
-- [Database](#database)
-- [Monitoring](#monitoring)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
-
 ## Architecture
 
 ```mermaid
