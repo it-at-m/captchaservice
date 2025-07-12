@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * Application class for starting the microservice.
+ * Application class for starting the Captcha Service application.
  */
 @SpringBootApplication
 @ConfigurationPropertiesScan
