@@ -12,8 +12,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ConfigurationPropertiesScan
 @EnableScheduling
 @SuppressWarnings("PMD.UseUtilityClass")
-public class MicroServiceApplication {
+public class CaptchaServiceApplication {
     public static void main(final String[] args) {
-        SpringApplication.run(MicroServiceApplication.class, args);
+        SpringApplication.run(CaptchaServiceApplication.class, args);
     }
 }
