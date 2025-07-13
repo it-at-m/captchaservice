@@ -295,4 +295,36 @@ class CaptchaControllerTest {
         }
     }
 
+    @Test
+    @SneakyThrows
+    void testInvalidatedPayloadsGauge() {
+        databaseTestUtil.clearDatabase();
+        final PostVerifyRequest verifyRequest = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_PAYLOAD);
+        final String verifyRequestBody = objectMapper.writeValueAsString(verifyRequest);
+
+        try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
+            mock.when(() -> Altcha.verifySolution(
+                    ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()),
+                    eq(TEST_HMAC_KEY),
+                    eq(true)))
+                    .thenReturn(true);
+
+            mockMvc.perform(post("/api/v1/captcha/verify")
+                    .content(verifyRequestBody)
+                    .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.valid", is(true)));
+
+            mockMvc.perform(get("/actuator/metrics/captcha.invalidated.payloads"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.measurements[0].value", is(1.0)));
+
+            Thread.sleep(5000); // Wait for the payload to expire
+
+            mockMvc.perform(get("/actuator/metrics/captcha.invalidated.payloads"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.measurements[0].value", is(0.0)));
+        }
+    }
+
 }

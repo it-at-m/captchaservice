@@ -43,3 +43,4 @@ captcha:
           maxNumber: 2000
         - minVisits: 4
           maxNumber: 3000
+  captcha-timeout-seconds: 5
