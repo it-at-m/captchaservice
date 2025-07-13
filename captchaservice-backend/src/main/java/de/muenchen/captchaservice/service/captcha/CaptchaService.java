@@ -11,6 +11,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
+import io.micrometer.core.instrument.Gauge;
 import lombok.extern.slf4j.Slf4j;
 import org.altcha.altcha.Altcha;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -31,15 +32,24 @@ public class CaptchaService {
 
     @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
     public CaptchaService(final CaptchaProperties captchaProperties, final DifficultyService difficultyService,
-            final InvalidatedPayloadRepository invalidatedPayloadRepository, MeterRegistry meterRegistry) {
+            final InvalidatedPayloadRepository invalidatedPayloadRepository, MeterRegistry registry) {
         this.captchaProperties = captchaProperties;
         this.invalidatedPayloadRepository = invalidatedPayloadRepository;
         this.difficultyService = difficultyService;
 
         // Initialize metrics
-        this.challengeCounter = meterRegistry.counter("captcha.challenge.requests");
-        this.verifySuccessCounter = meterRegistry.counter("captcha.verify.success");
-        this.tookTimeSummary = meterRegistry.summary("captcha.verify.took.time");
+        this.challengeCounter = Counter.builder("captcha.challenge.requests")
+                .description("Counter for captcha challenge requests")
+                .register(registry);
+        this.verifySuccessCounter = Counter.builder("captcha.verify.success")
+                .description("Counter for captcha verify success requests")
+                .register(registry);
+        this.tookTimeSummary = DistributionSummary.builder("captcha.verify.took.time")
+                .description("Summary of the time taken to verify captcha payloads")
+                .register(registry);
+        Gauge.builder("captcha.invalidated.payloads", invalidatedPayloadRepository, repo -> repo.countByExpiresAtGreaterThan(Instant.now()))
+                .description("Gauge for the number of currently invalidated payloads")
+                .register(registry);
     }
 
     public Altcha.Challenge createChallenge(final String siteKey, final SourceAddress sourceAddress) {
