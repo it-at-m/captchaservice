@@ -19,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -27,11 +28,13 @@ import org.testcontainers.utility.DockerImageName;
 
 import static de.muenchen.captchaservice.TestConstants.SPRING_NO_SECURITY_PROFILE;
 import static de.muenchen.captchaservice.TestConstants.SPRING_TEST_PROFILE;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -39,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
 @SuppressWarnings({ "PMD.AvoidUsingHardCodedIP", "PMD.AvoidDuplicateLiterals" })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class CaptchaControllerTest {
 
     @Container
@@ -70,6 +74,7 @@ class CaptchaControllerTest {
 
     @Autowired
     private DatabaseTestUtil databaseTestUtil;
+
     @Autowired
     private CaptchaRequestRepository captchaRequestRepository;
 
@@ -227,6 +232,66 @@ class CaptchaControllerTest {
             mock.verify(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(true)));
         } catch (Exception e) {
             fail(e.getMessage());
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    void testChallengeMetricsIncrement() {
+        int calls = 3;
+        final PostChallengeRequest challengeRequest = new PostChallengeRequest(TEST_SITE_KEY, TEST_SITE_SECRET, "1.2.3.4");
+        final String challengeRequestBody = objectMapper.writeValueAsString(challengeRequest);
+
+        for (int i = 1; i <= calls; i++) {
+            mockMvc.perform(
+                    post("/api/v1/captcha/challenge")
+                            .content(challengeRequestBody)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(
+                    get("/actuator/metrics/captcha.challenge.requests"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.measurements[0].value", is((double) i)));
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    void testVerifyMetricsIncrement() {
+        databaseTestUtil.clearDatabase();
+        int calls = 4;
+        final PostVerifyRequest verifyRequest = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_PAYLOAD);
+        final String verifyRequestBody = objectMapper.writeValueAsString(verifyRequest);
+
+        try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
+            mock.when(() -> Altcha.verifySolution(
+                    ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()),
+                    eq(TEST_HMAC_KEY),
+                    eq(true)))
+                    .thenReturn(true);
+
+            for (int i = 1; i <= calls; i++) {
+                mockMvc.perform(post("/api/v1/captcha/verify")
+                        .content(verifyRequestBody)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.valid", is(true)));
+
+                mockMvc.perform(get("/actuator/metrics/captcha.verify.success"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.measurements[0].value", is((double) i)));
+
+                mockMvc.perform(get("/actuator/metrics/captcha.verify.took.time"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.measurements[?(@.statistic=='COUNT')].value", hasItem((double) i)));
+
+                mockMvc.perform(get("/actuator/metrics/captcha.verify.took.time"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.measurements[?(@.statistic=='TOTAL')].value", hasItem((double) i * TEST_PAYLOAD.getTook())));
+
+                databaseTestUtil.clearDatabase();
+            }
         }
     }
 
