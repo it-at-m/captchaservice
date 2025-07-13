@@ -9,7 +9,6 @@ import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.service.captcha.CaptchaService;
 import de.muenchen.captchaservice.service.siteauth.SiteAuthService;
 import de.muenchen.captchaservice.service.sourceaddress.SourceAddressService;
-import io.micrometer.core.instrument.Counter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -27,8 +26,6 @@ public class CaptchaController {
     private final CaptchaService captchaService;
     private final SiteAuthService siteAuthService;
     private final SourceAddressService sourceAddressService;
-    private final Counter challengeRequestCounter;
-    private final Counter verifyRequestCounter;
 
     @PostMapping("/challenge")
     @SneakyThrows
@@ -37,7 +34,6 @@ public class CaptchaController {
             throw new UnauthorizedException("Wrong credentials.");
         }
 
-        challengeRequestCounter.increment();
         final SourceAddress sourceAddress = sourceAddressService.parse(request.getSiteKey(), request.getClientAddress());
         final Altcha.Challenge challenge = captchaService.createChallenge(request.getSiteKey(), sourceAddress);
         return new PostChallengeResponse(challenge);
@@ -49,7 +45,6 @@ public class CaptchaController {
             throw new UnauthorizedException("Wrong credentials.");
         }
 
-        verifyRequestCounter.increment();
         final boolean isValid = captchaService.verify(request.getSiteKey(), request.getPayload());
         return new PostVerifyResponse(isValid);
     }
