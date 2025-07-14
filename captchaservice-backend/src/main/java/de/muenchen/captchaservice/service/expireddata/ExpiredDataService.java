@@ -18,7 +18,8 @@ public class ExpiredDataService {
     private final CaptchaService captchaService;
 
     @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
-    public ExpiredDataService(final CaptchaRequestRepository captchaRequestRepository, final InvalidatedPayloadRepository invalidatedPayloadRepository, final CaptchaService captchaService) {
+    public ExpiredDataService(final CaptchaRequestRepository captchaRequestRepository, final InvalidatedPayloadRepository invalidatedPayloadRepository,
+            final CaptchaService captchaService) {
         this.captchaRequestRepository = captchaRequestRepository;
         this.invalidatedPayloadRepository = invalidatedPayloadRepository;
         this.captchaService = captchaService;

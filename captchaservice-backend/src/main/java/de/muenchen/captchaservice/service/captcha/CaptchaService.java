@@ -125,7 +125,6 @@ public class CaptchaService {
 
     public void resetInvalidatedPayloadCount() {
         this.invalidatedPayloadCount.set(
-            invalidatedPayloadRepository.countByExpiresAtGreaterThan(java.time.Instant.now())
-        );
+                invalidatedPayloadRepository.countByExpiresAtGreaterThan(java.time.Instant.now()));
     }
 }
