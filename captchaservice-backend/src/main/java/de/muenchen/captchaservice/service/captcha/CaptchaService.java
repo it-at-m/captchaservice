@@ -119,13 +119,6 @@ public class CaptchaService {
                 payload.signature));
     }
 
-
-    /**
-     * Decrements the invalidated payload counter when expired payloads are cleaned up.
-     * This method should be called by the ExpiredDataService when it removes expired entries.
-     * 
-     * @param count the number of expired payloads that were removed
-     */
     public void decrementInvalidatedPayloadCount(long count) {
         invalidatedPayloadCount.addAndGet(-count);
     }
