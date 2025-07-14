@@ -13,6 +13,15 @@ spring:
 #    hibernate:
 #      ddl-auto: create-drop
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: metrics
+  endpoint:
+    metrics:
+      access: read_only
+
 security:
   # possible values: none, all, changing (With changing, only changing requests such as POST, PUT, DELETE are logged)
   # Currently only dummy values, will later be changed for testing security.
@@ -34,3 +43,4 @@ captcha:
           maxNumber: 2000
         - minVisits: 4
           maxNumber: 3000
+  captcha-timeout-seconds: 5

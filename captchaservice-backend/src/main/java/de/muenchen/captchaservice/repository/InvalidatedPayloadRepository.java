@@ -13,4 +13,6 @@ public interface InvalidatedPayloadRepository extends PagingAndSortingRepository
     long deleteByExpiresAtLessThan(Instant validUntil);
 
     long countByPayloadHash(String payloadHash);
+
+    long countByExpiresAtGreaterThan(Instant now);
 }

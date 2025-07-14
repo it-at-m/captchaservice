@@ -5,7 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.altcha.altcha.Altcha;
+
+import de.muenchen.captchaservice.data.ExtendedPayload;
 
 @Data
 @NoArgsConstructor
@@ -21,6 +22,6 @@ public class PostVerifyRequest {
     private String siteSecret;
 
     @NotNull
-    private Altcha.Payload payload;
+    private ExtendedPayload payload;
 
 }
