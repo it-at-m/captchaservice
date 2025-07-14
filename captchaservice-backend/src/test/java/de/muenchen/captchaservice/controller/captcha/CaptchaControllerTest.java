@@ -6,6 +6,8 @@ import de.muenchen.captchaservice.controller.captcha.request.PostChallengeReques
 import de.muenchen.captchaservice.controller.captcha.request.PostVerifyRequest;
 import de.muenchen.captchaservice.data.ExtendedPayload;
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
+import de.muenchen.captchaservice.service.captcha.CaptchaService;
+import de.muenchen.captchaservice.service.expireddata.ExpiredDataService;
 import de.muenchen.captchaservice.util.DatabaseTestUtil;
 import lombok.SneakyThrows;
 import org.altcha.altcha.Altcha;
@@ -82,6 +84,12 @@ class CaptchaControllerTest {
     @Autowired
     @Value("${captcha.captcha-timeout-seconds}")
     private int captchaTimeoutSeconds;
+
+    @Autowired
+    private ExpiredDataService expiredDataService;
+
+    @Autowired
+    private CaptchaService captchaService;
 
     @Test
     void postChallenge_basic() {
@@ -304,6 +312,7 @@ class CaptchaControllerTest {
     @SneakyThrows
     void testInvalidatedPayloadsGauge() {
         databaseTestUtil.clearDatabase();
+        captchaService.resetInvalidatedPayloadCount();
         final PostVerifyRequest verifyRequest = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_PAYLOAD);
         final String verifyRequestBody = objectMapper.writeValueAsString(verifyRequest);
 
@@ -324,7 +333,9 @@ class CaptchaControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.measurements[0].value", is(1.0)));
 
-            Thread.sleep(captchaTimeoutSeconds * 1000); // Wait for the payload to expire
+            // Simulate the expiration of the payload
+            Thread.sleep(captchaTimeoutSeconds * 1000);
+            expiredDataService.deleteExpiredData();
 
             mockMvc.perform(get("/actuator/metrics/captcha.invalidated.payloads"))
                     .andExpect(status().isOk())

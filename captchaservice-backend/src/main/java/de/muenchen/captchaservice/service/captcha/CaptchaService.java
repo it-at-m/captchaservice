@@ -122,4 +122,10 @@ public class CaptchaService {
     public void decrementInvalidatedPayloadCount(long count) {
         invalidatedPayloadCount.addAndGet(-count);
     }
+
+    public void resetInvalidatedPayloadCount() {
+        this.invalidatedPayloadCount.set(
+            invalidatedPayloadRepository.countByExpiresAtGreaterThan(java.time.Instant.now())
+        );
+    }
 }
