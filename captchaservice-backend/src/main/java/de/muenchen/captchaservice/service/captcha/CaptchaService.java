@@ -74,12 +74,11 @@ public class CaptchaService {
             return false;
         }
         try {
-            if (payload.getTook() != null) {
-                tookTimeSummary.record(payload.getTook());
-            }
-
             final boolean isValid = Altcha.verifySolution(payload, captchaProperties.hmacKey(), true);
             if (isValid) {
+                if (payload.getTook() != null) {
+                    tookTimeSummary.record(payload.getTook());
+                }
                 verifySuccessCounter.increment();
                 invalidatePayload(payload);
             }
