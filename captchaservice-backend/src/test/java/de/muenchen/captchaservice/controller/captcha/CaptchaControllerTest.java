@@ -15,6 +15,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -77,6 +78,10 @@ class CaptchaControllerTest {
 
     @Autowired
     private CaptchaRequestRepository captchaRequestRepository;
+
+    @Autowired
+    @Value("${captcha.captcha-timeout-seconds}")
+    private int captchaTimeoutSeconds;
 
     @Test
     void postChallenge_basic() {
@@ -319,7 +324,7 @@ class CaptchaControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.measurements[0].value", is(1.0)));
 
-            Thread.sleep(5000); // Wait for the payload to expire
+            Thread.sleep(captchaTimeoutSeconds * 1000); // Wait for the payload to expire
 
             mockMvc.perform(get("/actuator/metrics/captcha.invalidated.payloads"))
                     .andExpect(status().isOk())
