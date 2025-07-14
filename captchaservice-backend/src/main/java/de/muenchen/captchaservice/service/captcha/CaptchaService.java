@@ -12,6 +12,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Gauge;
+import java.util.concurrent.atomic.AtomicLong;
 import lombok.extern.slf4j.Slf4j;
 import org.altcha.altcha.Altcha;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -29,6 +30,7 @@ public class CaptchaService {
     private final Counter challengeCounter;
     private final Counter verifySuccessCounter;
     private final DistributionSummary tookTimeSummary;
+    private final AtomicLong invalidatedPayloadCount = new AtomicLong(0);
 
     @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
     public CaptchaService(final CaptchaProperties captchaProperties, final DifficultyService difficultyService,
@@ -36,6 +38,9 @@ public class CaptchaService {
         this.captchaProperties = captchaProperties;
         this.invalidatedPayloadRepository = invalidatedPayloadRepository;
         this.difficultyService = difficultyService;
+
+        // Initialize counter with current count from database
+        this.invalidatedPayloadCount.set(invalidatedPayloadRepository.countByExpiresAtGreaterThan(Instant.now()));
 
         // Initialize metrics
         this.challengeCounter = Counter.builder("captcha.challenge.requests")
@@ -47,7 +52,7 @@ public class CaptchaService {
         this.tookTimeSummary = DistributionSummary.builder("captcha.verify.took.time")
                 .description("Summary of the time taken to verify captcha payloads")
                 .register(registry);
-        Gauge.builder("captcha.invalidated.payloads", invalidatedPayloadRepository, repo -> repo.countByExpiresAtGreaterThan(Instant.now()))
+        Gauge.builder("captcha.invalidated.payloads", invalidatedPayloadCount, AtomicLong::get)
                 .description("Gauge for the number of currently invalidated payloads")
                 .register(registry);
     }
@@ -92,6 +97,7 @@ public class CaptchaService {
     public void invalidatePayload(final Altcha.Payload payload) {
         final String payloadHash = getPayloadHash(payload);
         final InvalidatedPayload invalidatedPayload = new InvalidatedPayload(payloadHash, Instant.now().plusSeconds(captchaProperties.captchaTimeoutSeconds()));
+        invalidatedPayloadCount.incrementAndGet();
         invalidatedPayloadRepository.save(invalidatedPayload);
         log.debug("Invalidated payloadHash: {}", payloadHash);
     }
@@ -113,4 +119,14 @@ public class CaptchaService {
                 payload.signature));
     }
 
+
+    /**
+     * Decrements the invalidated payload counter when expired payloads are cleaned up.
+     * This method should be called by the ExpiredDataService when it removes expired entries.
+     * 
+     * @param count the number of expired payloads that were removed
+     */
+    public void decrementInvalidatedPayloadCount(long count) {
+        invalidatedPayloadCount.addAndGet(-count);
+    }
 }
