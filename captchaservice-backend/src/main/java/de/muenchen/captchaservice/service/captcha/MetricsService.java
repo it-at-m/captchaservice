@@ -29,9 +29,7 @@ public class MetricsService {
         this.invalidatedPayloadRepository = invalidatedPayloadRepository;
     }
 
-    public void recordChallengeRequest(String siteKey, SourceAddress sourceAddress) {
-        final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
-
+    public void recordChallengeRequest(String siteKey, SourceAddress sourceAddress, long difficulty) {
         Counter.builder("captcha.challenge.requests")
                 .tag("site_key", siteKey)
                 .tag("difficulty", String.valueOf(difficulty))

@@ -37,10 +37,8 @@ public class CaptchaService {
 
     public Altcha.Challenge createChallenge(final String siteKey, final SourceAddress sourceAddress) {
         final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
-
-        metricsService.recordChallengeRequest(siteKey, sourceAddress);
-
         difficultyService.registerRequest(siteKey, sourceAddress);
+        metricsService.recordChallengeRequest(siteKey, sourceAddress, difficulty);
         final Altcha.ChallengeOptions options = new Altcha.ChallengeOptions();
         options.algorithm = Altcha.Algorithm.SHA256;
         options.hmacKey = captchaProperties.hmacKey();
