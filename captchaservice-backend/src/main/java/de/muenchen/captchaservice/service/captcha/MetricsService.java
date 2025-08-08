@@ -3,6 +3,7 @@ package de.muenchen.captchaservice.service.captcha;
 import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
 import de.muenchen.captchaservice.service.difficulty.DifficultyService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Gauge;
@@ -20,6 +21,7 @@ public class MetricsService {
     private final DifficultyService difficultyService;
     private final InvalidatedPayloadRepository invalidatedPayloadRepository;
 
+    @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
     public MetricsService(MeterRegistry meterRegistry, DifficultyService difficultyService,
             InvalidatedPayloadRepository invalidatedPayloadRepository) {
         this.meterRegistry = meterRegistry;
