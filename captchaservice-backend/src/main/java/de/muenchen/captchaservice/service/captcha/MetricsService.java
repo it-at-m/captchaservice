@@ -61,6 +61,7 @@ public class MetricsService {
                 .tag("site_key", siteKey)
                 .tag("difficulty", String.valueOf(difficulty))
                 .description("Summary of the time taken by clients to solve captcha challenges")
+                .baseUnit("milliseconds")
                 .register(meterRegistry)
                 .record(solveTime);
     }
@@ -78,6 +79,6 @@ public class MetricsService {
      */
     private static String sanitizeForLog(String input) {
         if (input == null) return null;
-        return input.replaceAll("[\\r\\n]", "");
+        return input.replaceAll("[^A-Za-z0-9_-]", "_");
     }
 }
