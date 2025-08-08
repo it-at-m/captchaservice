@@ -77,7 +77,6 @@ public class MetricsService {
 
     /**
      * Sanitizes user input for logging to prevent log injection.
-     * Removes newlines and carriage returns.
      */
     private static String sanitizeForLog(String input) {
         if (input == null) return null;
