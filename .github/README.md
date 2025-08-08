@@ -175,7 +175,7 @@ graph TB
 4. **Verify the service is running**
 
    ```bash
-   curl http://localhost:8080/actuator/health
+   curl http://localhost:39146/actuator/health
    ```
 
 ## Configuration
