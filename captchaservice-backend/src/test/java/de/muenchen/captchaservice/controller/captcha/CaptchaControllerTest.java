@@ -2,6 +2,7 @@ package de.muenchen.captchaservice.controller.captcha;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.muenchen.captchaservice.TestConstants;
+import de.muenchen.captchaservice.configuration.captcha.CaptchaProperties;
 import de.muenchen.captchaservice.controller.captcha.request.PostChallengeRequest;
 import de.muenchen.captchaservice.controller.captcha.request.PostVerifyRequest;
 import de.muenchen.captchaservice.data.ExtendedPayload;
@@ -17,7 +18,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -57,6 +57,7 @@ class CaptchaControllerTest {
     private static final String TEST_SITE_KEY = "test_site";
     private static final String TEST_SITE_SECRET = "test_secret";
     private static final String TEST_HMAC_KEY = "secret";
+    private static final String TEST_CLIENT_ADDRESS = "1.2.3.4";
     private static final ExtendedPayload TEST_PAYLOAD;
 
     static {
@@ -82,8 +83,7 @@ class CaptchaControllerTest {
     private CaptchaRequestRepository captchaRequestRepository;
 
     @Autowired
-    @Value("${captcha.captcha-timeout-seconds}")
-    private int captchaTimeoutSeconds;
+    private CaptchaProperties captchaProperties;
 
     @Autowired
     private ExpiredDataService expiredDataService;
@@ -109,7 +109,7 @@ class CaptchaControllerTest {
                                     TEST_HMAC_KEY.equals(co.hmacKey))))
                     .thenReturn(challenge);
 
-            final PostChallengeRequest request = new PostChallengeRequest(TEST_SITE_KEY, TEST_SITE_SECRET, "1.2.3.4");
+            final PostChallengeRequest request = new PostChallengeRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_CLIENT_ADDRESS);
             final String requestBody = objectMapper.writeValueAsString(request);
             // --
             mockMvc.perform(
@@ -136,7 +136,7 @@ class CaptchaControllerTest {
     @SneakyThrows
     void postChallenge_validIpv4() {
         databaseTestUtil.clearDatabase();
-        final PostChallengeRequest request = new PostChallengeRequest(TEST_SITE_KEY, TEST_SITE_SECRET, "1.2.3.4");
+        final PostChallengeRequest request = new PostChallengeRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_CLIENT_ADDRESS);
         final String requestBody = objectMapper.writeValueAsString(request);
         mockMvc.perform(
                 post("/api/v1/captcha/challenge")
@@ -144,7 +144,7 @@ class CaptchaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-        assertEquals(1, captchaRequestRepository.countBySourceAddressHashIgnoreCase(DigestUtils.sha256Hex("1.2.3.4")));
+        assertEquals(1, captchaRequestRepository.countBySourceAddressHashIgnoreCase(DigestUtils.sha256Hex(TEST_CLIENT_ADDRESS)));
     }
 
     @Test
@@ -177,7 +177,7 @@ class CaptchaControllerTest {
     @Test
     @SneakyThrows
     void postVerify_success() {
-        final PostVerifyRequest request = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_PAYLOAD);
+        final PostVerifyRequest request = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_CLIENT_ADDRESS, TEST_PAYLOAD);
         final String requestBody = objectMapper.writeValueAsString(request);
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
             mock
@@ -201,7 +201,7 @@ class CaptchaControllerTest {
     @Test
     @SneakyThrows
     void postVerify_unauthorized() {
-        final PostVerifyRequest request = new PostVerifyRequest("test_site1", "test_secret1", TEST_PAYLOAD);
+        final PostVerifyRequest request = new PostVerifyRequest("test_site1", "test_secret1", TEST_CLIENT_ADDRESS, TEST_PAYLOAD);
         final String requestBody = objectMapper.writeValueAsString(request);
         // --
         mockMvc.perform(
@@ -215,7 +215,7 @@ class CaptchaControllerTest {
     @SneakyThrows
     void postVerify_expired() {
         databaseTestUtil.clearDatabase();
-        final PostVerifyRequest request = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_PAYLOAD);
+        final PostVerifyRequest request = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_CLIENT_ADDRESS, TEST_PAYLOAD);
         final String requestBody = objectMapper.writeValueAsString(request);
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
             // Successful request
@@ -252,7 +252,7 @@ class CaptchaControllerTest {
     @SneakyThrows
     void testChallengeMetricsIncrement() {
         int calls = 3;
-        final PostChallengeRequest challengeRequest = new PostChallengeRequest(TEST_SITE_KEY, TEST_SITE_SECRET, "1.2.3.4");
+        final PostChallengeRequest challengeRequest = new PostChallengeRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_CLIENT_ADDRESS);
         final String challengeRequestBody = objectMapper.writeValueAsString(challengeRequest);
 
         for (int i = 1; i <= calls; i++) {
@@ -265,7 +265,9 @@ class CaptchaControllerTest {
             mockMvc.perform(
                     get("/actuator/metrics/captcha.challenge.requests"))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.measurements[0].value", is((double) i)));
+                    .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
+                    .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
+                    .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")));
         }
     }
 
@@ -274,7 +276,7 @@ class CaptchaControllerTest {
     void testVerifyMetricsIncrement() {
         databaseTestUtil.clearDatabase();
         int calls = 4;
-        final PostVerifyRequest verifyRequest = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_PAYLOAD);
+        final PostVerifyRequest verifyRequest = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_CLIENT_ADDRESS, TEST_PAYLOAD);
         final String verifyRequestBody = objectMapper.writeValueAsString(verifyRequest);
 
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
@@ -293,15 +295,17 @@ class CaptchaControllerTest {
 
                 mockMvc.perform(get("/actuator/metrics/captcha.verify.success"))
                         .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.measurements[0].value", is((double) i)));
+                        .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")));
 
-                mockMvc.perform(get("/actuator/metrics/captcha.verify.took.time"))
+                mockMvc.perform(get("/actuator/metrics/captcha.client.solve.time"))
                         .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.measurements[?(@.statistic=='COUNT')].value", hasItem((double) i)));
-
-                mockMvc.perform(get("/actuator/metrics/captcha.verify.took.time"))
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.measurements[?(@.statistic=='TOTAL')].value", hasItem((double) i * TEST_PAYLOAD.getTook())));
+                        .andExpect(jsonPath("$.measurements[?(@.statistic=='COUNT')].value", hasItem((double) i)))
+                        .andExpect(jsonPath("$.measurements[?(@.statistic=='TOTAL')].value", hasItem((double) i * TEST_PAYLOAD.getTook())))
+                        .andExpect(jsonPath("$.measurements[?(@.statistic=='MAX')].value", hasItem((double) TEST_PAYLOAD.getTook())))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")));
 
                 databaseTestUtil.clearDatabase();
             }
@@ -312,8 +316,7 @@ class CaptchaControllerTest {
     @SneakyThrows
     void testInvalidatedPayloadsGauge() {
         databaseTestUtil.clearDatabase();
-        captchaService.resetInvalidatedPayloadCount();
-        final PostVerifyRequest verifyRequest = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_PAYLOAD);
+        final PostVerifyRequest verifyRequest = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_CLIENT_ADDRESS, TEST_PAYLOAD);
         final String verifyRequestBody = objectMapper.writeValueAsString(verifyRequest);
 
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
@@ -334,7 +337,7 @@ class CaptchaControllerTest {
                     .andExpect(jsonPath("$.measurements[0].value", is(1.0)));
 
             // Simulate the expiration of the payload
-            Thread.sleep(captchaTimeoutSeconds * 1000);
+            Thread.sleep(captchaProperties.captchaTimeoutSeconds() * 1000);
             expiredDataService.deleteExpiredData();
 
             mockMvc.perform(get("/actuator/metrics/captcha.invalidated.payloads"))
