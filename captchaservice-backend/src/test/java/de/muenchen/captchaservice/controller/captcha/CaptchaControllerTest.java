@@ -29,6 +29,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
 
+import java.time.Instant;
+
 import static de.muenchen.captchaservice.TestConstants.SPRING_NO_SECURITY_PROFILE;
 import static de.muenchen.captchaservice.TestConstants.SPRING_TEST_PROFILE;
 import static org.hamcrest.Matchers.hasItem;
@@ -336,9 +338,8 @@ class CaptchaControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.measurements[0].value", is(1.0)));
 
-            // Simulate the expiration of the payload
-            Thread.sleep(captchaProperties.captchaTimeoutSeconds() * 1000);
-            expiredDataService.deleteExpiredData();
+            // Simulate the expiration of the payload by directly clearing the database
+            databaseTestUtil.clearDatabase();
 
             mockMvc.perform(get("/actuator/metrics/captcha.invalidated.payloads"))
                     .andExpect(status().isOk())
