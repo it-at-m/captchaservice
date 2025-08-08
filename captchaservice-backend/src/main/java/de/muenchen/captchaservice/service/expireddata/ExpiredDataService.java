@@ -2,7 +2,6 @@ package de.muenchen.captchaservice.service.expireddata;
 
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
 import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
-import de.muenchen.captchaservice.service.captcha.CaptchaService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -15,14 +14,11 @@ import java.time.Instant;
 public class ExpiredDataService {
     private final CaptchaRequestRepository captchaRequestRepository;
     private final InvalidatedPayloadRepository invalidatedPayloadRepository;
-    private final CaptchaService captchaService;
 
     @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
-    public ExpiredDataService(final CaptchaRequestRepository captchaRequestRepository, final InvalidatedPayloadRepository invalidatedPayloadRepository,
-            final CaptchaService captchaService) {
+    public ExpiredDataService(final CaptchaRequestRepository captchaRequestRepository, final InvalidatedPayloadRepository invalidatedPayloadRepository) {
         this.captchaRequestRepository = captchaRequestRepository;
         this.invalidatedPayloadRepository = invalidatedPayloadRepository;
-        this.captchaService = captchaService;
     }
 
     @Transactional
