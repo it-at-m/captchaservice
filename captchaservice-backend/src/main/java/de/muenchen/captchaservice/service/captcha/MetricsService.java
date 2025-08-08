@@ -51,7 +51,7 @@ public class MetricsService {
 
     public void recordClientSolveTime(String siteKey, SourceAddress sourceAddress, long solveTime) {
         if (solveTime <= 0) {
-            log.warn("Invalid solve time value: {} for site: {}", solveTime, siteKey);
+            log.warn("Invalid solve time value: {} for site: {}", solveTime, sanitizeForLog(siteKey));
             return;
         }
 
@@ -70,5 +70,14 @@ public class MetricsService {
                 () -> invalidatedPayloadRepository.countByExpiresAtGreaterThan(Instant.now()))
                 .description("Gauge for the number of currently invalidated payloads")
                 .register(meterRegistry);
+    }
+
+    /**
+     * Sanitizes user input for logging to prevent log injection.
+     * Removes newlines and carriage returns.
+     */
+    private static String sanitizeForLog(String input) {
+        if (input == null) return null;
+        return input.replaceAll("[\\r\\n]", "");
     }
 }
