@@ -259,6 +259,7 @@ Verifies a CAPTCHA solution payload.
 {
   "siteKey": "site1",
   "siteSecret": "secret1",
+  "clientAddress": "192.168.1.100",
   "payload": {
     "algorithm": "SHA-256",
     "challenge": "abc123...",
@@ -272,7 +273,7 @@ Verifies a CAPTCHA solution payload.
 
 **Response:**
 
-```json
+```jsonc
 {
   "valid": true
 }
