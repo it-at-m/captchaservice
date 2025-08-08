@@ -1,5 +1,6 @@
 package de.muenchen.captchaservice.controller.captcha.request;
 
+import de.muenchen.captchaservice.validation.ValidSourceAddress;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,11 @@ public class PostVerifyRequest {
     @NotNull
     @NotBlank
     private String siteSecret;
+
+    @NotNull
+    @NotBlank
+    @ValidSourceAddress
+    private String clientAddress;
 
     @NotNull
     private ExtendedPayload payload;

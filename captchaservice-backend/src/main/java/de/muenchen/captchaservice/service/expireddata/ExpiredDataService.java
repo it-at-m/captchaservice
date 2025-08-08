@@ -35,7 +35,6 @@ public class ExpiredDataService {
         final long deletedInvalidatedPayloadCount = invalidatedPayloadRepository.deleteByExpiresAtLessThan(now);
         if (deletedInvalidatedPayloadCount > 0) {
             log.info("Deleted {} expired InvalidatedPayloads", deletedInvalidatedPayloadCount);
-            captchaService.decrementInvalidatedPayloadCount(deletedInvalidatedPayloadCount);
         }
     }
 }

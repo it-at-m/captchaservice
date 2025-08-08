@@ -45,7 +45,8 @@ public class CaptchaController {
             throw new UnauthorizedException("Wrong credentials.");
         }
 
-        final boolean isValid = captchaService.verify(request.getSiteKey(), request.getPayload());
+        final SourceAddress sourceAddress = sourceAddressService.parse(request.getSiteKey(), request.getClientAddress());
+        final boolean isValid = captchaService.verify(request.getSiteKey(), request.getPayload(), sourceAddress);
         return new PostVerifyResponse(isValid);
     }
 }
