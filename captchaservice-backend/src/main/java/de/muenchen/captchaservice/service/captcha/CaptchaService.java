@@ -2,6 +2,7 @@ package de.muenchen.captchaservice.service.captcha;
 
 import de.muenchen.captchaservice.configuration.captcha.CaptchaProperties;
 import de.muenchen.captchaservice.configuration.captcha.CaptchaSite;
+import de.muenchen.captchaservice.data.ExtendedPayload;
 import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.entity.InvalidatedPayload;
 import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
@@ -21,18 +22,23 @@ public class CaptchaService {
     private final CaptchaProperties captchaProperties;
     private final InvalidatedPayloadRepository invalidatedPayloadRepository;
     private final DifficultyService difficultyService;
+    private final MetricsService metricsService;
 
     @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
     public CaptchaService(final CaptchaProperties captchaProperties, final DifficultyService difficultyService,
-            final InvalidatedPayloadRepository invalidatedPayloadRepository) {
+            final InvalidatedPayloadRepository invalidatedPayloadRepository, MetricsService metricsService) {
         this.captchaProperties = captchaProperties;
         this.invalidatedPayloadRepository = invalidatedPayloadRepository;
         this.difficultyService = difficultyService;
+        this.metricsService = metricsService;
+
+        metricsService.initializeInvalidatedPayloadsGauge();
     }
 
     public Altcha.Challenge createChallenge(final String siteKey, final SourceAddress sourceAddress) {
         final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
         difficultyService.registerRequest(siteKey, sourceAddress);
+        metricsService.recordChallengeRequest(siteKey, difficulty, sourceAddress);
         final Altcha.ChallengeOptions options = new Altcha.ChallengeOptions();
         options.algorithm = Altcha.Algorithm.SHA256;
         options.hmacKey = captchaProperties.hmacKey();
@@ -46,13 +52,19 @@ public class CaptchaService {
         return null;
     }
 
-    public boolean verify(final String siteKey, final Altcha.Payload payload) {
+    public boolean verify(final String siteKey, final ExtendedPayload payload, final SourceAddress sourceAddress) {
         if (isPayloadInvalidated(siteKey, payload)) {
             return false;
         }
         try {
             final boolean isValid = Altcha.verifySolution(payload, captchaProperties.hmacKey(), true);
             if (isValid) {
+                metricsService.recordVerifySuccess(siteKey, sourceAddress);
+
+                if (payload.getTook() != null) {
+                    metricsService.recordClientSolveTime(siteKey, sourceAddress, payload.getTook());
+                }
+
                 invalidatePayload(payload);
             }
             return isValid;
@@ -85,5 +97,4 @@ public class CaptchaService {
                 payload.salt,
                 payload.signature));
     }
-
 }

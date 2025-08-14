@@ -1,11 +1,13 @@
 package de.muenchen.captchaservice.controller.captcha.request;
 
+import de.muenchen.captchaservice.validation.ValidSourceAddress;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.altcha.altcha.Altcha;
+
+import de.muenchen.captchaservice.data.ExtendedPayload;
 
 @Data
 @NoArgsConstructor
@@ -21,6 +23,11 @@ public class PostVerifyRequest {
     private String siteSecret;
 
     @NotNull
-    private Altcha.Payload payload;
+    @NotBlank
+    @ValidSourceAddress
+    private String clientAddress;
+
+    @NotNull
+    private ExtendedPayload payload;
 
 }
