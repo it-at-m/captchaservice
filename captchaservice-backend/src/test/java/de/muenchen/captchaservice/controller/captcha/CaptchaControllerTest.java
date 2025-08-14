@@ -269,7 +269,8 @@ class CaptchaControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
                     .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
-                    .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")));
+                    .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
+                    .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')].values[*]", hasItem(String.valueOf(i))));
         }
     }
 
@@ -299,7 +300,8 @@ class CaptchaControllerTest {
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
-                        .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")));
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')]").exists());
 
                 mockMvc.perform(get("/actuator/metrics/captcha.client.solve.time"))
                         .andExpect(status().isOk())
@@ -307,7 +309,8 @@ class CaptchaControllerTest {
                         .andExpect(jsonPath("$.measurements[?(@.statistic=='TOTAL')].value", hasItem((double) i * TEST_PAYLOAD.getTook())))
                         .andExpect(jsonPath("$.measurements[?(@.statistic=='MAX')].value", hasItem((double) TEST_PAYLOAD.getTook())))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
-                        .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")));
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')]").exists());
 
                 databaseTestUtil.clearDatabase();
             }
