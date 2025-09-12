@@ -57,7 +57,7 @@ public class CaptchaService {
             return false;
         }
         try {
-            final boolean isValid = Altcha.verifySolution(payload, captchaProperties.hmacKey(), true);
+            final boolean isValid = Altcha.verifySolution(payload, captchaProperties.hmacKey(), false);
             log.info("Altcha.verifySolution() returned {} for payloadHash={}", isValid, getPayloadHash(payload));
             if (isValid) {
                 log.info("Sucessfully verified. Recording success for metrics...");
