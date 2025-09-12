@@ -58,10 +58,13 @@ public class CaptchaService {
         }
         try {
             final boolean isValid = Altcha.verifySolution(payload, captchaProperties.hmacKey(), true);
+            log.info("Altcha.verifySolution() returned {} for payloadHash={}", isValid, getPayloadHash(payload))
             if (isValid) {
+                log.info("Sucessfully verified. Recording success for metrics...")
                 metricsService.recordVerifySuccess(siteKey, sourceAddress);
 
                 if (payload.getTook() != null) {
+                    log.info("Recording client solve time metric: took={} ms", payload.getTook());
                     metricsService.recordClientSolveTime(siteKey, sourceAddress, payload.getTook());
                 }
 
