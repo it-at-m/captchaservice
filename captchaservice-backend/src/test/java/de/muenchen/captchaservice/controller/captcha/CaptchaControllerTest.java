@@ -183,7 +183,7 @@ class CaptchaControllerTest {
         final String requestBody = objectMapper.writeValueAsString(request);
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
             mock
-                    .when(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(false)))
+                    .when(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(true)))
                     .thenReturn(true);
             // --
             mockMvc.perform(
@@ -194,7 +194,7 @@ class CaptchaControllerTest {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.valid", is(true)));
             // --
-            mock.verify(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(false)));
+            mock.verify(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(true)));
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -222,7 +222,7 @@ class CaptchaControllerTest {
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
             // Successful request
             mock
-                    .when(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(false)))
+                    .when(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(true)))
                     .thenReturn(true);
             mockMvc.perform(
                     post("/api/v1/captcha/verify")
@@ -231,11 +231,11 @@ class CaptchaControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.valid", is(true)));
-            mock.verify(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(false)));
+            mock.verify(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(true)));
 
             // Expired request
             mock
-                    .when(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(false)))
+                    .when(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(true)))
                     .thenReturn(true);
             mockMvc.perform(
                     post("/api/v1/captcha/verify")
@@ -244,7 +244,7 @@ class CaptchaControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.valid", is(false)));
-            mock.verify(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(false)));
+            mock.verify(() -> Altcha.verifySolution(ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()), eq(TEST_HMAC_KEY), eq(true)));
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -286,7 +286,7 @@ class CaptchaControllerTest {
             mock.when(() -> Altcha.verifySolution(
                     ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()),
                     eq(TEST_HMAC_KEY),
-                    eq(false)))
+                    eq(true)))
                     .thenReturn(true);
 
             for (int i = 1; i <= calls; i++) {
@@ -328,7 +328,7 @@ class CaptchaControllerTest {
             mock.when(() -> Altcha.verifySolution(
                     ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()),
                     eq(TEST_HMAC_KEY),
-                    eq(false)))
+                    eq(true)))
                     .thenReturn(true);
 
             mockMvc.perform(post("/api/v1/captcha/verify")

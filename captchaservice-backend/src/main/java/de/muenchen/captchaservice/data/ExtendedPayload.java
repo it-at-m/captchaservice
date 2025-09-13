@@ -14,4 +14,14 @@ public class ExtendedPayload extends Altcha.Payload {
      */
     private Long took;
 
+    public Altcha.Payload toBasePayload() {
+        Altcha.Payload base = new Altcha.Payload();
+        base.algorithm = this.algorithm;
+        base.challenge = this.challenge;
+        base.number = this.number;
+        base.salt = this.salt;
+        base.signature = this.signature;
+        return base;
+    }
+
 }
