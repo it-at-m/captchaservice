@@ -2,13 +2,10 @@ package de.muenchen.captchaservice.controller.captcha;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.muenchen.captchaservice.TestConstants;
-import de.muenchen.captchaservice.configuration.captcha.CaptchaProperties;
 import de.muenchen.captchaservice.controller.captcha.request.PostChallengeRequest;
 import de.muenchen.captchaservice.controller.captcha.request.PostVerifyRequest;
 import de.muenchen.captchaservice.data.ExtendedPayload;
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
-import de.muenchen.captchaservice.service.captcha.CaptchaService;
-import de.muenchen.captchaservice.service.expireddata.ExpiredDataService;
 import de.muenchen.captchaservice.util.DatabaseTestUtil;
 import lombok.SneakyThrows;
 import org.altcha.altcha.Altcha;
@@ -28,8 +25,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
-
-import java.time.Instant;
 
 import static de.muenchen.captchaservice.TestConstants.SPRING_NO_SECURITY_PROFILE;
 import static de.muenchen.captchaservice.TestConstants.SPRING_TEST_PROFILE;
@@ -83,15 +78,6 @@ class CaptchaControllerTest {
 
     @Autowired
     private CaptchaRequestRepository captchaRequestRepository;
-
-    @Autowired
-    private CaptchaProperties captchaProperties;
-
-    @Autowired
-    private ExpiredDataService expiredDataService;
-
-    @Autowired
-    private CaptchaService captchaService;
 
     @Test
     void postChallenge_basic() {
