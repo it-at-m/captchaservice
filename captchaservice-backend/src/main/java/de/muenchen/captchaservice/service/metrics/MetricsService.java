@@ -1,4 +1,4 @@
-package de.muenchen.captchaservice.service.captcha;
+package de.muenchen.captchaservice.service.metrics;
 
 import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
@@ -57,8 +57,8 @@ public class MetricsService {
                 .increment();
     }
 
-    public void recordClientSolveTime(String siteKey, SourceAddress sourceAddress, long solveTime) {
-        if (solveTime <= 0) {
+    public void recordClientSolveTime(String siteKey, SourceAddress sourceAddress, Long solveTime) {
+        if (solveTime == null || solveTime < 0) {
             log.warn("Invalid solve time value: {} for site: {}", solveTime, sanitizeForLog(siteKey));
             return;
         }

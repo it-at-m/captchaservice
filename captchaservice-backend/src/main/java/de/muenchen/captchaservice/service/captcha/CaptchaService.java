@@ -7,6 +7,7 @@ import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.entity.InvalidatedPayload;
 import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
 import de.muenchen.captchaservice.service.difficulty.DifficultyService;
+import de.muenchen.captchaservice.service.metrics.MetricsService;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import org.altcha.altcha.Altcha;
