@@ -55,6 +55,7 @@ class CaptchaControllerTest {
     private static final String TEST_SITE_SECRET = "test_secret";
     private static final String TEST_HMAC_KEY = "secret";
     private static final String TEST_CLIENT_ADDRESS = "1.2.3.4";
+    private static final String TEST_WHITELISTED_ADDRESS = "10.0.0.0";
     private static final ExtendedPayload TEST_PAYLOAD;
 
     static {
@@ -238,6 +239,28 @@ class CaptchaControllerTest {
 
     @Test
     @SneakyThrows
+    void testChallengeMetricsWhiteListedSourceAddress() {
+        final PostChallengeRequest challengeRequest = new PostChallengeRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_WHITELISTED_ADDRESS);
+        final String challengeRequestBody = objectMapper.writeValueAsString(challengeRequest);
+
+        mockMvc.perform(
+                post("/api/v1/captcha/challenge")
+                        .content(challengeRequestBody)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(
+                get("/actuator/metrics/captcha.challenge.requests"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.measurements[0].value", is(1.0)))
+                .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1")))
+                .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
+                .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')].values[*]", hasItem("1")))
+                .andExpect(jsonPath("$.availableTags[?(@.tag=='is_whitelisted')].values[0]", hasItem("true")));
+    }
+
+    @Test
+    @SneakyThrows
     void testChallengeMetricsIncrement() {
         int calls = 3;
         final PostChallengeRequest challengeRequest = new PostChallengeRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_CLIENT_ADDRESS);
@@ -256,7 +279,8 @@ class CaptchaControllerTest {
                     .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
                     .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
                     .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
-                    .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')].values[*]", hasItem(String.valueOf(i))));
+                    .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')].values[*]", hasItem(String.valueOf(i))))
+                    .andExpect(jsonPath("$.availableTags[?(@.tag=='is_whitelisted')].values[0]", hasItem("false")));
         }
     }
 
@@ -287,7 +311,8 @@ class CaptchaControllerTest {
                         .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
-                        .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')]").exists());
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')]").exists())
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='is_whitelisted')].values[0]", hasItem("false")));
 
                 mockMvc.perform(get("/actuator/metrics/captcha.client.solve.time"))
                         .andExpect(status().isOk())
@@ -296,7 +321,8 @@ class CaptchaControllerTest {
                         .andExpect(jsonPath("$.measurements[?(@.statistic=='MAX')].value", hasItem((double) TEST_PAYLOAD.getTook())))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
-                        .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')]").exists());
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')]").exists())
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='is_whitelisted')].values[0]", hasItem("false")));
 
                 databaseTestUtil.clearDatabase();
             }
