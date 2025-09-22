@@ -37,6 +37,7 @@ jobs:
           CENTRAL_USERNAME: ${{ secrets.sonatype_username }}
           CENTRAL_PASSWORD: ${{ secrets.sonatype_password  }}
           GDP_PRIVATE_KEY: ${{  secrets.gpg_private_key }}
+          use-pr: "true"
 
   build-image:
     runs-on: ubuntu-latest
