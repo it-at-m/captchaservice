@@ -68,9 +68,12 @@ public class CaptchaService {
                 }
 
                 invalidatePayload(payload);
+            } else {
+                metricsService.recordVerifyFailure(siteKey, sourceAddress);
             }
             return isValid;
         } catch (Exception e) {
+            metricsService.recordVerifyError(siteKey, sourceAddress);
             log.warn("Error verifying captcha payload: {}", payload, e);
         }
         return false;
