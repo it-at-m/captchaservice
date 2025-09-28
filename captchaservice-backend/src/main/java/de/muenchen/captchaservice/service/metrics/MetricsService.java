@@ -33,6 +33,7 @@ public class MetricsService {
     }
 
     public void recordChallengeRequest(String siteKey, long difficulty, SourceAddress sourceAddress) {
+        final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
         long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
         Counter.builder("captcha.challenge.requests")
@@ -47,6 +48,7 @@ public class MetricsService {
 
     public void recordVerifySuccess(String siteKey, SourceAddress sourceAddress) {
         final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
+        final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
         long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
         Counter.builder("captcha.verify.success")
