@@ -42,7 +42,7 @@ services:
     entrypoint: /bin/sh -c "chmod 600 /pgadmin4/pgpass; /entrypoint.sh;" # see https://www.postgresql.org/docs/current/libpq-pgpass.html#LIBPQ-PGPASS (last paragraph)
 
   keycloak:
-    image: quay.io/keycloak/keycloak:20.0.5@sha256:054ef67eb7dae0129bbb9eb0e0797fd2392cd6d135094a6063ae7ff7773ef81f
+    image: quay.io/keycloak/keycloak:26.0.8@sha256:09a381c715ab0b111835b70f2905955274843a219c6f27efb348e4d9f4086858
     command:
       - start-dev --http-relative-path /auth
     depends_on:
