@@ -147,7 +147,7 @@ graph TB
 - Java 21 or later
 - Maven 3.8+
 - PostgreSQL 16+
-- Docker and Docker Compose (for local development)
+- Docker/Podman and Docker/Podman Compose (for local development)
 
 ## Quick Start
 
@@ -160,10 +160,10 @@ graph TB
 
 2. **Start the development stack**
 
-   ```bash
-   cd stack
-   docker compose up -d
-   ```
+  ```bash
+  cd stack
+  {docker|podman} compose up -d
+  ```
 
 3. **Build and run the application**
 
