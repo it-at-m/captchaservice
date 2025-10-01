@@ -33,26 +33,60 @@ public class MetricsService {
     }
 
     public void recordChallengeRequest(String siteKey, long difficulty, SourceAddress sourceAddress) {
+        final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
         long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
         Counter.builder("captcha.challenge.requests")
                 .tag("site_key", siteKey)
                 .tag("difficulty", String.valueOf(difficulty))
                 .tag("same_source_address_request_count", String.valueOf(sameSourceAddressRequestCount))
-                .description("Counter for captcha challenge requests")
+                .tag("is_whitelisted", String.valueOf(isWhitelisted))
+                .description("Number of captcha challenge requests")
                 .register(meterRegistry)
                 .increment();
     }
 
     public void recordVerifySuccess(String siteKey, SourceAddress sourceAddress) {
         final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
+        final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
         long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
         Counter.builder("captcha.verify.success")
                 .tag("site_key", siteKey)
                 .tag("difficulty", String.valueOf(difficulty))
                 .tag("same_source_address_request_count", String.valueOf(sameSourceAddressRequestCount))
-                .description("Counter for captcha verify success requests")
+                .tag("is_whitelisted", String.valueOf(isWhitelisted))
+                .description("Number of successful captcha verifications")
+                .register(meterRegistry)
+                .increment();
+    }
+
+    public void recordVerifyFailure(String siteKey, SourceAddress sourceAddress) {
+        final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
+        final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
+        long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
+
+        Counter.builder("captcha.verify.failure")
+                .tag("site_key", siteKey)
+                .tag("difficulty", String.valueOf(difficulty))
+                .tag("same_source_address_request_count", String.valueOf(sameSourceAddressRequestCount))
+                .tag("is_whitelisted", String.valueOf(isWhitelisted))
+                .description("Number of failed captcha verifications where the client provided a wrong solution")
+                .register(meterRegistry)
+                .increment();
+    }
+
+    public void recordVerifyError(String siteKey, SourceAddress sourceAddress) {
+        final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
+        final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
+        long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
+
+        Counter.builder("captcha.verify.error")
+                .tag("site_key", siteKey)
+                .tag("difficulty", String.valueOf(difficulty))
+                .tag("same_source_address_request_count", String.valueOf(sameSourceAddressRequestCount))
+                .tag("is_whitelisted", String.valueOf(isWhitelisted))
+                .description("Number of captcha verification errors caused by exceptions or system issues")
                 .register(meterRegistry)
                 .increment();
     }
