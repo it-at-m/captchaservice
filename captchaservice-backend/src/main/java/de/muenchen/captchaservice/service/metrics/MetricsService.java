@@ -33,12 +33,14 @@ public class MetricsService {
     }
 
     public void recordChallengeRequest(String siteKey, long difficulty, SourceAddress sourceAddress) {
+        final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
         long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
         Counter.builder("captcha.challenge.requests")
                 .tag("site_key", siteKey)
                 .tag("difficulty", String.valueOf(difficulty))
                 .tag("same_source_address_request_count", String.valueOf(sameSourceAddressRequestCount))
+                .tag("is_whitelisted", String.valueOf(isWhitelisted))
                 .description("Counter for captcha challenge requests")
                 .register(meterRegistry)
                 .increment();
@@ -46,12 +48,14 @@ public class MetricsService {
 
     public void recordVerifySuccess(String siteKey, SourceAddress sourceAddress) {
         final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
+        final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
         long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
         Counter.builder("captcha.verify.success")
                 .tag("site_key", siteKey)
                 .tag("difficulty", String.valueOf(difficulty))
                 .tag("same_source_address_request_count", String.valueOf(sameSourceAddressRequestCount))
+                .tag("is_whitelisted", String.valueOf(isWhitelisted))
                 .description("Counter for captcha verify success requests")
                 .register(meterRegistry)
                 .increment();
@@ -64,12 +68,14 @@ public class MetricsService {
         }
 
         final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
+        final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
         long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
         DistributionSummary.builder("captcha.client.solve.time")
                 .tag("site_key", siteKey)
                 .tag("difficulty", String.valueOf(difficulty))
                 .tag("same_source_address_request_count", String.valueOf(sameSourceAddressRequestCount))
+                .tag("is_whitelisted", String.valueOf(isWhitelisted))
                 .description("Summary of the time taken by clients to solve captcha challenges")
                 .baseUnit("milliseconds")
                 .register(meterRegistry)
