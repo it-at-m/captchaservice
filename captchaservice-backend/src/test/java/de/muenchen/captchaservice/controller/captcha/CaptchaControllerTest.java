@@ -306,11 +306,12 @@ class CaptchaControllerTest {
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.valid", is(true)));
 
-                mockMvc.perform(get("/actuator/metrics/captcha.verify.success"))
+                mockMvc.perform(get("/actuator/metrics/captcha.verify.attempts"))
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='status')].values[0]", hasItem("success")))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')]").exists())
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='is_whitelisted')].values[0]", hasItem("false")));
 
@@ -351,11 +352,12 @@ class CaptchaControllerTest {
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.valid", is(false)));
 
-                mockMvc.perform(get("/actuator/metrics/captcha.verify.failure"))
+                mockMvc.perform(get("/actuator/metrics/captcha.verify.attempts"))
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='status')].values[0]", hasItem("failure")))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')]").exists());
             }
         }
@@ -382,11 +384,12 @@ class CaptchaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk());
 
-                mockMvc.perform(get("/actuator/metrics/captcha.verify.error"))
+                mockMvc.perform(get("/actuator/metrics/captcha.verify.attempts"))
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='status')].values[0]", hasItem("error")))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')]").exists());
             }
         }

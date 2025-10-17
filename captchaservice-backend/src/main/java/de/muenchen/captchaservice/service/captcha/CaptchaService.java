@@ -8,6 +8,7 @@ import de.muenchen.captchaservice.entity.InvalidatedPayload;
 import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
 import de.muenchen.captchaservice.service.difficulty.DifficultyService;
 import de.muenchen.captchaservice.service.metrics.MetricsService;
+import de.muenchen.captchaservice.service.metrics.MetricsService.VerificationStatus;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import org.altcha.altcha.Altcha;
@@ -61,7 +62,7 @@ public class CaptchaService {
             Altcha.Payload base = payload.toBasePayload();
             final boolean isValid = Altcha.verifySolution(base, captchaProperties.hmacKey(), true);
             if (isValid) {
-                metricsService.recordVerifySuccess(siteKey, sourceAddress);
+                metricsService.recordVerifyAttempt(siteKey, sourceAddress, VerificationStatus.SUCCESS);
 
                 if (payload.getTook() != null) {
                     metricsService.recordClientSolveTime(siteKey, sourceAddress, payload.getTook());
@@ -69,11 +70,11 @@ public class CaptchaService {
 
                 invalidatePayload(payload);
             } else {
-                metricsService.recordVerifyFailure(siteKey, sourceAddress);
+                metricsService.recordVerifyAttempt(siteKey, sourceAddress, VerificationStatus.FAILURE);
             }
             return isValid;
         } catch (Exception e) {
-            metricsService.recordVerifyError(siteKey, sourceAddress);
+            metricsService.recordVerifyAttempt(siteKey, sourceAddress, VerificationStatus.ERROR);
             log.warn("Error verifying captcha payload: {}", payload, e);
         }
         return false;
