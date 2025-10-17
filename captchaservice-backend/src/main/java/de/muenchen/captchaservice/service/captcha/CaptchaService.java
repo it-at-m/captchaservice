@@ -8,7 +8,7 @@ import de.muenchen.captchaservice.entity.InvalidatedPayload;
 import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
 import de.muenchen.captchaservice.service.difficulty.DifficultyService;
 import de.muenchen.captchaservice.service.metrics.MetricsService;
-import de.muenchen.captchaservice.service.metrics.MetricsService.VerificationStatus;
+import de.muenchen.captchaservice.service.metrics.MetricsService.CaptchaEventType;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.extern.slf4j.Slf4j;
 import org.altcha.altcha.Altcha;
@@ -40,7 +40,7 @@ public class CaptchaService {
     public Altcha.Challenge createChallenge(final String siteKey, final SourceAddress sourceAddress) {
         final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
         difficultyService.registerRequest(siteKey, sourceAddress);
-        metricsService.recordChallengeRequest(siteKey, difficulty, sourceAddress);
+        metricsService.recordCaptchaEvent(siteKey, sourceAddress, CaptchaEventType.CHALLENGE_REQUEST);
         final Altcha.ChallengeOptions options = new Altcha.ChallengeOptions();
         options.algorithm = Altcha.Algorithm.SHA256;
         options.hmacKey = captchaProperties.hmacKey();
@@ -62,7 +62,7 @@ public class CaptchaService {
             Altcha.Payload base = payload.toBasePayload();
             final boolean isValid = Altcha.verifySolution(base, captchaProperties.hmacKey(), true);
             if (isValid) {
-                metricsService.recordVerifyAttempt(siteKey, sourceAddress, VerificationStatus.SUCCESS);
+                metricsService.recordCaptchaEvent(siteKey, sourceAddress, CaptchaEventType.VERIFY_SUCCESS);
 
                 if (payload.getTook() != null) {
                     metricsService.recordClientSolveTime(siteKey, sourceAddress, payload.getTook());
@@ -70,11 +70,11 @@ public class CaptchaService {
 
                 invalidatePayload(payload);
             } else {
-                metricsService.recordVerifyAttempt(siteKey, sourceAddress, VerificationStatus.FAILURE);
+                metricsService.recordCaptchaEvent(siteKey, sourceAddress, CaptchaEventType.VERIFY_FAILURE);
             }
             return isValid;
         } catch (Exception e) {
-            metricsService.recordVerifyAttempt(siteKey, sourceAddress, VerificationStatus.ERROR);
+            metricsService.recordCaptchaEvent(siteKey, sourceAddress, CaptchaEventType.VERIFY_ERROR);
             log.warn("Error verifying captcha payload: {}", payload, e);
         }
         return false;

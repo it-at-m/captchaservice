@@ -18,10 +18,11 @@ import java.time.Instant;
 @Slf4j
 public class MetricsService {
 
-    public enum VerificationStatus {
-        SUCCESS,
-        FAILURE,
-        ERROR
+    public enum CaptchaEventType {
+        CHALLENGE_REQUEST,
+        VERIFY_SUCCESS,
+        VERIFY_FAILURE,
+        VERIFY_ERROR
     }
 
     private final MeterRegistry meterRegistry;
@@ -38,32 +39,18 @@ public class MetricsService {
         this.captchaRequestRepository = captchaRequestRepository;
     }
 
-    public void recordChallengeRequest(String siteKey, long difficulty, SourceAddress sourceAddress) {
-        final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
-        long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
-
-        Counter.builder("captcha.challenge.requests")
-                .tag("site_key", siteKey)
-                .tag("difficulty", String.valueOf(difficulty))
-                .tag("same_source_address_request_count", String.valueOf(sameSourceAddressRequestCount))
-                .tag("is_whitelisted", String.valueOf(isWhitelisted))
-                .description("Number of captcha challenge requests")
-                .register(meterRegistry)
-                .increment();
-    }
-
-    public void recordVerifyAttempt(String siteKey, SourceAddress sourceAddress, VerificationStatus status) {
+    public void recordCaptchaEvent(String siteKey, SourceAddress sourceAddress, CaptchaEventType eventType) {
         final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
         final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
         long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
-        Counter.builder("captcha.verify.attempts")
+        Counter.builder("captcha.events")
                 .tag("site_key", siteKey)
                 .tag("difficulty", String.valueOf(difficulty))
                 .tag("same_source_address_request_count", String.valueOf(sameSourceAddressRequestCount))
                 .tag("is_whitelisted", String.valueOf(isWhitelisted))
-                .tag("status", status.name().toLowerCase())
-                .description("Number of captcha verification attempts with their outcome status (success, failure, error)")
+                .tag("event_type", eventType.name().toLowerCase())
+                .description("All captcha events: challenge requests and verification attempts")
                 .register(meterRegistry)
                 .increment();
     }
