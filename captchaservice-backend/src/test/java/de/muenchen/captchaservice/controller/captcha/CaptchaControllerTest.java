@@ -250,13 +250,14 @@ class CaptchaControllerTest {
                 .andExpect(status().isOk());
 
         mockMvc.perform(
-                get("/actuator/metrics/captcha.challenge.requests"))
+                get("/actuator/metrics/captcha.events"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.measurements[0].value", is(1.0)))
                 .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1")))
                 .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
                 .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')].values[*]", hasItem("1")))
-                .andExpect(jsonPath("$.availableTags[?(@.tag=='is_whitelisted')].values[0]", hasItem("true")));
+                .andExpect(jsonPath("$.availableTags[?(@.tag=='is_whitelisted')].values[0]", hasItem("true")))
+                .andExpect(jsonPath("$.availableTags[?(@.tag=='event_type')].values[0]", hasItem("challenge_request")));
     }
 
     @Test
@@ -274,13 +275,14 @@ class CaptchaControllerTest {
                     .andExpect(status().isOk());
 
             mockMvc.perform(
-                    get("/actuator/metrics/captcha.challenge.requests"))
+                    get("/actuator/metrics/captcha.events"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
                     .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
                     .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
                     .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')].values[*]", hasItem(String.valueOf(i))))
-                    .andExpect(jsonPath("$.availableTags[?(@.tag=='is_whitelisted')].values[0]", hasItem("false")));
+                    .andExpect(jsonPath("$.availableTags[?(@.tag=='is_whitelisted')].values[0]", hasItem("false")))
+                    .andExpect(jsonPath("$.availableTags[?(@.tag=='event_type')].values[0]", hasItem("challenge_request")));
         }
     }
 
@@ -288,7 +290,7 @@ class CaptchaControllerTest {
     @SneakyThrows
     void testVerifyMetricsIncrement() {
         databaseTestUtil.clearDatabase();
-        int calls = 4;
+        int calls = 3;
         final PostVerifyRequest verifyRequest = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_CLIENT_ADDRESS, TEST_PAYLOAD);
         final String verifyRequestBody = objectMapper.writeValueAsString(verifyRequest);
 
@@ -306,11 +308,12 @@ class CaptchaControllerTest {
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.valid", is(true)));
 
-                mockMvc.perform(get("/actuator/metrics/captcha.verify.success"))
+                mockMvc.perform(get("/actuator/metrics/captcha.events"))
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='event_type')].values[0]", hasItem("verify_success")))
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')]").exists())
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='is_whitelisted')].values[0]", hasItem("false")));
 
@@ -325,6 +328,71 @@ class CaptchaControllerTest {
                         .andExpect(jsonPath("$.availableTags[?(@.tag=='is_whitelisted')].values[0]", hasItem("false")));
 
                 databaseTestUtil.clearDatabase();
+            }
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    void testFailedVerifyMetricsIncrement() {
+        databaseTestUtil.clearDatabase();
+        int calls = 3;
+        final PostVerifyRequest verifyRequest = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_CLIENT_ADDRESS, TEST_PAYLOAD);
+        final String verifyRequestBody = objectMapper.writeValueAsString(verifyRequest);
+
+        try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
+            mock.when(() -> Altcha.verifySolution(
+                    ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()),
+                    eq(TEST_HMAC_KEY),
+                    eq(true)))
+                    .thenReturn(false);
+
+            for (int i = 1; i <= calls; i++) {
+                mockMvc.perform(post("/api/v1/captcha/verify")
+                        .content(verifyRequestBody)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.valid", is(false)));
+
+                mockMvc.perform(get("/actuator/metrics/captcha.events"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='event_type')].values[0]", hasItem("verify_failure")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')]").exists());
+            }
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    void testVerifyErrorMetricsIncrement() {
+        databaseTestUtil.clearDatabase();
+        int calls = 3;
+        final PostVerifyRequest verifyRequest = new PostVerifyRequest(TEST_SITE_KEY, TEST_SITE_SECRET, TEST_CLIENT_ADDRESS, TEST_PAYLOAD);
+        final String verifyRequestBody = objectMapper.writeValueAsString(verifyRequest);
+
+        try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
+            mock.when(() -> Altcha.verifySolution(
+                    ArgumentMatchers.<Altcha.Payload>argThat(p -> p.algorithm.isEmpty()),
+                    eq(TEST_HMAC_KEY),
+                    eq(true)))
+                    .thenThrow(new RuntimeException("Simulated error"));
+
+            for (int i = 1; i <= calls; i++) {
+                mockMvc.perform(post("/api/v1/captcha/verify")
+                        .content(verifyRequestBody)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk());
+
+                mockMvc.perform(get("/actuator/metrics/captcha.events"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.measurements[0].value", is((double) i)))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='difficulty')].values[0]", hasItem("1000")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='site_key')].values[0]", hasItem("test_site")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='event_type')].values[0]", hasItem("verify_error")))
+                        .andExpect(jsonPath("$.availableTags[?(@.tag=='same_source_address_request_count')]").exists());
             }
         }
     }
