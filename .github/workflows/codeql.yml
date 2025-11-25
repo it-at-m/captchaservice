@@ -12,6 +12,6 @@ jobs:
     uses: it-at-m/.github/.github/workflows/codeql.yml@main
     with:
       analyze-java: true
-      analyze-javascript-typescript-vue: true
+      analyze-javascript-typescript-vue: false
       analyze-python: false
       java-build-paths: "['./captchaservice-backend']"
