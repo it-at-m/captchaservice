@@ -1,17 +1,20 @@
 spring:
   jpa:
     hibernate:
-      # schema is managed by Flyway, only validate
-      ddl-auto: validate
-  flyway:
-    locations:
-      - classpath:db/migration/schema
+      ddl-auto: create-drop
 
-# Uncomment for testing purposes
-#spring:
-#  jpa:
-#    hibernate:
-#      ddl-auto: create-drop
+logging:
+  include-application-group: false # disabled because application group is only relevant when deployed
+  structured:
+    format:
+      console: # set to empty to disable structured logging for testing
+
+refarch:
+  security:
+    # possible values: none, all, changing (With changing, only changing requests such as POST, PUT, DELETE are logged)
+    # Currently only dummy values, will later be changed for testing security.
+    user-info-uri: NotNeeded
+    logging-mode: all
 
 management:
   endpoints:
@@ -21,12 +24,6 @@ management:
   endpoint:
     metrics:
       access: read_only
-
-security:
-  # possible values: none, all, changing (With changing, only changing requests such as POST, PUT, DELETE are logged)
-  # Currently only dummy values, will later be changed for testing security.
-  requestLogging: all
-  userInfoUri: NotNeeded
 
 captcha:
   hmac-key: secret

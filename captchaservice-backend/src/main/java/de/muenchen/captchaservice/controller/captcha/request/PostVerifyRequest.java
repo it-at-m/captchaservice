@@ -13,20 +13,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PostVerifyRequest {
 
-    @NotNull
-    @NotBlank
-    private String siteKey;
+    @NotNull @NotBlank private String siteKey;
 
-    @NotNull
-    @NotBlank
-    private String siteSecret;
+    @NotNull @NotBlank private String siteSecret;
 
-    @NotNull
-    @NotBlank
-    @ValidSourceAddress
+    @NotNull @NotBlank @ValidSourceAddress
     private String clientAddress;
 
-    @NotNull
-    private ExtendedPayload payload;
+    @NotNull private ExtendedPayload payload;
 
 }

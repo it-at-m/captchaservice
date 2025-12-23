@@ -7,10 +7,13 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.Instant;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(
@@ -39,15 +42,11 @@ public class CaptchaRequest extends BaseEntity {
     private Instant requestAt;
 
     @Column(nullable = false, length = 64)
-    @NotNull
-    @Size(min = 64, max = 64)
-    private String sourceAddressHash;
+    @NotNull @Size(min = 64, max = 64) private String sourceAddressHash;
 
-    @NotNull
-    private boolean isWhitelisted;
+    @NotNull private boolean isWhitelisted;
 
-    @NotNull
-    private Instant expiresAt;
+    @NotNull private Instant expiresAt;
 
     public CaptchaRequest(String sourceAddressHash, boolean isWhitelisted, Instant expiresAt) {
         this.sourceAddressHash = sourceAddressHash;

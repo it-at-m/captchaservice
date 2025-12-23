@@ -1,7 +1,6 @@
 package de.muenchen.captchaservice.util.networkaddresscalculator;
 
 import com.google.common.net.InetAddresses;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 

@@ -1,9 +1,8 @@
-package de.muenchen.captchaservice.configuration.nfcconverter;
+package de.muenchen.captchaservice.configuration.filter.nfcconverter;
 
 import java.io.CharArrayReader;
 import java.io.IOException;
 import java.io.Reader;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;

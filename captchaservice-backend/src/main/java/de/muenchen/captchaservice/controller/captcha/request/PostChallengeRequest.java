@@ -12,17 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PostChallengeRequest {
 
-    @NotNull
-    @NotBlank
-    private String siteKey;
+    @NotNull @NotBlank private String siteKey;
 
-    @NotNull
-    @NotBlank
-    private String siteSecret;
+    @NotNull @NotBlank private String siteSecret;
 
-    @NotNull
-    @NotBlank
-    @ValidSourceAddress
+    @NotNull @NotBlank @ValidSourceAddress
     private String clientAddress;
 
 }

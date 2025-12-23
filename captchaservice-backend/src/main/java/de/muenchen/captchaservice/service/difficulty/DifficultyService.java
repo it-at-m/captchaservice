@@ -6,15 +6,13 @@ import de.muenchen.captchaservice.configuration.captcha.DifficultyItem;
 import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.entity.CaptchaRequest;
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.web.util.matcher.IpAddressMatcher;
-import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
+import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -26,7 +24,6 @@ public class DifficultyService {
 
     private final Map<String, IpAddressMatcher> matcherCache = new ConcurrentHashMap<>();
 
-    @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
     public DifficultyService(final CaptchaProperties captchaProperties, final CaptchaRequestRepository captchaRequestRepository) {
         this.captchaProperties = captchaProperties;
         this.captchaRequestRepository = captchaRequestRepository;
