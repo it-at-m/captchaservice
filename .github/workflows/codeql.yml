@@ -51,7 +51,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build-path: ["./refarch-backend", "./refarch-eai"] # JSON array formatted as string, contains the paths to the java projects to build
+        build-path: ["./captchaservice-backend"] # JSON array formatted as string, contains the paths to the java projects to build
     steps:
       - uses: it-at-m/lhm_actions/action-templates/actions/action-codeql@12966547963631f8429d42bab860485b413003c2 # v1.0.22
         if: ${{ env.analyze-java == 'true' && (github.ref_name == 'main' || needs.check-changes.outputs.java == 'true') }}

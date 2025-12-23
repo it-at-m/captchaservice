@@ -15,10 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         include: # hier müssen die Pfade angegeben werden
-          - app-path: refarch-backend
-          - app-path: refarch-frontend
-          - app-path: refarch-eai
-          - app-path: refarch-webcomponent
+          - app-path: captchaservice-backend
 
     steps:
       - uses: it-at-m/lhm_actions/action-templates/actions/action-checkout@12966547963631f8429d42bab860485b413003c2 # v1.0.22
