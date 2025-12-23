@@ -47,7 +47,7 @@ management:
     prometheus:
       access: read_only
     sbom:
-      access: read-only
+      access: read_only
   info:
     env:
       enabled: true
