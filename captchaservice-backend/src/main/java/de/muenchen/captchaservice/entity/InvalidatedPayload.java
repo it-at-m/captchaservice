@@ -7,9 +7,13 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-
 import java.time.Instant;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(
@@ -34,11 +38,8 @@ public class InvalidatedPayload extends BaseEntity {
     // ========= //
 
     @Column(nullable = false, length = 64)
-    @NotNull
-    @Size(min = 64, max = 64)
-    private String payloadHash;
+    @NotNull @Size(min = 64, max = 64) private String payloadHash;
 
-    @NotNull
-    private Instant expiresAt;
+    @NotNull private Instant expiresAt;
 
 }

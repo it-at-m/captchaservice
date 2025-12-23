@@ -1,11 +1,17 @@
 package de.muenchen.captchaservice.service.expireddata;
 
+import static de.muenchen.captchaservice.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.captchaservice.TestConstants.SPRING_TEST_PROFILE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.muenchen.captchaservice.TestConstants;
 import de.muenchen.captchaservice.entity.CaptchaRequest;
 import de.muenchen.captchaservice.entity.InvalidatedPayload;
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
 import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
 import de.muenchen.captchaservice.util.DatabaseTestUtil;
+import java.time.Instant;
+import java.time.Period;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +21,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
-
-import java.time.Instant;
-import java.time.Period;
-
-import static de.muenchen.captchaservice.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.captchaservice.TestConstants.SPRING_TEST_PROFILE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })

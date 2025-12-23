@@ -9,13 +9,11 @@ import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
 import de.muenchen.captchaservice.service.difficulty.DifficultyService;
 import de.muenchen.captchaservice.service.metrics.MetricsService;
 import de.muenchen.captchaservice.service.metrics.MetricsService.CaptchaEventType;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.time.Instant;
 import lombok.extern.slf4j.Slf4j;
 import org.altcha.altcha.Altcha;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 
 @Service
 @Slf4j
@@ -26,7 +24,6 @@ public class CaptchaService {
     private final DifficultyService difficultyService;
     private final MetricsService metricsService;
 
-    @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
     public CaptchaService(final CaptchaProperties captchaProperties, final DifficultyService difficultyService,
             final InvalidatedPayloadRepository invalidatedPayloadRepository, MetricsService metricsService) {
         this.captchaProperties = captchaProperties;

@@ -1,4 +1,4 @@
-package de.muenchen.captchaservice.configuration.nfcconverter;
+package de.muenchen.captchaservice.configuration.filter.nfcconverter;
 
 import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;

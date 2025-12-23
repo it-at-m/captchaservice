@@ -5,10 +5,9 @@ import de.muenchen.captchaservice.configuration.captcha.CaptchaProperties;
 import de.muenchen.captchaservice.configuration.captcha.CaptchaSite;
 import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.util.networkaddresscalculator.NetworkAddressCalculator;
+import java.net.InetAddress;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.net.InetAddress;
 
 @Service
 @AllArgsConstructor

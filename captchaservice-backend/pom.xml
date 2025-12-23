@@ -5,16 +5,37 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.8</version>
+        <version>3.5.9</version>
         <relativePath />
     </parent>
 
     <groupId>de.muenchen.captchaservice</groupId>
     <artifactId>captchaservice-backend</artifactId>
     <version>1.4.0-SNAPSHOT</version>
-    <name>captchaservice_backend</name>
+    
+    <name>captchaservice-backend</name>
     <description />
     <url>https://github.com/it-at-m/captchaservice</url>
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://github.com/it-at-m/refarch-templates.git</url>
+        <connection>scm:git:https://github.com/it-at-m/refarch-templates.git</connection>
+        <developerConnection>scm:git:https://github.com/it-at-m/refarch-templates.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <developers>
+        <developer>
+            <organization>it@M</organization>
+            <email>opensource@muenchen.de</email>
+            <url>https://github.com/it-at-m</url>
+        </developer>
+    </developers>
 
     <properties>
         <!-- Compilation -->
@@ -24,10 +45,7 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
 
         <!-- Core Frameworks -->
-        <spring-cloud-dependencies.version>2025.1.0</spring-cloud-dependencies.version> <!-- Must match the chosen Spring Boot version -->
-
-        <!-- Logging -->
-        <logstash-logback-encoder.version>8.1</logstash-logback-encoder.version>
+        <spring-cloud-dependencies.version>2025.0.1</spring-cloud-dependencies.version> <!-- Must match the chosen Spring Boot version -->
 
         <!-- Linting & Formatting -->
         <spotless-maven-plugin.version>3.1.0</spotless-maven-plugin.version>
@@ -35,33 +53,38 @@
         <pmd-maven-plugin.version>3.28.0</pmd-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.9.8.2</spotbugs-maven-plugin.version>
         <spotbugs-annotations.version>4.9.8</spotbugs-annotations.version>
-        <findsecbugs-plugin.version>1.13.0</findsecbugs-plugin.version>
+        <findsecbugs-plugin.version>1.14.0</findsecbugs-plugin.version>
 
         <!-- Testing -->
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <argLine /> <!-- Must be empty, definition needed for integration of Jacoco and Surefire via @{argLine} lazy property evaluation -->
 
         <!-- Release -->
-        <maven-release-plugin.version>3.3.1</maven-release-plugin.version>
+        <maven-release-plugin.version>3.2.0</maven-release-plugin.version>
 
         <!-- Utility -->
         <commons-collections4.version>4.5.0</commons-collections4.version>
-        <commons-csv.version>1.14.1</commons-csv.version>
         <commons-io.version>2.21.0</commons-io.version>
-        <commons-lang3.version>3.20.0</commons-lang3.version>
-        <commons-text.version>1.15.0</commons-text.version>
-        <commons-validator.version>1.10.1</commons-validator.version>
+        <commons-text.version>1.14.0</commons-text.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <refarch-tools.version>1.2.0</refarch-tools.version>
 
         <!-- Additional required dependencies -->
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version> <!-- Needed to make MapStruct and Lombok work together -->
+        <springdoc-openapi-starter-webmvc-ui.version>2.8.14</springdoc-openapi-starter-webmvc-ui.version>
+        <springdoc-openapi-maven-plugin.version>1.5</springdoc-openapi-maven-plugin.version>
+        <therapi-runtime-javadoc.version>0.15.0</therapi-runtime-javadoc.version>
 
         <!-- Flyway maven plugin configuration for local stack database -->
         <flyway.url>jdbc:postgresql://localhost:5432/postgres</flyway.url>
         <flyway.user>admin</flyway.user>
         <flyway.password>admin</flyway.password>
         <flyway.locations>classpath:db/migration/schema,classpath:db/migration/testdata</flyway.locations>
+
+        <!-- Spotless P2 Mirror configuration (e.g. required when using company internal registry -->
+        <p2.username /> <!-- must be empty, override via Maven settings.xml if needed -->
+        <p2.password /> <!-- must be empty, override via Maven settings.xml if needed -->
+        <p2.mirror>download.eclipse.org</p2.mirror>
     </properties>
 
 
@@ -127,39 +150,11 @@
             <artifactId>spring-security-oauth2-jose</artifactId>
         </dependency>
 
-        <!-- json etc. -->
-        <dependency>
-            <groupId>org.springframework.hateoas</groupId>
-            <artifactId>spring-hateoas</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-        </dependency>
-
         <!-- Database -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
-        <!-- Hibernate Model Gen for type safe criterias -->
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-        </dependency>
-        <!-- Database migrations -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
@@ -189,15 +184,15 @@
             <artifactId>spotbugs-annotations</artifactId>
             <version>${spotbugs-annotations.version}</version>
         </dependency>
-
-        <!-- Validation -->
         <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
+            <groupId>com.github.therapi</groupId>
+            <artifactId>therapi-runtime-javadoc</artifactId>
+            <version>${therapi-runtime-javadoc.version}</version>
         </dependency>
 
         <!-- Testing -->
@@ -205,12 +200,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.vaadin.external.google</groupId>
-                    <artifactId>android-json</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -232,16 +221,6 @@
             <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <!-- Logging -->
         <dependency>
@@ -253,22 +232,11 @@
             <artifactId>micrometer-tracing-bridge-brave</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-            <version>${logstash-logback-encoder.version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
-        <!-- Spring developer tools -->
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-rest-hal-explorer</artifactId>
-        </dependency>
-
-        <!-- apache commons -->
+        <!-- Apache Commons -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
@@ -276,28 +244,13 @@
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <version>${commons-csv.version}</version>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-text</artifactId>
-            <version>${commons-text.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-validator</groupId>
-            <artifactId>commons-validator</artifactId>
-            <version>${commons-validator.version}</version>
         </dependency>
 
         <!-- Configuration Processor -->
@@ -323,13 +276,12 @@
             <artifactId>guava</artifactId>
             <version>33.5.0-jre</version>
         </dependency>
-    </dependencies>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
 
-    <scm>
-        <connection>scm:git:https://github.com/it-at-m/captchaservice.git</connection>
-        <developerConnection>scm:git:https://github.com/it-at-m/captchaservice.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
+    </dependencies>
 
     <build>
         <plugins>
@@ -345,6 +297,10 @@
                     <target>${java.version}</target>
                     <annotationProcessorPaths>
                         <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                        </path>
+                        <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
@@ -359,12 +315,48 @@
                             <artifactId>lombok-mapstruct-binding</artifactId>
                             <version>${lombok-mapstruct-binding.version}</version>
                         </path>
+                        <path>
+                            <groupId>com.github.therapi</groupId>
+                            <artifactId>therapi-runtime-javadoc-scribe</artifactId>
+                            <version>${therapi-runtime-javadoc.version}</version>
+                        </path>
                     </annotationProcessorPaths>
-                    <compilerArgs>
-                        <compilerArg>
-                            -Amapstruct.defaultComponentModel=spring
-                        </compilerArg>
-                    </compilerArgs>
+                    <showDeprecation>true</showDeprecation>
+                    <failOnWarning>false</failOnWarning>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <configuration>
+                            <compilerArgs>
+                                <compilerArg>
+                                    -Amapstruct.defaultComponentModel=spring
+                                </compilerArg>
+                            </compilerArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.cyclonedx</groupId>
+                <artifactId>cyclonedx-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <skipNotDeployed>false</skipNotDeployed>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Spring needs to be running to be able to use this plugin! -->
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                <version>${springdoc-openapi-maven-plugin.version}</version>
+                <configuration>
+                    <apiDocsUrl>http://localhost:39146/v3/api-docs</apiDocsUrl>
+                    <outputFileName>${project.name}.yaml</outputFileName>
+                    <failOnError>true</failOnError>
                 </configuration>
             </plugin>
 
@@ -373,7 +365,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>@{argLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                    <argLine>
+                        @{argLine} -Dfile.encoding=${project.build.sourceEncoding}
+                        -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+                        -Xshare:off
+                    </argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -404,7 +400,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Codeformatter Spotless -->
+            <!-- Linting -->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
@@ -424,10 +420,23 @@
                         </includes>
                         <eclipse>
                             <file>itm-java-codeformat/java_codestyle_formatter.xml</file>
+                            <p2Mirrors>
+                                <p2Mirror>
+                                    <prefix>https://download.eclipse.org</prefix>
+                                    <url>https://${p2.username}:${p2.password}@${p2.mirror}</url>
+                                </p2Mirror>
+                            </p2Mirrors>
                         </eclipse>
                         <trimTrailingWhitespace />
                         <endWithNewline />
+                        <importOrder />
+                        <removeUnusedImports />
+                        <forbidWildcardImports />
+                        <formatAnnotations />
                     </java>
+                    <lintSuppressions>
+                        <!-- Add your own Spotless suppressions, see https://github.com/diffplug/spotless/tree/main/plugin-maven#suppressing-lint-errors -->
+                    </lintSuppressions>
                 </configuration>
                 <executions>
                     <execution>
@@ -450,6 +459,7 @@
                     <excludeRoots>
                         <excludeRoot>target/generated-sources</excludeRoot>
                         <excludeRoot>target/generated-test-sources</excludeRoot>
+                        <excludeRoot>${project.build.testSourceDirectory}</excludeRoot>
                     </excludeRoots>
                     <rulesets>
                         <ruleset>refarch-pmd-ruleset.xml</ruleset>
@@ -465,7 +475,7 @@
 <!--                </executions>-->
                 <dependencies>
                     <dependency>
-                        <groupId>de.muenchen.refarch.tools</groupId>
+                        <groupId>de.muenchen.captchaservice.tools</groupId>
                         <artifactId>refarch-pmd</artifactId>
                         <version>${refarch-tools.version}</version>
                     </dependency>
@@ -496,14 +506,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- Flyway Maven plugin for local database management
-                     Usage:
-                     - Clean database: mvn flyway:clean
-                     - Apply migrations: mvn flyway:migrate
-                     - Reset and migrate: mvn flyway:clean flyway:migrate
-
-                     Note: Use -Dflyway.cleanDisabled=false when running clean command
-                -->
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
             </plugin>

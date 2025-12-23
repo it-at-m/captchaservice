@@ -1,7 +1,7 @@
-package de.muenchen.captchaservice.configuration.nfcconverter;
+package de.muenchen.captchaservice.configuration.filter.nfcconverter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import jakarta.servlet.http.Cookie;
 import java.util.Arrays;
