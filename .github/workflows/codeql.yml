@@ -8,7 +8,7 @@ env:
   # Temurin JDK version to use for autobuild (only when java-buildmode is set to autobuild)
   java-version: 21
   # Whether to analyze JavaScript/TypeScript/Vue code or not (only set to true if repo has Javascript/Typescript/Vue source code)
-  analyze-javascript-typescript-vue: true
+  analyze-javascript-typescript-vue: false
   # Whether to analyze Python code or not (only set to true if repo has Python source code)
   analyze-python: false
   # Query set to use when analyzing the source code (e.g. default, security-extended, security-and-quality)
