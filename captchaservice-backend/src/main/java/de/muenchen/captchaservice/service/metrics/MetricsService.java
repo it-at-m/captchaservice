@@ -4,15 +4,13 @@ import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
 import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
 import de.muenchen.captchaservice.service.difficulty.DifficultyService;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import java.time.Instant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
 
 @Service
 @Slf4j
@@ -30,7 +28,6 @@ public class MetricsService {
     private final InvalidatedPayloadRepository invalidatedPayloadRepository;
     private final CaptchaRequestRepository captchaRequestRepository;
 
-    @SuppressFBWarnings(value = { "EI_EXPOSE_REP2" }, justification = "Dependency Injection")
     public MetricsService(MeterRegistry meterRegistry, DifficultyService difficultyService,
             InvalidatedPayloadRepository invalidatedPayloadRepository, CaptchaRequestRepository captchaRequestRepository) {
         this.meterRegistry = meterRegistry;

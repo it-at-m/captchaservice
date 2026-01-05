@@ -1,5 +1,9 @@
 package de.muenchen.captchaservice.service.difficulty;
 
+import static de.muenchen.captchaservice.TestConstants.SPRING_NO_SECURITY_PROFILE;
+import static de.muenchen.captchaservice.TestConstants.SPRING_TEST_PROFILE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.muenchen.captchaservice.TestConstants;
 import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.util.DatabaseTestUtil;
@@ -12,10 +16,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.DockerImageName;
-
-import static de.muenchen.captchaservice.TestConstants.SPRING_NO_SECURITY_PROFILE;
-import static de.muenchen.captchaservice.TestConstants.SPRING_TEST_PROFILE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles(profiles = { SPRING_TEST_PROFILE, SPRING_NO_SECURITY_PROFILE })
