@@ -475,7 +475,7 @@
 <!--                </executions>-->
                 <dependencies>
                     <dependency>
-                        <groupId>de.muenchen.captchaservice.tools</groupId>
+                        <groupId>de.muenchen.refarch.tools</groupId>
                         <artifactId>refarch-pmd</artifactId>
                         <version>${refarch-tools.version}</version>
                     </dependency>
