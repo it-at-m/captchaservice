@@ -6,12 +6,12 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.9</version>
-        <relativePath/>
+        <relativePath />
     </parent>
 
     <groupId>de.muenchen.captchaservice</groupId>
     <artifactId>captchaservice-backend</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.4.0</version>
     
     <name>captchaservice-backend</name>
     <description>A Spring Boot microservice that provides proof-of-work CAPTCHA challenges using the ALTCHA library.</description>
@@ -27,7 +27,7 @@
         <url>https://github.com/it-at-m/captchaservice.git</url>
         <connection>scm:git:https://github.com/it-at-m/captchaservice.git</connection>
         <developerConnection>scm:git:https://github.com/it-at-m/captchaservice.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>captchaservice-backend-1.4.0</tag>
     </scm>
     <developers>
         <developer>
