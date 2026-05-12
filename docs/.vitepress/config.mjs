@@ -41,14 +41,14 @@ const navLabels = {
   en: {
     overview: "Overview",
     releases: "Releases",
-    altcha: "ALTCHA",
     openSource: "Open Source",
+    altcha: "ALTCHA",
   },
   de: {
     overview: "Übersicht",
     releases: "Releases",
-    altcha: "ALTCHA",
     openSource: "Open Source",
+    altcha: "ALTCHA",
   },
 };
 
