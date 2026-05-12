@@ -1,22 +1,29 @@
 {
-  "name": "refarch-templates-docs",
-  "version": "0.0.0",
-  "type": "module",
+  "name": "captchaservice-docs",
   "private": true,
+  "type": "module",
   "engines": {
     "node": ">=22.19 <=22"
   },
   "scripts": {
-    "dev": "vitepress dev",
-    "build": "vitepress build",
-    "lint": "prettier . --check && markdownlint .",
-    "fix": "prettier . --write && markdownlint -f ."
+    "docs:dev": "vitepress dev .",
+    "docs:build": "vitepress build .",
+    "docs:preview": "vitepress preview .",
+    "dev": "vitepress dev .",
+    "build": "vitepress build .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "prettier --check ."
   },
   "devDependencies": {
-    "@muenchen/prettier-codeformat": "1.0.2",
-    "markdownlint-cli": "0.48.0",
-    "mermaid": "11.14.0",
-    "vitepress": "1.6.4",
-    "vitepress-plugin-mermaid": "2.0.17"
+    "@muenchen/prettier-codeformat": "^1.0.2",
+    "markdown-it": "^14.1.0",
+    "mermaid": "^11.15.0",
+    "prettier": "^3.5.3",
+    "vitepress": "^1.6.3"
+  },
+  "overrides": {
+    "vite": "^6.4.2",
+    "uuid": "^11.1.1"
   }
 }

@@ -1,5 +1,13 @@
 <template>
   <Layout>
+    <template #nav-bar-title-after>
+      <LatestReleaseTag variant="title" />
+    </template>
+    <template #nav-screen-content-after>
+      <div class="latest-release-screen-slot">
+        <LatestReleaseTag variant="menu" />
+      </div>
+    </template>
     <template #nav-bar-content-after>
       <div class="logo">
         <a
@@ -8,16 +16,20 @@
         >
           <img
             src="https://assets.muenchen.de/logos/lhm/logo-lhm-muenchen.svg"
-            alt="Logo Landeshauptstadt München"
+            alt="Logo Landeshauptstadt Muenchen"
           />
         </a>
       </div>
     </template>
   </Layout>
+  <MermaidRenderer />
 </template>
 
 <script setup>
 import DefaultTheme from "vitepress/theme";
+
+import LatestReleaseTag from "./LatestReleaseTag.vue";
+import MermaidRenderer from "./MermaidRenderer.vue";
 
 const { Layout } = DefaultTheme;
 </script>
@@ -37,6 +49,7 @@ const { Layout } = DefaultTheme;
     content: "";
   }
 }
+
 .logo img {
   filter: var(--muc-logo-filter);
   height: 28px;

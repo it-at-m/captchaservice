@@ -1,12 +1,15 @@
-import type { Theme } from "vitepress";
-
 import DefaultTheme from "vitepress/theme";
 
 import LhmThemeExtension from "./LhmThemeExtension.vue";
 
 import "./style.css";
 
-export default <Theme>{
+export default {
   ...DefaultTheme,
   Layout: LhmThemeExtension,
+  enhanceApp(ctx) {
+    if (typeof DefaultTheme.enhanceApp === "function") {
+      DefaultTheme.enhanceApp(ctx);
+    }
+  },
 };
