@@ -57,11 +57,11 @@ const buildNav = (prefix, lang) => {
   return [
     { text: t.overview, link: `${prefix}/` },
     { text: t.releases, link: `${GH_REPO}/releases` },
-    { text: t.altcha, link: "https://altcha.org/" },
     {
       text: t.openSource,
       link: "https://opensource.muenchen.de/",
     },
+    { text: t.altcha, link: "https://altcha.org/" },
   ];
 };
 
