@@ -94,9 +94,8 @@ public class UserInfoAuthoritiesConverter implements Converter<Jwt, Collection<G
                     Map.class).getBody();
 
             log.debug("Response from user-info Endpoint: {}", LogSanitizer.sanitizeObject(map));
-            if (map != null && map.containsKey(CLAIM_AUTHORITIES)) {
-                authorities = asAuthorities(map.get(CLAIM_AUTHORITIES));
-            }
+            final Object authoritiesClaim = map != null ? map.get(CLAIM_AUTHORITIES) : null;
+            authorities = asAuthorities(authoritiesClaim);
             log.debug("Resolved Authorities (from /userinfo Endpoint): {}", LogSanitizer.sanitizeObject(authorities));
             // store
             this.cache.put(jwt.getSubject(), authorities);
@@ -109,6 +108,9 @@ public class UserInfoAuthoritiesConverter implements Converter<Jwt, Collection<G
 
     private static Collection<GrantedAuthority> asAuthorities(final Object object) {
         final List<GrantedAuthority> authorities = new ArrayList<>();
+        if (object == null) {
+            return authorities;
+        }
         Object authoritiesObject = object;
         if (authoritiesObject instanceof Collection<?> collection) {
             authoritiesObject = collection.toArray(new Object[0]);
