@@ -2,6 +2,7 @@ package de.muenchen.captchaservice.configuration.security;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Ticker;
+import de.muenchen.captchaservice.util.LogSanitizer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,8 +24,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
-
-import de.muenchen.captchaservice.util.LogSanitizer;
 
 /**
  * Service that calls an OIDC /userinfo endpoint (with JWT Bearer Auth) and extracts the
