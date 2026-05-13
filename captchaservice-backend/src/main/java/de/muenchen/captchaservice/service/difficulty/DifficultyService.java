@@ -6,6 +6,7 @@ import de.muenchen.captchaservice.configuration.captcha.DifficultyItem;
 import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.entity.CaptchaRequest;
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
+import de.muenchen.captchaservice.util.LogSanitizer;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
@@ -46,6 +47,7 @@ public class DifficultyService {
             throw new IllegalArgumentException("siteKey not found");
         }
         final String sourceAddressHash = sourceAddress.getHash();
+        final String siteKeyForLog = LogSanitizer.sanitize(siteKey);
         final long sourceVisitCount = captchaRequestRepository.countBySourceAddressHashIgnoreCaseAndExpiresAtGreaterThanEqual(sourceAddressHash,
                 Instant.now());
         final Optional<DifficultyItem> difficultyItem = captchaSite
@@ -55,11 +57,11 @@ public class DifficultyService {
                 .filter(di -> di.minVisits() - 1 <= sourceVisitCount)
                 .findFirst();
         if (difficultyItem.isEmpty()) {
-            log.error("No difficulty found site {} with {} visits", siteKey, sourceVisitCount);
+            log.error("No difficulty found site {} with {} visits", siteKeyForLog, sourceVisitCount);
             return 1_000_000L;
         }
         final long maxNumber = difficultyItem.get().maxNumber();
-        log.debug("Difficulty {} for {} in {} after {} visits", maxNumber, sourceAddressHash, siteKey, sourceVisitCount);
+        log.debug("Difficulty {} for {} in {} after {} visits", maxNumber, sourceAddressHash, siteKeyForLog, sourceVisitCount);
         return maxNumber;
     }
 

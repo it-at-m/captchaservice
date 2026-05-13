@@ -1,5 +1,6 @@
 package de.muenchen.captchaservice.configuration.filter.nfcconverter;
 
+import de.muenchen.captchaservice.util.LogSanitizer;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import edu.umd.cs.findbugs.annotations.SuppressMatchType;
 import jakarta.servlet.http.Cookie;
@@ -38,10 +39,10 @@ public class NfcHelper {
             return null;
         }
 
-        log.debug("String BEFORE nfc conversion: \"{}\".", in);
+        log.debug("String BEFORE nfc conversion: \"{}\".", LogSanitizer.sanitize(in));
         log.debug("Length of String BEFORE nfc conversion: {}.", in.length());
         final String nfcConvertedContent = Normalizer.normalize(in, Normalizer.Form.NFC);
-        log.debug("String AFTER nfc conversion: \"{}\".", nfcConvertedContent);
+        log.debug("String AFTER nfc conversion: \"{}\".", LogSanitizer.sanitize(nfcConvertedContent));
         log.debug("Length of String AFTER nfc conversion: {}.", nfcConvertedContent.length());
         return nfcConvertedContent;
     }

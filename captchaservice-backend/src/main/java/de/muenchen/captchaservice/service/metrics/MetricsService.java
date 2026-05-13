@@ -4,6 +4,7 @@ import de.muenchen.captchaservice.data.SourceAddress;
 import de.muenchen.captchaservice.repository.CaptchaRequestRepository;
 import de.muenchen.captchaservice.repository.InvalidatedPayloadRepository;
 import de.muenchen.captchaservice.service.difficulty.DifficultyService;
+import de.muenchen.captchaservice.util.LogSanitizer;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Gauge;
@@ -54,7 +55,7 @@ public class MetricsService {
 
     public void recordClientSolveTime(String siteKey, SourceAddress sourceAddress, Long solveTime) {
         if (solveTime == null || solveTime < 0) {
-            log.warn("Invalid solve time value: {} for site: {}", solveTime, sanitizeForLog(siteKey));
+            log.warn("Invalid solve time value: {} for site: {}", solveTime, LogSanitizer.sanitize(siteKey));
             return;
         }
 
@@ -84,11 +85,4 @@ public class MetricsService {
                 .register(meterRegistry);
     }
 
-    /**
-     * Sanitizes user input for logging to prevent log injection.
-     */
-    private static String sanitizeForLog(String input) {
-        if (input == null) return null;
-        return input.replaceAll("[^A-Za-z0-9_-]", "_");
-    }
 }

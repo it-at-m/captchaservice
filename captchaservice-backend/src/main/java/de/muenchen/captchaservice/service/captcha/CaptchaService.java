@@ -72,7 +72,13 @@ public class CaptchaService {
             return isValid;
         } catch (Exception e) {
             metricsService.recordCaptchaEvent(siteKey, sourceAddress, CaptchaEventType.VERIFY_ERROR);
-            log.warn("Error verifying captcha payload: {}", payload, e);
+            String payloadHash = "unavailable";
+            try {
+                payloadHash = getPayloadHash(payload);
+            } catch (Exception ignored) {
+                // Keep default when hash cannot be computed.
+            }
+            log.warn("Error verifying captcha payload. payloadHash={}", payloadHash, e);
         }
         return false;
     }
