@@ -24,6 +24,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
+import de.muenchen.captchaservice.util.LogSanitizer;
+
 /**
  * Service that calls an OIDC /userinfo endpoint (with JWT Bearer Auth) and extracts the
  * "Authorities" contained there.
@@ -75,11 +77,11 @@ public class UserInfoAuthoritiesConverter implements Converter<Jwt, Collection<G
             // value present in cache
             @SuppressWarnings("unchecked")
             final Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) valueWrapper.get();
-            log.debug("Resolved authorities (from cache): {}", authorities);
+            log.debug("Resolved authorities (from cache): {}", LogSanitizer.sanitizeObject(authorities));
             return authorities;
         }
 
-        log.debug("Fetching user-info for token subject: {}", jwt.getSubject());
+        log.debug("Fetching user-info for token subject: {}", LogSanitizer.sanitize(jwt.getSubject()));
         @SuppressWarnings("PMD.LooseCoupling")
         final HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + jwt.getTokenValue());
@@ -91,11 +93,11 @@ public class UserInfoAuthoritiesConverter implements Converter<Jwt, Collection<G
             final Map<String, Object> map = restTemplate.exchange(this.userInfoUri, HttpMethod.GET, entity,
                     Map.class).getBody();
 
-            log.debug("Response from user-info Endpoint: {}", map);
+            log.debug("Response from user-info Endpoint: {}", LogSanitizer.sanitizeObject(map));
             if (map != null && map.containsKey(CLAIM_AUTHORITIES)) {
                 authorities = asAuthorities(map.get(CLAIM_AUTHORITIES));
             }
-            log.debug("Resolved Authorities (from /userinfo Endpoint): {}", authorities);
+            log.debug("Resolved Authorities (from /userinfo Endpoint): {}", LogSanitizer.sanitizeObject(authorities));
             // store
             this.cache.put(jwt.getSubject(), authorities);
         } catch (Exception e) {

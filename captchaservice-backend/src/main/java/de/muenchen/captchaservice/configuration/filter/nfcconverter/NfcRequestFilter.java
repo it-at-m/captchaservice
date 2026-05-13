@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import de.muenchen.captchaservice.util.LogSanitizer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,15 +48,17 @@ public class NfcRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         log.debug("Request-Type={}", request.getClass().getName());
-        log.debug("Intercepting request for URI {}", request.getRequestURI());
+        final String sanitizedRequestUri = LogSanitizer.sanitize(request.getRequestURI());
+        log.debug("Intercepting request for URI {}", sanitizedRequestUri);
 
         final String contentType = request.getContentType();
-        log.debug("ContentType for request with URI: \"{}\"", contentType);
+        final String sanitizedContentType = LogSanitizer.sanitize(contentType);
+        log.debug("ContentType for request with URI: \"{}\"", sanitizedContentType);
         if (contentType != null && CONTENT_TYPES.stream().anyMatch(contentType::startsWith)) {
-            log.debug("Processing request {}.", request.getRequestURI());
+            log.debug("Processing request {}.", sanitizedRequestUri);
             filterChain.doFilter(new NfcRequest(request), response);
         } else {
-            log.debug("Skip processing of HTTP request since it's content type \"{}\" is not in whitelist.", contentType);
+            log.debug("Skip processing of HTTP request since it's content type \"{}\" is not in whitelist.", sanitizedContentType);
             filterChain.doFilter(request, response);
         }
     }
