@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
-import lombok.EqualsAndHashCode;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +27,6 @@ import org.hibernate.annotations.CreationTimestamp;
 @Getter
 @Setter
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class CaptchaRequest extends BaseEntity {
 
@@ -52,6 +51,23 @@ public class CaptchaRequest extends BaseEntity {
         this.sourceAddressHash = sourceAddressHash;
         this.isWhitelisted = isWhitelisted;
         this.expiresAt = expiresAt;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        CaptchaRequest other = (CaptchaRequest) obj;
+        return Objects.equals(getId(), other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 
 }
