@@ -8,7 +8,6 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
-import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -62,12 +61,12 @@ public class CaptchaRequest extends BaseEntity {
             return false;
         }
         CaptchaRequest other = (CaptchaRequest) obj;
-        return Objects.equals(getId(), other.getId());
+        return getId() != null && getId().equals(other.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return getId() != null ? getId().hashCode() : System.identityHashCode(this);
     }
 
 }

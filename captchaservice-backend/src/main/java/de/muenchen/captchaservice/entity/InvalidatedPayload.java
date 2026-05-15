@@ -8,7 +8,6 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,7 +40,7 @@ public class InvalidatedPayload extends BaseEntity {
 
     @NotNull private Instant expiresAt;
 
-    `@Override`
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -52,11 +51,10 @@ public class InvalidatedPayload extends BaseEntity {
         InvalidatedPayload other = (InvalidatedPayload) obj;
         return getId() != null && getId().equals(other.getId());
     }
-    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return getId() != null ? getId().hashCode() : System.identityHashCode(this);
     }
 
 }
