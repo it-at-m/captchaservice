@@ -41,7 +41,7 @@ public class InvalidatedPayload extends BaseEntity {
 
     @NotNull private Instant expiresAt;
 
-    @Override
+    `@Override`
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -50,7 +50,8 @@ public class InvalidatedPayload extends BaseEntity {
             return false;
         }
         InvalidatedPayload other = (InvalidatedPayload) obj;
-        return Objects.equals(getId(), other.getId());
+        return getId() != null && getId().equals(other.getId());
+    }
     }
 
     @Override
