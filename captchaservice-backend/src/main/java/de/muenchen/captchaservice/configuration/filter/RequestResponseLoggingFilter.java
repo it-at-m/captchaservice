@@ -63,7 +63,7 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
         if (checkForLogging(request)) {
             log.info("User {} executed {} on URI {} with http status {}",
                     LogSanitizer.sanitize(AuthUtils.getUsername()),
-                    request.getMethod(),
+                    LogSanitizer.sanitize(request.getMethod()),
                     LogSanitizer.sanitize(request.getRequestURI()),
                     response.getStatus());
         }
