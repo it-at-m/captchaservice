@@ -52,21 +52,4 @@ public class CaptchaRequest extends BaseEntity {
         this.expiresAt = expiresAt;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        CaptchaRequest other = (CaptchaRequest) obj;
-        return getId() != null && getId().equals(other.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getId() != null ? getId().hashCode() : System.identityHashCode(this);
-    }
-
 }

@@ -40,21 +40,4 @@ public class InvalidatedPayload extends BaseEntity {
 
     @NotNull private Instant expiresAt;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        InvalidatedPayload other = (InvalidatedPayload) obj;
-        return getId() != null && getId().equals(other.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getId() != null ? getId().hashCode() : System.identityHashCode(this);
-    }
-
 }
