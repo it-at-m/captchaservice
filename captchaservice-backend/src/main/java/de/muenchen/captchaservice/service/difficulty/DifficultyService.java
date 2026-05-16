@@ -38,9 +38,9 @@ public class DifficultyService {
         log.debug("Registered request for source address with hash {}", sourceAddressHash);
     }
 
-    public long getDifficultyForSourceAddress(final String siteKey, final SourceAddress sourceAddress) {
+    public int getDifficultyForSourceAddress(final String siteKey, final SourceAddress sourceAddress) {
         if (isSourceAddressWhitelisted(siteKey, sourceAddress)) {
-            return 1L;
+            return 1;
         }
         final CaptchaSite captchaSite = captchaProperties.sites().get(siteKey);
         if (captchaSite == null) {
@@ -58,11 +58,11 @@ public class DifficultyService {
                 .findFirst();
         if (difficultyItem.isEmpty()) {
             log.error("No difficulty found site {} with {} visits", siteKeyForLog, sourceVisitCount);
-            return 1_000_000L;
+            return 1_000_000;
         }
-        final long maxNumber = difficultyItem.get().maxNumber();
-        log.debug("Difficulty {} for {} in {} after {} visits", maxNumber, sourceAddressHash, siteKeyForLog, sourceVisitCount);
-        return maxNumber;
+        final int difficulty = difficultyItem.get().cost();
+        log.debug("Difficulty {} for {} in {} after {} visits", difficulty, sourceAddressHash, siteKeyForLog, sourceVisitCount);
+        return difficulty;
     }
 
     public boolean isSourceAddressWhitelisted(final String siteKey, final SourceAddress sourceAddress) {

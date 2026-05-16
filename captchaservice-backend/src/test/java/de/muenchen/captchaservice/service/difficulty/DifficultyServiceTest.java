@@ -41,7 +41,7 @@ class DifficultyServiceTest {
     void testDifficultyIncrease() {
         databaseTestUtil.clearDatabase();
         final SourceAddress sourceAddress = new SourceAddress("1.2.3.4");
-        long difficulty;
+        int difficulty;
         // --
         difficultyService.registerRequest("test_site", sourceAddress);
         difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);
@@ -67,7 +67,7 @@ class DifficultyServiceTest {
     void testDifficultyIncreaseWithWhitelistedSourceAddress() {
         databaseTestUtil.clearDatabase();
         final SourceAddress sourceAddress = new SourceAddress("10.1.2.3");
-        long difficulty;
+        int difficulty;
         // --
         difficultyService.registerRequest("test_site", sourceAddress);
         difficulty = difficultyService.getDifficultyForSourceAddress(TEST_SITE_KEY, sourceAddress);

@@ -38,7 +38,7 @@ public class MetricsService {
     }
 
     public void recordCaptchaEvent(String siteKey, SourceAddress sourceAddress, CaptchaEventType eventType) {
-        final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
+        final int difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
         final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
         long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
@@ -59,7 +59,7 @@ public class MetricsService {
             return;
         }
 
-        final long difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
+        final int difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
         final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
         long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
