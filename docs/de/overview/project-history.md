@@ -16,7 +16,7 @@ Eine quelloffene, europäische Bibliothek zu wählen, ist für uns kein Zufall: 
 
 ## Was wird geschützt
 
-Im eAppointment-/ZMS-Stack sitzt CaptchaService heute vor den Endpunkten zur Slot-Suche von `zmscitizenapi`. Eine Challenge wird angefordert, sobald die Bürgerin oder der Bürger die Buchung in `zmscitizenview` öffnet; den verifizierten Payload verlangt `zmscitizenapi` dann, bevor eine Reservierung oder ein Scraping-ähnlicher Lesezugriff zugelassen wird.
+Im eAppointment-/ZMS-Stack sitzt CaptchaService heute vor den Endpunkten zur Slot-Suche von `zmscitizenapi`. Eine Challenge wird angefordert, sobald die Bürgerin oder der Bürger die Buchung in `zmscitizenview` öffnet; die verifizierte Payload verlangt `zmscitizenapi` dann, bevor eine Reservierung oder ein Scraping-ähnlicher Lesezugriff zugelassen wird.
 
 Das Netto-Ergebnis:
 
