@@ -10,6 +10,7 @@ import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Instant;
+import java.util.Locale;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -29,31 +30,31 @@ public class MetricsService {
     private final InvalidatedPayloadRepository invalidatedPayloadRepository;
     private final CaptchaRequestRepository captchaRequestRepository;
 
-    public MetricsService(MeterRegistry meterRegistry, DifficultyService difficultyService,
-            InvalidatedPayloadRepository invalidatedPayloadRepository, CaptchaRequestRepository captchaRequestRepository) {
+    public MetricsService(final MeterRegistry meterRegistry, final DifficultyService difficultyService,
+            final InvalidatedPayloadRepository invalidatedPayloadRepository, final CaptchaRequestRepository captchaRequestRepository) {
         this.meterRegistry = meterRegistry;
         this.difficultyService = difficultyService;
         this.invalidatedPayloadRepository = invalidatedPayloadRepository;
         this.captchaRequestRepository = captchaRequestRepository;
     }
 
-    public void recordCaptchaEvent(String siteKey, SourceAddress sourceAddress, CaptchaEventType eventType) {
+    public void recordCaptchaEvent(final String siteKey, final SourceAddress sourceAddress, final CaptchaEventType eventType) {
         final int difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
         final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
-        long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
+        final long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
         Counter.builder("captcha.events")
                 .tag("site_key", siteKey)
                 .tag("difficulty", String.valueOf(difficulty))
                 .tag("same_source_address_request_count", String.valueOf(sameSourceAddressRequestCount))
                 .tag("is_whitelisted", String.valueOf(isWhitelisted))
-                .tag("event_type", eventType.name().toLowerCase())
+                .tag("event_type", eventType.name().toLowerCase(Locale.ROOT))
                 .description("All captcha events: challenge requests and verification attempts")
                 .register(meterRegistry)
                 .increment();
     }
 
-    public void recordClientSolveTime(String siteKey, SourceAddress sourceAddress, Long solveTime) {
+    public void recordClientSolveTime(final String siteKey, final SourceAddress sourceAddress, final Long solveTime) {
         if (solveTime == null || solveTime < 0) {
             log.warn("Invalid solve time value: {} for site: {}", solveTime, LogSanitizer.sanitize(siteKey));
             return;
@@ -61,7 +62,7 @@ public class MetricsService {
 
         final int difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
         final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
-        long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
+        final long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
         DistributionSummary.builder("captcha.client.solve.time")
                 .tag("site_key", siteKey)
@@ -74,7 +75,7 @@ public class MetricsService {
                 .record(solveTime);
     }
 
-    private long getSameSourceAddressRequestCount(SourceAddress sourceAddress) {
+    private long getSameSourceAddressRequestCount(final SourceAddress sourceAddress) {
         return captchaRequestRepository.countBySourceAddressHashIgnoreCaseAndExpiresAtGreaterThanEqual(sourceAddress.getHash(), Instant.now());
     }
 

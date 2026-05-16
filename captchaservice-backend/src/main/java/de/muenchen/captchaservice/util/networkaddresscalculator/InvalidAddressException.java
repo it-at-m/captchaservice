@@ -8,7 +8,7 @@ public class InvalidAddressException extends RuntimeException {
     @Getter
     private final String address;
 
-    public InvalidAddressException(String message, String address, Exception cause) {
+    public InvalidAddressException(final String message, final String address, final Exception cause) {
         super(message, cause);
         this.address = address;
     }

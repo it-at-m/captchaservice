@@ -24,7 +24,7 @@ public class CaptchaService {
     private final MetricsService metricsService;
 
     public CaptchaService(final CaptchaProperties captchaProperties, final DifficultyService difficultyService,
-            final InvalidatedPayloadRepository invalidatedPayloadRepository, MetricsService metricsService) {
+            final InvalidatedPayloadRepository invalidatedPayloadRepository, final MetricsService metricsService) {
         this.captchaProperties = captchaProperties;
         this.invalidatedPayloadRepository = invalidatedPayloadRepository;
         this.difficultyService = difficultyService;
@@ -37,7 +37,7 @@ public class CaptchaService {
         final int difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
         difficultyService.registerRequest(siteKey, sourceAddress);
         metricsService.recordCaptchaEvent(siteKey, sourceAddress, CaptchaEventType.CHALLENGE_REQUEST);
-        final var options = new Altcha.CreateChallengeOptions()
+        final Altcha.CreateChallengeOptions options = new Altcha.CreateChallengeOptions()
                 .algorithm("SHA-256")
                 .hmacSignatureSecret(captchaProperties.hmacKey())
                 .cost(difficulty)

@@ -8,7 +8,7 @@ public class InvalidNetSizeException extends RuntimeException {
     @Getter
     private final int netSize;
 
-    public InvalidNetSizeException(String message, int netSize) {
+    public InvalidNetSizeException(final String message, final int netSize) {
         super(message);
         this.netSize = netSize;
     }

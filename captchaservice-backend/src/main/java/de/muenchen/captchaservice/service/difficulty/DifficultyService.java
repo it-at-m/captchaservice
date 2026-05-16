@@ -67,9 +67,11 @@ public class DifficultyService {
 
     public boolean isSourceAddressWhitelisted(final String siteKey, final SourceAddress sourceAddress) {
         final CaptchaSite captchaSite = captchaProperties.sites().get(siteKey);
-        for (String subnet : captchaSite.whitelistedSourceAddresses()) {
-            IpAddressMatcher matcher = matcherCache.computeIfAbsent(subnet, IpAddressMatcher::new);
-            if (matcher.matches(sourceAddress.getSourceAddress())) return true;
+        for (final String subnet : captchaSite.whitelistedSourceAddresses()) {
+            final IpAddressMatcher matcher = matcherCache.computeIfAbsent(subnet, IpAddressMatcher::new);
+            if (matcher.matches(sourceAddress.getAddress())) {
+                return true;
+            }
         }
         return false;
     }
