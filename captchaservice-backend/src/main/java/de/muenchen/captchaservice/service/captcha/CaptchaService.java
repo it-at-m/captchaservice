@@ -97,9 +97,6 @@ public class CaptchaService {
     }
 
     private static String getPayloadHash(final Altcha.Payload payload) {
-        return DigestUtils.sha256Hex(
-                payload.challenge().signature()
-                        + ":"
-                        + payload.solution().counter());
+        return DigestUtils.sha256Hex(payload.challenge().signature());
     }
 }
