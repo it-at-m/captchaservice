@@ -8,6 +8,7 @@ import jakarta.persistence.MappedSuperclass;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 public abstract class BaseEntity implements Serializable {
 
     @Serial
@@ -27,22 +29,5 @@ public abstract class BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        BaseEntity other = (BaseEntity) obj;
-        return id != null && id.equals(other.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : System.identityHashCode(this);
-    }
 
 }
