@@ -18,19 +18,19 @@ jobs:
           - app-path: captchaservice-backend
 
     steps:
-      - uses: it-at-m/lhm_actions/action-templates/actions/action-checkout@acb09213786b76dd7aa52ec1d901390d28c60eb0 # v1.0.29
+      - uses: it-at-m/lhm_actions/action-templates/actions/action-checkout@1a673d9c3be4a4f59cf29f425bc2b00fc42751fd # v1.0.32
       - if: ${{ hashFiles(format('./{0}/package.json', matrix.app-path))!=null }}
         id: node
-        uses: it-at-m/lhm_actions/action-templates/actions/action-npm-build@acb09213786b76dd7aa52ec1d901390d28c60eb0 # v1.0.29
+        uses: it-at-m/lhm_actions/action-templates/actions/action-npm-build@1a673d9c3be4a4f59cf29f425bc2b00fc42751fd # v1.0.32
         with:
           app-path: ${{ matrix.app-path }}
       - if: ${{ hashFiles(format('./{0}/pom.xml', matrix.app-path))!=null }}
         id: maven
-        uses: it-at-m/lhm_actions/action-templates/actions/action-maven-build@acb09213786b76dd7aa52ec1d901390d28c60eb0 # v1.0.29
+        uses: it-at-m/lhm_actions/action-templates/actions/action-maven-build@1a673d9c3be4a4f59cf29f425bc2b00fc42751fd # v1.0.32
         with:
           app-path: ${{ matrix.app-path }}
       - if: github.ref == 'refs/heads/main'
-        uses: it-at-m/lhm_actions/action-templates/actions/action-build-image@acb09213786b76dd7aa52ec1d901390d28c60eb0 # v1.0.29
+        uses: it-at-m/lhm_actions/action-templates/actions/action-build-image@1a673d9c3be4a4f59cf29f425bc2b00fc42751fd # v1.0.32
         with:
           path: ${{ matrix.app-path }}
           image-name: ${{ matrix.app-path }}
