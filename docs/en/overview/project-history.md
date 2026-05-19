@@ -7,7 +7,7 @@
 Over the years the team went through several iterations to keep automated scrapers and booking bots away from those endpoints:
 
 1. **A simple, self-developed CAPTCHA** — the first line of defense. Easy to operate, but the bot landscape kept moving and the in-house solution had to be hardened repeatedly.
-2. **Commercial, proprietary CAPTCHA services** — these worked well in production, but as closed-source, externally hosted offerings they were ultimately not the best fit for our public-sector workload.
+2. **Commercial, proprietary CAPTCHA services** — worked well in production, but as closed-source offerings with external, GDPR-compliant EU hosting for a public administration they were ultimately not the best fit.
 3. **[ALTCHA](https://altcha.org/)** — once a comparable, fully open-source proof-of-work library was found, we made the switch. ALTCHA is GDPR-compliant by design — no cookies, no tracking, no third-party calls —, produces the same kind of near-invisible client-side challenge, and is [made in Europe](https://altcha.org/). The code, the protocol, and the server can all be operated in-house under MIT.
 
 CaptchaService is the small, multi-tenant Spring Boot service that now wraps ALTCHA and gives every Munich application a single CAPTCHA endpoint to call.
