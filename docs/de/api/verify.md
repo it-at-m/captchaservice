@@ -65,7 +65,7 @@ Die Verifikation schlägt fehl (und liefert `valid: false`), wenn:
 
 - die Challenge abgelaufen ist (`captcha.captcha-timeout-seconds`),
 - die Signatur nicht passt (Challenge wurde manipuliert oder mit einem anderen HMAC-Schlüssel signiert),
-- die Payload bereits öfter als `max-verifies-per-payload` verifiziert wurde,
+- die Payload bereits `max-verifies-per-payload`-mal verifiziert wurde,
 - der Proof-of-Work-`derivedKey` die Challenge nicht tatsächlich löst.
 
 Authentifizierungsfehler (falsches `siteKey` / `siteSecret`) oder fehlerhafte Requests führen stattdessen zu HTTP-Fehlerantworten — siehe [Fehlerantworten](./errors.md).

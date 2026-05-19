@@ -41,7 +41,7 @@ Reading the example above for `site2`:
 | Recent visits in window | Challenge `cost` |
 | ----------------------- | ---------------- |
 | 1 to 9                  | 1 000            |
-| more than 10            | 10 000           |
+| 10 or more              | 10 000           |
 
 Higher `cost` makes each solving step on the client more expensive (more hash iterations per try), so the proof of work takes longer on average. Tune per site based on observed bot traffic.
 

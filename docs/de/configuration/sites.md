@@ -41,7 +41,7 @@ Das obige Beispiel für `site2` gelesen:
 | Jüngste Besuche im Fenster | Challenge `cost` |
 | -------------------------- | ---------------- |
 | 1 bis 9                    | 1 000            |
-| mehr als 10                | 10 000           |
+| 10 oder mehr               | 10 000           |
 
 Ein höherer `cost`-Wert macht jeden Lösungsschritt auf dem Client aufwendiger (mehr Hash-Iterationen pro Versuch) — das Lösen dauert im Schnitt länger. Pro Site anhand des beobachteten Bot-Verhaltens nachjustieren.
 
