@@ -1,5 +1,6 @@
 package de.muenchen.captchaservice.configuration.filter.nfcconverter;
 
+import de.muenchen.captchaservice.util.LogSanitizer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Cookie;
@@ -170,7 +171,7 @@ public class NfcRequest extends HttpServletRequestWrapper implements HttpServlet
 
     @Override
     public Part getPart(final String name) throws IOException, ServletException {
-        log.debug("getPart({})", name);
+        log.debug("getPart({})", LogSanitizer.sanitize(name));
         return getOriginalRequest().getPart(name);
     }
 
