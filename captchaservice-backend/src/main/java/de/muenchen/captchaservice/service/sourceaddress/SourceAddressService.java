@@ -15,9 +15,9 @@ public class SourceAddressService {
     private final CaptchaProperties captchaProperties;
 
     public SourceAddress parse(final String siteKey, final String sourceAddress) {
-        CaptchaSite site = captchaProperties.sites().get(siteKey);
-        String networkAddressString;
-        InetAddress addr = InetAddresses.forString(sourceAddress);
+        final CaptchaSite site = captchaProperties.sites().get(siteKey);
+        final String networkAddressString;
+        final InetAddress addr = InetAddresses.forString(sourceAddress);
         if (addr instanceof java.net.Inet4Address) {
             networkAddressString = NetworkAddressCalculator.getNetworkAddress(sourceAddress, site.sourceAddressIpv4NetSize());
         } else if (addr instanceof java.net.Inet6Address) {

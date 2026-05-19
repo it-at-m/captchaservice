@@ -8,9 +8,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 @Data
 public class SourceAddress {
 
-    final private String sourceAddress;
+    private final String address;
 
     public String getHash() {
-        return DigestUtils.sha256Hex(sourceAddress);
+        return DigestUtils.sha256Hex(address);
     }
 }

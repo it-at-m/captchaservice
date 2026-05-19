@@ -53,7 +53,7 @@ graph LR;
     Client[Client / Frontend] -->|POST /challenge| Service[CaptchaService];
     Service -->|signierte Challenge| Client;
     Client -->|löst PoW| Client;
-    Client -->|POST /verify mit Payload| Service;
+    Client -->|POST /verify mit der Payload| Service;
     Service -->|gültig / ungültig| Client;
     Service -.->|speichern + bereinigen| DB[(PostgreSQL)];
 ```
