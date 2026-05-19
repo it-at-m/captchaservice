@@ -33,5 +33,5 @@ The repository is generated from [`it-at-m/refarch-templates`](https://github.co
 ## Today
 
 - **In production use**: in front of `zmscitizenapi` / `zmscitizenview` in the ZMS / eAppointment project.
-- **Reusable**: any Spring Boot or non-Java frontend can call the service over HTTP, configure its own site key/secret, and use a dedicated difficulty map.
+- **Reusable**: any Spring Boot or non-Java frontend can call the service over HTTP, configure its own site, and use a dedicated difficulty map.
 - **Open source**: published under MIT on [GitHub](https://github.com/it-at-m/captchaservice) and on [opensource.muenchen.de](https://opensource.muenchen.de/).
