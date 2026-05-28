@@ -1,0 +1,176 @@
+name: 🧹 Prune Old Workflow Runs
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      days_to_keep:
+        description: 'Number of days to keep workflow runs (default: 60)'
+        required: false
+        default: '60'
+        type: string
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  delete-old-runs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Delete old workflow runs
+        run: |
+          # Calculate cutoff date
+          CUTOFF_DAYS=${{ github.event.inputs.days_to_keep || 60 }}
+          CUTOFF_DATE=$(date -d "$CUTOFF_DAYS days ago" -u +"%Y-%m-%dT%H:%M:%SZ")
+          echo "=== Workflow Run Cleanup ==="
+          echo "Retention period: $CUTOFF_DAYS days"
+          echo "Cutoff date: $CUTOFF_DATE"
+          echo "Current date: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          echo ""
+          
+          # Get total count of all runs (GitHub CLI has a max limit of 1000 per request)
+          TOTAL_RUNS=$(gh run list --repo ${{ github.repository }} --limit 1000 --json databaseId | jq length)
+          echo "Total workflow runs found in first 1000: $TOTAL_RUNS"
+          echo "Note: GitHub CLI limits to 1000 runs per request. We'll process in batches."
+          
+          # Get total count and calculate last page
+          TOTAL_COUNT=$(gh api "repos/${{ github.repository }}/actions/runs?per_page=1" --jq '.total_count')
+          LAST_PAGE=$(( (TOTAL_COUNT + 99) / 100 ))  # Round up division
+          START_PAGE=$LAST_PAGE  # Start from the last page (oldest runs)
+          
+          echo "Total workflow runs: $TOTAL_COUNT"
+          echo "Total pages: $LAST_PAGE"
+          echo "Starting from page $START_PAGE (oldest runs) and going forward..."
+          echo "Will process pages $START_PAGE through 1 (newest runs)"
+          
+          DELETED_COUNT=0
+          MAX_DELETIONS=300  # Rate limit: 1000 requests per hour, cap at 300 for safety
+          CONSECUTIVE_EMPTY_PAGES=0
+          MAX_CONSECUTIVE_EMPTY=5  # Stop after 5 consecutive pages with no matches
+          
+          for PAGE in $(seq $START_PAGE -1 1); do
+            # Check if we've reached the rate limit BEFORE processing
+            if [ $DELETED_COUNT -ge $MAX_DELETIONS ]; then
+              echo "Reached rate limit of $MAX_DELETIONS deletions. Stopping to avoid API limits."
+              break
+            fi
+            
+            echo "Processing page $PAGE (oldest to newest)... (deleted so far: $DELETED_COUNT)"
+            
+            # Get runs from this page using GitHub API
+            echo "Fetching page $PAGE from GitHub API..."
+            
+            # Get all runs from this page with error handling
+            PAGE_DATA=$(gh api "repos/${{ github.repository }}/actions/runs?per_page=100&page=$PAGE" 2>&1)
+            API_EXIT_CODE=$?
+            
+            if [ $API_EXIT_CODE -ne 0 ] || [ -z "$PAGE_DATA" ]; then
+              echo "Error: Failed to fetch page $PAGE from GitHub API (exit code: $API_EXIT_CODE)"
+              echo "API response: $PAGE_DATA"
+              TOTAL_ON_PAGE=0
+            else
+              # Validate JSON and extract count
+              TOTAL_ON_PAGE=$(echo "$PAGE_DATA" | jq -r '.workflow_runs | length' 2>/dev/null || echo "0")
+              if [ -z "$TOTAL_ON_PAGE" ] || [ "$TOTAL_ON_PAGE" = "null" ] || ! [ "$TOTAL_ON_PAGE" -eq "$TOTAL_ON_PAGE" ] 2>/dev/null; then
+                echo "Warning: Invalid JSON response for page $PAGE, setting count to 0"
+                TOTAL_ON_PAGE=0
+              fi
+            fi
+            
+            echo "Total runs on page $PAGE: $TOTAL_ON_PAGE"
+            
+            # Skip processing if API call failed
+            if [ $API_EXIT_CODE -ne 0 ]; then
+              echo "Skipping page $PAGE due to API error"
+              CONSECUTIVE_EMPTY_PAGES=$((CONSECUTIVE_EMPTY_PAGES + 1))
+              continue
+            fi
+            
+            # Show sample of what we're getting (for debugging)
+            if [ "$TOTAL_ON_PAGE" -gt 0 ]; then
+              echo "Sample runs on this page:"
+              echo "$PAGE_DATA" | jq -r '.workflow_runs[0:3] | .[] | "  - \(.name) (\(.head_branch)) - Status: \(.status) - Created: \(.created_at)"'
+            fi
+            
+            # Filter runs using jq with proper variable passing
+            # Collect matching runs as an array for easier processing
+            # Debug: Show oldest run on this page for comparison
+            if [ "$TOTAL_ON_PAGE" -gt 0 ]; then
+              OLDEST_ON_PAGE=$(echo "$PAGE_DATA" | jq -r '.workflow_runs | sort_by(.created_at) | .[0].created_at')
+              echo "Oldest run on page $PAGE: $OLDEST_ON_PAGE (cutoff: $CUTOFF_DATE)"
+            fi
+            
+            RUNS_JSON=$(echo "$PAGE_DATA" | jq --arg cutoff "$CUTOFF_DATE" '[.workflow_runs[] | select(.status == "completed" and .created_at < $cutoff and .name != "Prune Old Workflow Runs" and (.head_branch | test("^[0-9]+\\.[0-9]+\\.[0-9]+(-.*)?$") | not)) | {id: .id, created_at: .created_at, name: .name, head_branch: .head_branch}]')
+            
+            # Extract run IDs
+            RUN_IDS=$(echo "$RUNS_JSON" | jq -r '.[].id' 2>/dev/null | grep -v '^$' | grep -v '^null$' || true)
+            
+            if [ -z "$RUN_IDS" ]; then
+              RUN_COUNT=0
+            else
+              RUN_COUNT=$(echo "$RUN_IDS" | wc -l | tr -d ' ')
+            fi
+            
+            echo "Found $RUN_COUNT old runs on page $PAGE matching criteria"
+            
+            if [ "$RUN_COUNT" -eq 0 ]; then
+              CONSECUTIVE_EMPTY_PAGES=$((CONSECUTIVE_EMPTY_PAGES + 1))
+              echo "No runs to delete on this page. Consecutive empty pages: $CONSECUTIVE_EMPTY_PAGES"
+              
+              # If we've checked enough consecutive pages with no matches, we're likely done
+              if [ $CONSECUTIVE_EMPTY_PAGES -ge $MAX_CONSECUTIVE_EMPTY ]; then
+                echo "Checked $MAX_CONSECUTIVE_EMPTY consecutive pages with no matches. Stopping."
+                break
+              fi
+              continue
+            else
+              # Reset counter when we find matches
+              CONSECUTIVE_EMPTY_PAGES=0
+            fi
+            
+            # Show some sample runs we're about to delete
+            echo "Sample runs to delete:"
+            echo "$RUNS_JSON" | jq -r '.[0:5] | .[] | "  - \(.name) (\(.head_branch)) (\(.created_at))"'
+            
+            # Delete runs one by one with delays
+            for run_id in $RUN_IDS; do
+              if [ -n "$run_id" ]; then
+                echo "Deleting workflow run: $run_id"
+                if gh run delete --repo ${{ github.repository }} "$run_id"; then
+                  echo "Successfully deleted run: $run_id"
+                  DELETED_COUNT=$((DELETED_COUNT + 1))
+                  
+                  # Check rate limit after each deletion
+                  if [ $DELETED_COUNT -ge $MAX_DELETIONS ]; then
+                    echo "Reached rate limit of $MAX_DELETIONS deletions. Stopping."
+                    break 2  # Break out of both loops
+                  fi
+                else
+                  echo "Failed to delete run: $run_id"
+                fi
+                
+                # Add delay between deletions to avoid rate limiting
+                sleep 1
+              fi
+            done
+            
+            # Small delay to avoid rate limiting
+            sleep 2
+          done
+          
+          echo "Deletion process completed. Total deleted: $DELETED_COUNT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "Cleanup completed. Remaining workflow runs:"
+          gh run list --repo ${{ github.repository }} --limit 10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
