@@ -2,6 +2,7 @@ package de.muenchen.captchaservice.configuration.filter;
 
 import de.muenchen.captchaservice.configuration.security.SecurityProperties;
 import de.muenchen.captchaservice.security.AuthUtils;
+import de.muenchen.captchaservice.util.LogSanitizer;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,9 +62,9 @@ public class RequestResponseLoggingFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
         if (checkForLogging(request)) {
             log.info("User {} executed {} on URI {} with http status {}",
-                    AuthUtils.getUsername(),
-                    request.getMethod(),
-                    request.getRequestURI(),
+                    LogSanitizer.sanitize(AuthUtils.getUsername()),
+                    LogSanitizer.sanitize(request.getMethod()),
+                    LogSanitizer.sanitize(request.getRequestURI()),
                     response.getStatus());
         }
     }
