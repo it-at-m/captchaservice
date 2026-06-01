@@ -21,8 +21,6 @@ Dieses Handbuch ist der zentrale Einstiegspunkt auf [GitHub Pages](https://it-at
 
 ## Über CaptchaService
 
-<a href="https://altcha.org/" target="_blank" rel="noopener noreferrer"><img width="240" align="right" alt="ALTCHA-Logo" src="https://altcha.org/_astro/logo-symbol.JlHBPz1R_Z1HYzg2.svg" /></a>
-
 **CaptchaService** ist ein Spring-Boot-Microservice, der Proof-of-Work-CAPTCHA-Challenges auf Basis der [ALTCHA-Bibliothek](https://altcha.org/) bereitstellt — eine DSGVO-konforme, datenschutzfreundliche Alternative zu klassischen Bild-CAPTCHAs, [in Europa entwickelt](https://altcha.org/), ohne Cookies, ohne Tracking und ohne Drittanbieter-Aufrufe. Die Wahl einer quelloffenen, europäischen Bibliothek ist für uns ein bewusster Beitrag zur **digitalen Souveränität** der öffentlichen Verwaltung. CaptchaService ergänzt sie um adaptive Schwierigkeitssteuerung und Mehrmandantenfähigkeit.
 
 CaptchaService ist die quelloffene Bot-Schutzschicht vor den öffentlichen **ZMS-/eAppointment**-APIs der Landeshauptstadt München. Er löst jahrelange Versuche mit eigenen und externen CAPTCHAs durch einen datenschutzfreundlichen Proof-of-Work-Ablauf ab, der vollständig auf dem Client läuft.
