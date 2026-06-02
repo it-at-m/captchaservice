@@ -12,7 +12,7 @@ import de.muenchen.captchaservice.service.sourceaddress.SourceAddressService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.altcha.altcha.Altcha;
+import org.altcha.altcha.v2.Altcha;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

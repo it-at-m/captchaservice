@@ -2,7 +2,7 @@
 
 **`POST /api/v1/captcha/verify`**
 
-Verifiziert den Proof-of-Work-Payload, den ein ALTCHA-kompatibler Solver für eine zuvor über [`/challenge`](./challenge.md) bezogene Challenge erzeugt hat.
+Verifiziert die Proof-of-Work-Payload, die ein ALTCHA-kompatibler Solver für eine zuvor über [`/challenge`](./challenge.md) bezogene Challenge erzeugt hat.
 
 ## Request-Body
 
@@ -12,25 +12,40 @@ Verifiziert den Proof-of-Work-Payload, den ein ALTCHA-kompatibler Solver für ei
   "siteSecret": "secret1",
   "clientAddress": "192.168.1.100",
   "payload": {
-    "algorithm": "SHA-256",
-    "challenge": "abc123...",
-    "number": 542,
-    "salt": "def456...",
-    "signature": "ghi789...",
-    "took": 4400
+    "challenge": {
+      "parameters": {
+        "algorithm": "SHA-256",
+        "nonce": "abc123...",
+        "salt": "def456...",
+        "cost": 1000,
+        "keyLength": 32,
+        "keyPrefix": "00",
+        "keySignature": null,
+        "memoryCost": null,
+        "parallelism": null,
+        "expiresAt": 1778916660,
+        "data": null
+      },
+      "signature": "ghi789..."
+    },
+    "solution": {
+      "counter": 12,
+      "derivedKey": "00a1b2c3d4e5f6...",
+      "time": 47
+    }
   }
 }
 ```
 
-| Feld                                                                          | Pflicht | Beschreibung                                                                       |
-| ----------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------- |
-| `siteKey`                                                                     | ja      | Gleicher Site-Key wie bei `/challenge`.                                            |
-| `siteSecret`                                                                  | ja      | Gleiches Site-Geheimnis.                                                           |
-| `clientAddress`                                                               | ja      | Quell-IP des Endnutzers.                                                           |
-| `payload`                                                                     | ja      | Vom Client-Widget zurückgegebene ALTCHA-Lösung.                                    |
-| `payload.number`                                                              | ja      | Nonce, den der Client gefunden hat und der den Proof-of-Work erfüllt.              |
-| `payload.took`                                                                | nein    | Optionale Wall-Clock-Zeit des Clients für die Challenge. Hilfreich für Telemetrie. |
-| `payload.salt`, `payload.challenge`, `payload.signature`, `payload.algorithm` | ja      | unverändert aus `/challenge`.                                                      |
+| Feld                          | Pflicht | Beschreibung                                                                                               |
+| ----------------------------- | ------- | ---------------------------------------------------------------------------------------------------------- |
+| `siteKey`                     | ja      | Wie bei `/challenge`.                                                                                      |
+| `siteSecret`                  | ja      | Wie bei `/challenge`.                                                                                      |
+| `clientAddress`               | ja      | Quell-IP des Endnutzers.                                                                                   |
+| `payload.challenge`           | ja      | Unverändert aus [`/challenge`](./challenge.md) — siehe [Response](./challenge.md#response).                |
+| `payload.solution.counter`    | ja      | Per Brute Force gefundener Integer; `nonce` + `counter` an die KDF, bis `derivedKey` zu `keyPrefix` passt. |
+| `payload.solution.derivedKey` | ja      | Kleinbuchstaben-Hex des abgeleiteten Schlüssels für `counter`; serverseitig erneut geprüft.                |
+| `payload.solution.time`       | nein    | Lösungsdauer in ms (optional). Wird in `captcha.client.solve.time` erfasst, sofern gesetzt.                |
 
 ## Response
 
@@ -50,7 +65,7 @@ Die Verifikation schlägt fehl (und liefert `valid: false`), wenn:
 
 - die Challenge abgelaufen ist (`captcha.captcha-timeout-seconds`),
 - die Signatur nicht passt (Challenge wurde manipuliert oder mit einem anderen HMAC-Schlüssel signiert),
-- der Payload bereits öfter als `max-verifies-per-payload` verifiziert wurde,
-- der Proof-of-Work-`number` die Challenge nicht tatsächlich löst.
+- die Payload bereits `max-verifies-per-payload`-mal verifiziert wurde,
+- der Proof-of-Work-`derivedKey` die Challenge nicht tatsächlich löst.
 
 Authentifizierungsfehler (falsches `siteKey` / `siteSecret`) oder fehlerhafte Requests führen stattdessen zu HTTP-Fehlerantworten — siehe [Fehlerantworten](./errors.md).

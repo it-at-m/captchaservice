@@ -10,7 +10,7 @@ captcha:
   sites:
     site1: # Site-Key für site1
       site-secret: "secret1" # Site-Secret für site1
-      max-verifies-per-payload: 1 # Wie oft ein Payload geprüft werden darf
+      max-verifies-per-payload: 1 # Wie oft eine Payload geprüft werden darf
       whitelisted_source-addresses:
         - "192.0.2.0/24" # erlaubter IP-Bereich
     site2:
@@ -19,9 +19,9 @@ captcha:
         - "192.0.2.0/24" # erlaubter IP-Bereich
       difficulty-map:
         - min-visits: 1 # ab dem ersten Besuch…
-          max-number: 1000 # …Schwierigkeit 1 000
+          cost: 1000 # …Schwierigkeit 1 000
         - min-visits: 10 # ab dem 10. Besuch…
-          max-number: 10000 # …Schwierigkeit 10 000
+          cost: 10000 # …Schwierigkeit 10 000
 ```
 
 ## Felder
@@ -30,20 +30,20 @@ captcha:
 - **`captcha.captcha-timeout-seconds`** — wie lange eine ausgestellte Challenge gültig bleibt, bevor sie bei der Verifikation abgelehnt wird.
 - **`captcha.source-address-window-seconds`** — Beobachtungsfenster für die adaptive Schwierigkeit.
 - **`captcha.sites.<key>.site-secret`** — site-spezifisches Geheimnis. Clients senden bei jedem Request `siteKey` + `siteSecret`.
-- **`captcha.sites.<key>.max-verifies-per-payload`** — wie oft ein gelöster Payload geprüft werden darf, bevor er entwertet ist. Fast immer `1`.
+- **`captcha.sites.<key>.max-verifies-per-payload`** — wie oft eine gelöste Payload geprüft werden darf, bevor sie entwertet ist. Fast immer `1`.
 - **`captcha.sites.<key>.whitelisted_source-addresses`** — Liste von CIDR-Bereichen. Clients außerhalb der Liste werden abgelehnt (sofern das Feld gesetzt ist).
-- **`captcha.sites.<key>.difficulty-map`** — adaptive Schwierigkeitsleiter. Jeder Eintrag bildet eine Anzahl jüngster Besuche (`min-visits`) auf eine maximale Challenge-Zahl (`max-number`) ab. Der Dienst wählt pro Request den höchsten passenden Eintrag, sodass viel laufende IPs teurere Challenges erhalten.
+- **`captcha.sites.<key>.difficulty-map`** — adaptive Schwierigkeitsleiter. Jeder Eintrag bildet die Anzahl jüngster Besuche (`min-visits`) auf die Schwierigkeit der Challenge (`cost`) ab. Der Dienst wählt pro Request den höchsten passenden Eintrag, sodass viel laufende IPs teurere Challenges erhalten.
 
 ## Beispiel-Schwierigkeits-Map
 
 Das obige Beispiel für `site2` gelesen:
 
-| Jüngste Besuche im Fenster | Challenge `maxNumber` |
-| -------------------------- | --------------------- |
-| 1 – 9                      | 1 000                 |
-| 10 +                       | 10 000                |
+| Jüngste Besuche im Fenster | Challenge `cost` |
+| -------------------------- | ---------------- |
+| 1 bis 9                    | 1 000            |
+| 10 oder mehr               | 10 000           |
 
-Höhere `maxNumber` bedeutet, dass der Client im Schnitt mehr Nonces durchprobieren muss, um den Proof-of-Work zu lösen. Pro Site anhand des beobachteten Bot-Verhaltens nachjustieren.
+Ein höherer `cost`-Wert macht jeden Lösungsschritt auf dem Client aufwendiger (mehr Hash-Iterationen pro Versuch) — das Lösen dauert im Schnitt länger. Pro Site anhand des beobachteten Bot-Verhaltens nachjustieren.
 
 ## In ZMS / eAppointment
 

@@ -1,6 +1,5 @@
 package de.muenchen.captchaservice.controller.captcha.request;
 
-import de.muenchen.captchaservice.data.ExtendedPayload;
 import de.muenchen.captchaservice.validation.ValidSourceAddress;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.altcha.altcha.v2.Altcha.Payload;
 
 @Data
 @ToString(exclude = "payload")
@@ -22,6 +22,6 @@ public class PostVerifyRequest {
     @NotNull @NotBlank @ValidSourceAddress
     private String clientAddress;
 
-    @NotNull private ExtendedPayload payload;
+    @NotNull private Payload payload;
 
 }
