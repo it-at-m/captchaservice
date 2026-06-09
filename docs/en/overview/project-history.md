@@ -20,7 +20,7 @@ The net effect:
 
 - Automated bots can no longer cheaply enumerate available appointment slots in `zmscitizenapi`.
 - Real users only see a near-invisible proof-of-work step in `zmscitizenview`.
-- **No personal data leaves the City of Munich infrastructure.**
+- Through CaptchaService, no personal data leaves the City of Munich infrastructure.
 
 ## Origin
 

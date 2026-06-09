@@ -20,7 +20,7 @@ Das Netto-Ergebnis:
 
 - Bots können nicht mehr günstig die verfügbaren Termine in `zmscitizenapi` auflisten.
 - Echte Nutzer:innen sehen in `zmscitizenview` nur einen nahezu unsichtbaren Proof-of-Work-Schritt.
-- **Keine personenbezogenen Daten verlassen die Münchner Infrastruktur.**
+- Über CaptchaService verlassen keine personenbezogenen Daten die Infrastruktur der Landeshauptstadt München.
 
 ## Herkunft
 
