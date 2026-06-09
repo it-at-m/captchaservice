@@ -18,6 +18,8 @@
 
 ## About CaptchaService
 
+<img width="200" align="right" alt="CaptchaService logo" src="../docs/img/captchaservice_logo.png" />
+
 CaptchaService is a Spring Boot microservice that provides proof-of-work CAPTCHA challenges using the [ALTCHA library](https://altcha.org/) — a GDPR-compliant, privacy-first alternative to traditional image-based CAPTCHAs, [made in Europe](https://altcha.org/), with no cookies, no tracking, and no third-party calls. Picking an open-source, European library is a deliberate vote for **digital sovereignty** in the public sector. CaptchaService adds adaptive difficulty management and multi-tenant support on top.
 
 It is the open-source bot-protection layer in front of the public ZMS / eAppointment APIs operated by the City of Munich (Landeshauptstadt München) — specifically [`zmscitizenview`](https://github.com/it-at-m/eappointment/tree/main/zmscitizenview) and [`zmscitizenapi`](https://github.com/it-at-m/eappointment/tree/main/zmscitizenapi). It replaces years of in-house and proprietary CAPTCHA attempts with a privacy-friendly proof-of-work flow that runs entirely on the client.
@@ -40,6 +42,8 @@ Munich Contact: it@M - opensource@muenchen.de
 ---
 
 ## Über CaptchaService
+
+<img width="200" align="right" alt="CaptchaService-Logo" src="../docs/img/captchaservice_logo.png" />
 
 CaptchaService ist ein Spring-Boot-Microservice, der Proof-of-Work-CAPTCHA-Challenges auf Basis der [ALTCHA-Bibliothek](https://altcha.org/) bereitstellt — eine DSGVO-konforme, datenschutzfreundliche Alternative zu klassischen Bild-CAPTCHAs, [in Europa entwickelt](https://altcha.org/), ohne Cookies, ohne Tracking und ohne Drittanbieter-Aufrufe. Die Wahl einer quelloffenen, europäischen Bibliothek ist für uns ein bewusster Beitrag zur **digitalen Souveränität** der öffentlichen Verwaltung. CaptchaService ergänzt sie um adaptive Schwierigkeitssteuerung und Mehrmandantenfähigkeit.
 
