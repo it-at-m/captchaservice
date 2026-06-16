@@ -42,12 +42,15 @@ const navLabels = {
     overview: "Overview",
     releases: "Releases",
     openSource: "Open Source",
+    openSourceUrl: "https://opensource.muenchen.de/software/captchaservice.html",
     altcha: "ALTCHA",
   },
   de: {
     overview: "Übersicht",
     releases: "Releases",
     openSource: "Open Source",
+    openSourceUrl:
+      "https://opensource.muenchen.de/de/software/captchaservice.html",
     altcha: "ALTCHA",
   },
 };
@@ -59,7 +62,7 @@ const buildNav = (prefix, lang) => {
     { text: t.releases, link: `${GH_REPO}/releases` },
     {
       text: t.openSource,
-      link: "https://opensource.muenchen.de/",
+      link: t.openSourceUrl,
     },
     { text: t.altcha, link: "https://altcha.org/" },
   ];
