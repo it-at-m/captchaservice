@@ -182,8 +182,8 @@ class CaptchaControllerTest {
         final Altcha.VerifySolutionResult verifyResult = new Altcha.VerifySolutionResult(true, false, false, false, 10L);
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
             mock.when(() -> Altcha.verifySolution(
-                    any(),
-                    any(),
+                    eq(payload.challenge()),
+                    eq(payload.solution()),
                     eq(TEST_HMAC_KEY),
                     any()))
                     .thenReturn(verifyResult);
@@ -193,6 +193,12 @@ class CaptchaControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.valid", is(true)));
+
+            mock.verify(() -> Altcha.verifySolution(
+                    eq(payload.challenge()),
+                    eq(payload.solution()),
+                    eq(TEST_HMAC_KEY),
+                    any()));
         }
     }
 
