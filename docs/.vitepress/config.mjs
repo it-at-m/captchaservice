@@ -42,7 +42,8 @@ const navLabels = {
     overview: "Overview",
     releases: "Releases",
     openSource: "Open Source",
-    openSourceUrl: "https://opensource.muenchen.de/software/captchaservice.html",
+    openSourceUrl:
+      "https://opensource.muenchen.de/software/captchaservice.html",
     altcha: "ALTCHA",
   },
   de: {
