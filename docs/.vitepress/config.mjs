@@ -91,6 +91,7 @@ const sidebarLabels = {
     monitoring: "Monitoring",
     community: "Community",
     contributing: "Contributing",
+    gitHooks: "Git Hooks (Husky)",
     codeOfConduct: "Code of Conduct",
     license: "License (MIT)",
   },
@@ -115,6 +116,7 @@ const sidebarLabels = {
     monitoring: "Monitoring",
     community: "Community",
     contributing: "Mitwirken",
+    gitHooks: "Git-Hooks (Husky)",
     codeOfConduct: "Verhaltenskodex",
     license: "Lizenz (MIT)",
   },
@@ -182,6 +184,10 @@ const buildSidebar = (prefix, lang) => {
         {
           text: t.contributing,
           link: `${prefix}/community/contributing`,
+        },
+        {
+          text: t.gitHooks,
+          link: `${prefix}/community/git-hooks`,
         },
         {
           text: t.codeOfConduct,

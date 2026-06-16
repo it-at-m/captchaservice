@@ -8,8 +8,9 @@ Wie konkret beigetragen werden kann, steht in der Münchner Open-Source-Beitrags
 
 1. Das Repository [`it-at-m/captchaservice`](https://github.com/it-at-m/captchaservice) auf GitHub forken.
 2. Einen Feature-Branch erzeugen (`git checkout -b feature/your-improvement`).
-3. Lokal `bash runLocal.sh` gegen den Compose-Stack ausführen (siehe [Schnellstart](../getting-started/quick-start.md)) und Änderungen prüfen.
-4. Committen, pushen und einen Pull Request gegen `main` öffnen.
+3. Im Repository-Root `npm install` ausführen, um [Git-Hooks (Husky)](./git-hooks.md) zu aktivieren.
+4. Lokal `bash runLocal.sh` gegen den Compose-Stack ausführen (siehe [Schnellstart](../getting-started/quick-start.md)) und Änderungen prüfen.
+5. Mit dem konventionellen Format committen (`type(CAPTCHA): summary`), pushen und einen Pull Request gegen `main` öffnen.
 
 Die CI-Workflows ([`maven-node-build.yml`](https://github.com/it-at-m/captchaservice/blob/main/.github/workflows/maven-node-build.yml), [`actionlint.yml`](https://github.com/it-at-m/captchaservice/blob/main/.github/workflows/actionlint.yml), [`codeql.yml`](https://github.com/it-at-m/captchaservice/blob/main/.github/workflows/codeql.yml), [`dependency-review.yml`](https://github.com/it-at-m/captchaservice/blob/main/.github/workflows/dependency-review.yml), [`dockercompose-healthcheck.yml`](https://github.com/it-at-m/captchaservice/blob/main/.github/workflows/dockercompose-healthcheck.yml)) prüfen jeden Pull Request.
 

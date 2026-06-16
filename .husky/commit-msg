@@ -1,0 +1,39 @@
+#!/bin/sh
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+NC='\033[0m'
+
+. "$(dirname "$0")/validate-commit-message.sh"
+
+commit_msg=$(head -n 1 "$1")
+staged_files=$(git diff --cached --name-only --diff-filter=ACM)
+
+echo "Running commit message check..."
+validate_commit_message "$commit_msg" || exit 1
+
+if echo "$staged_files" | grep -q '^docs/'; then
+  echo "Running docs formatting check..."
+  if ! (cd docs && npm run format:check); then
+    printf "${RED}✗ Docs Prettier check failed. Please fix the errors before committing.${NC}\n"
+    echo "  cd docs && npm run format"
+    echo "  (Run 'cd docs && npm install' first if dependencies are missing.)"
+    exit 1
+  fi
+  printf "${GREEN}✓ Docs formatting OK.${NC}\n"
+fi
+
+if echo "$staged_files" | grep -qE '\.java$'; then
+  if command -v mvn >/dev/null 2>&1; then
+    echo "Running Java Spotless check..."
+    if ! mvn -f captchaservice-backend/pom.xml -q spotless:check; then
+      printf "${RED}✗ Spotless check failed. Please fix formatting before committing.${NC}\n"
+      echo "  mvn -f captchaservice-backend/pom.xml spotless:apply"
+      exit 1
+    fi
+    printf "${GREEN}✓ Java Spotless OK.${NC}\n"
+  else
+    printf "${YELLOW}⚠ Maven not found. Skipping Java Spotless check.${NC}\n"
+  fi
+fi
