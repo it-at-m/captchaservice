@@ -20,7 +20,7 @@ public class ExpiredDataService {
 
     @Transactional
     public void deleteExpiredData() {
-        Instant now = Instant.now();
+        final Instant now = Instant.now();
         final long deletedCaptchaRequestCount = captchaRequestRepository.deleteByExpiresAtLessThan(now);
         if (deletedCaptchaRequestCount > 0) {
             log.info("Deleted {} expired CaptchaRequests", deletedCaptchaRequestCount);

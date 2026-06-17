@@ -57,8 +57,8 @@ graph TB
     end
 
     %% Anfragefluss
-    Client -->|POST /api/v1/challenge| ChallengeEndpoint
-    Client -->|POST /api/v1/verify| VerifyEndpoint
+    Client -->|POST /api/v1/captcha/challenge| ChallengeEndpoint
+    Client -->|POST /api/v1/captcha/verify| VerifyEndpoint
     Client --> Monitoring
 
     %% Controller -> Services
@@ -111,5 +111,5 @@ graph TB
 1. Der Client schickt `siteKey`, `siteSecret` und `clientAddress` per POST an `/api/v1/captcha/challenge`.
 2. `SiteAuthService` authentifiziert die Site, `SourceAddressService` prüft die IP, `DifficultyService` wählt die passende Schwierigkeit anhand der Site-Schwierigkeits-Map und der jüngsten Aufrufe.
 3. `CaptchaService` lässt ALTCHA eine signierte Challenge erzeugen, persistiert einen `CaptchaRequest` und liefert die Challenge zurück.
-4. Der Client löst den Proof-of-Work und schickt den gelösten Payload per POST an `/api/v1/captcha/verify`.
-5. `CaptchaService` prüft Signatur und HMAC, markiert den Payload als entwertet (damit er nicht erneut verwendet werden kann) und antwortet mit `{ "valid": true | false }`.
+4. Der Client löst den Proof-of-Work und schickt die gelöste Payload per POST an `/api/v1/captcha/verify`.
+5. `CaptchaService` prüft Signatur und HMAC, markiert die Payload als entwertet (damit sie nicht erneut verwendet werden kann) und antwortet mit `{ "valid": true | false }`.

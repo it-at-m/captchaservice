@@ -64,9 +64,9 @@ captcha:
       secret: loadtest
       difficulty-map:
         - min-visits: 1
-          max-number: 1
+          cost: 1
     test:
       secret: test
       difficulty-map:
         - min-visits: 1
-          max-number: 1000
+          cost: 1000

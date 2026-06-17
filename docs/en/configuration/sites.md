@@ -19,9 +19,9 @@ captcha:
         - "192.0.2.0/24" # Whitelisted IP address range
       difficulty-map:
         - min-visits: 1 # From the first visit on...
-          max-number: 1000 # ...the difficulty is 1000
+          cost: 1000 # ...the difficulty is 1000
         - min-visits: 10 # From the 10th visit on...
-          max-number: 10000 # ...the difficulty is 10000
+          cost: 10000 # ...the difficulty is 10000
 ```
 
 ## Fields
@@ -32,18 +32,18 @@ captcha:
 - **`captcha.sites.<key>.site-secret`** — per-site secret. Clients send `siteKey` + `siteSecret` on every request.
 - **`captcha.sites.<key>.max-verifies-per-payload`** — how many times a single solved payload can be verified before it is invalidated. Almost always `1`.
 - **`captcha.sites.<key>.whitelisted_source-addresses`** — list of CIDR ranges. Clients from outside the list are rejected (when the field is present).
-- **`captcha.sites.<key>.difficulty-map`** — adaptive difficulty ladder. Each entry maps a number of recent visits (`min-visits`) to a maximum challenge number (`max-number`). The service picks the highest matching entry per request, so heavy hitters get more expensive challenges.
+- **`captcha.sites.<key>.difficulty-map`** — adaptive difficulty ladder. Each entry maps a number of recent visits (`min-visits`) to a difficulty level (`cost`). The service picks the highest matching entry per request, so heavy hitters get more expensive challenges.
 
 ## Difficulty Map Example
 
 Reading the example above for `site2`:
 
-| Recent visits in window | Challenge `maxNumber` |
-| ----------------------- | --------------------- |
-| 1 – 9                   | 1 000                 |
-| 10 +                    | 10 000                |
+| Recent visits in window | Challenge `cost` |
+| ----------------------- | ---------------- |
+| 1 to 9                  | 1 000            |
+| 10 or more              | 10 000           |
 
-Higher `maxNumber` means the client has to try more nonces on average to solve the proof of work. Tune per site based on observed bot traffic.
+Higher `cost` makes each solving step on the client more expensive (more hash iterations per try), so the proof of work takes longer on average. Tune per site based on observed bot traffic.
 
 ## In ZMS / eAppointment
 

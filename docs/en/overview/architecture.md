@@ -57,8 +57,8 @@ graph TB
     end
 
     %% Request Flow
-    Client -->|POST /api/v1/challenge| ChallengeEndpoint
-    Client -->|POST /api/v1/verify| VerifyEndpoint
+    Client -->|POST /api/v1/captcha/challenge| ChallengeEndpoint
+    Client -->|POST /api/v1/captcha/verify| VerifyEndpoint
     Client --> Monitoring
 
     %% Controller to Services
