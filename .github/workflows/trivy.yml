@@ -1,0 +1,20 @@
+name: Trivy security scan
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 3 * * *" # Daily at 03:00 UTC
+
+jobs:
+  scan:
+    name: Security check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    if: github.event_name != 'schedule' || github.ref == 'refs/heads/main'
+    steps:
+      - name: Run Trivy security check on repository
+        uses: it-at-m/lhm_actions/action-templates/actions/action-trivy@877aafa9f0732cbc91819b60d237c351ea88f95c # v1.0.34
