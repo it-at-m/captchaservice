@@ -11,7 +11,7 @@
 
     <groupId>de.muenchen.captchaservice</groupId>
     <artifactId>captchaservice-backend</artifactId>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>2.0.0</version>
     
     <name>captchaservice-backend</name>
     <description>A Spring Boot microservice that provides proof-of-work CAPTCHA challenges using the ALTCHA library.</description>
@@ -27,7 +27,7 @@
         <url>https://github.com/it-at-m/captchaservice.git</url>
         <connection>scm:git:https://github.com/it-at-m/captchaservice.git</connection>
         <developerConnection>scm:git:https://github.com/it-at-m/captchaservice.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>captchaservice-backend-2.0.0</tag>
     </scm>
     <developers>
         <developer>
