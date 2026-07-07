@@ -4,8 +4,7 @@ const LATEST_API =
 // Release tags in this repo are prefixed with the Maven artifactId, e.g.
 // `backend-1.4.0`. Strip the prefix for display; the link still
 // points to the full tag URL from the GitHub API.
-const formatTagName = (tagName) =>
-  tagName.replace(/^backend-/, "");
+const formatTagName = (tagName) => tagName.replace(/^backend-/, "");
 
 let cached = null;
 let inflight = null;
