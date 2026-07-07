@@ -2,10 +2,10 @@ const LATEST_API =
   "https://api.github.com/repos/it-at-m/captchaservice/releases/latest";
 
 // Release tags in this repo are prefixed with the Maven artifactId, e.g.
-// `captchaservice-backend-1.4.0`. Strip the prefix for display; the link still
+// `backend-1.4.0`. Strip the prefix for display; the link still
 // points to the full tag URL from the GitHub API.
 const formatTagName = (tagName) =>
-  tagName.replace(/^captchaservice-backend-/, "");
+  tagName.replace(/^backend-/, "");
 
 let cached = null;
 let inflight = null;

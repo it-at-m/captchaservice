@@ -14,4 +14,4 @@
   - head-branch: [ '^sec', '-security-' ]
 "Template: Backend":
   - changed-files:
-    - any-glob-to-any-file: ['captchaservice-backend/**']
+    - any-glob-to-any-file: ['backend/**']

@@ -10,7 +10,6 @@
 
 # Package Files #
 *.jar
-!/stack/keycloak/plugins/*.jar
 *.war
 *.nar
 *.ear
@@ -185,3 +184,9 @@ nbdist/
 *.njsproj
 *.sln
 *.sw?
+
+# ========== RefArch specific  ==========
+**/src/api/generated
+# =============== Stack =================
+/stack/pgadmin/data/*
+!/stack/pgadmin/data/info.txt

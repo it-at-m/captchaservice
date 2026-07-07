@@ -23,7 +23,7 @@ Je nach Installation `docker compose` oder `podman compose` verwenden.
 ## 3. Anwendung bauen und starten
 
 ```bash
-cd captchaservice-backend
+cd backend
 bash runLocal.sh
 ```
 

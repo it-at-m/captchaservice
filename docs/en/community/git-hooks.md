@@ -68,7 +68,7 @@ npm run format
 ### Spotless fails
 
 ```bash
-mvn -f captchaservice-backend/pom.xml spotless:apply
+mvn -f backend/pom.xml spotless:apply
 ```
 
 ### Skip hooks temporarily

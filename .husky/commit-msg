@@ -27,9 +27,9 @@ fi
 if echo "$staged_files" | grep -qE '\.java$'; then
   if command -v mvn >/dev/null 2>&1; then
     echo "Running Java Spotless check..."
-    if ! mvn -f captchaservice-backend/pom.xml -q spotless:check; then
+    if ! mvn -f backend/pom.xml -q spotless:check; then
       printf "${RED}✗ Spotless check failed. Please fix formatting before committing.${NC}\n"
-      echo "  mvn -f captchaservice-backend/pom.xml spotless:apply"
+      echo "  mvn -f backend/pom.xml spotless:apply"
       exit 1
     fi
     printf "${GREEN}✓ Java Spotless OK.${NC}\n"
