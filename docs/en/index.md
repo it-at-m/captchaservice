@@ -4,7 +4,7 @@ This handbook is the main entry point on [GitHub Pages](https://it-at-m.github.i
 
 - **GitHub Repository**: [https://github.com/it-at-m/captchaservice/](https://github.com/it-at-m/captchaservice/)
 - **Latest releases**: [github.com/it-at-m/captchaservice/releases](https://github.com/it-at-m/captchaservice/releases)
-- **Maven coordinates**: `de.muenchen.captchaservice:captchaservice-backend`
+- **Maven coordinates**: `de.muenchen.captchaservice:backend`
 
 ## Quick Links
 

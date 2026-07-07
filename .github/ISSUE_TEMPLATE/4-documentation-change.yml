@@ -19,7 +19,7 @@ body:
       multiple: true
       description: Affected documentation parts
       options:
-        - captchaservice-backend
+        - backend
         - Other
     validations:
       required: true

@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        package: ["captchaservice-backend"]
+        package: ["backend"]
     steps:
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
@@ -105,6 +105,6 @@ jobs:
       - name: Summary
         run: |
           echo "Package cleanup completed."
-          echo "Processed packages: captchaservice-backend"
+          echo "Processed packages: backend"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

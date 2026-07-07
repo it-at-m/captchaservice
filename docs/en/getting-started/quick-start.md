@@ -23,7 +23,7 @@ Use either `docker compose` or `podman compose` depending on what you have insta
 ## 3. Build and run the application
 
 ```bash
-cd captchaservice-backend
+cd backend
 bash runLocal.sh
 ```
 

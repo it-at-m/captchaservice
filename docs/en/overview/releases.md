@@ -12,7 +12,7 @@ The latest release tag is also shown next to the site title in the top navigatio
 ```xml
 <dependency>
     <groupId>de.muenchen.captchaservice</groupId>
-    <artifactId>captchaservice-backend</artifactId>
+    <artifactId>backend</artifactId>
     <version>${version.captchaservice}</version>
 </dependency>
 ```

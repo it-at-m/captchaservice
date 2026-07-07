@@ -12,7 +12,7 @@ Die neueste Release-Bezeichnung wird zusätzlich in der oberen Navigation neben 
 ```xml
 <dependency>
     <groupId>de.muenchen.captchaservice</groupId>
-    <artifactId>captchaservice-backend</artifactId>
+    <artifactId>backend</artifactId>
     <version>${version.captchaservice}</version>
 </dependency>
 ```
