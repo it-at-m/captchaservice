@@ -1,5 +1,6 @@
 package de.muenchen.captchaservice.backend.configuration.filter.nfcconverter;
 
+import de.muenchen.captchaservice.backend.util.LogSanitizer;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import edu.umd.cs.findbugs.annotations.SuppressMatchType;
 import jakarta.servlet.http.Cookie;
@@ -14,11 +15,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.LinkedCaseInsensitiveMap;
-
-import de.muenchen.captchaservice.backend.util.LogSanitizer;
 
 /**
  * Utility class for NFC normalization

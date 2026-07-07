@@ -1,5 +1,6 @@
 package de.muenchen.captchaservice.backend.configuration.filter.nfcconverter;
 
+import de.muenchen.captchaservice.backend.util.LogSanitizer;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.FilterRegistration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import de.muenchen.captchaservice.backend.util.LogSanitizer;
 
 /**
  * <p>
