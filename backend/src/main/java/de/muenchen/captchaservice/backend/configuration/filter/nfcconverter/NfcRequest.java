@@ -1,5 +1,6 @@
 package de.muenchen.captchaservice.backend.configuration.filter.nfcconverter;
 
+import de.muenchen.captchaservice.backend.util.LogSanitizer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Cookie;
@@ -18,8 +19,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-
-import de.muenchen.captchaservice.backend.util.LogSanitizer;
 import lombok.extern.slf4j.Slf4j;
 
 /**
