@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+
+import de.muenchen.captchaservice.backend.util.LogSanitizer;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -169,7 +171,7 @@ public class NfcRequest extends HttpServletRequestWrapper implements HttpServlet
 
     @Override
     public Part getPart(final String name) throws IOException, ServletException {
-        log.debug("getPart({})", name);
+        log.debug("getPart({})", LogSanitizer.sanitize(name));
         return getOriginalRequest().getPart(name);
     }
 
