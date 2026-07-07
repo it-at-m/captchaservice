@@ -13,6 +13,8 @@ import org.springframework.boot.web.servlet.FilterRegistration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import de.muenchen.captchaservice.backend.util.LogSanitizer;
+
 /**
  * <p>
  * Spring filter that performs an NFC normalization of all <em>safe textual</em> content.
@@ -47,15 +49,15 @@ public class NfcRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         log.debug("Request-Type={}", request.getClass().getName());
-        log.debug("Intercepting request for URI {}", request.getRequestURI());
+        log.debug("Intercepting request for URI {}", LogSanitizer.sanitize(request.getRequestURI()));
 
         final String contentType = request.getContentType();
-        log.debug("ContentType for request with URI: \"{}\"", contentType);
+        log.debug("ContentType for request with URI: \"{}\"", LogSanitizer.sanitize(contentType));
         if (contentType != null && CONTENT_TYPES.stream().anyMatch(contentType::startsWith)) {
-            log.debug("Processing request {}.", request.getRequestURI());
+            log.debug("Processing request {}.", LogSanitizer.sanitize(request.getRequestURI()));
             filterChain.doFilter(new NfcRequest(request), response);
         } else {
-            log.debug("Skip processing of HTTP request since it's content type \"{}\" is not in whitelist.", contentType);
+            log.debug("Skip processing of HTTP request since it's content type \"{}\" is not in whitelist.", LogSanitizer.sanitize(contentType));
             filterChain.doFilter(request, response);
         }
     }

@@ -14,8 +14,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.LinkedCaseInsensitiveMap;
+
+import de.muenchen.captchaservice.backend.util.LogSanitizer;
 
 /**
  * Utility class for NFC normalization
@@ -39,10 +42,10 @@ public class NfcHelper {
             return null;
         }
 
-        log.debug("String BEFORE nfc conversion: \"{}\".", in);
+        log.debug("String BEFORE nfc conversion: \"{}\".", LogSanitizer.sanitize(in));
         log.debug("Length of String BEFORE nfc conversion: {}.", in.length());
         final String nfcConvertedContent = Normalizer.normalize(in, Normalizer.Form.NFC);
-        log.debug("String AFTER nfc conversion: \"{}\".", nfcConvertedContent);
+        log.debug("String AFTER nfc conversion: \"{}\".", LogSanitizer.sanitize(nfcConvertedContent));
         log.debug("Length of String AFTER nfc conversion: {}.", nfcConvertedContent.length());
         return nfcConvertedContent;
     }
