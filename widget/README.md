@@ -55,7 +55,7 @@ npm install altcha --save
 
 ```javascript
 // src/main.js or src/main.ts
-import 'altcha';
+import "altcha";
 ```
 
 5. Use the `<altcha-widget>` element in your component:
@@ -71,7 +71,7 @@ import 'altcha';
 
 <script>
 export default {
-  name: 'ExampleComponent',
+  name: "ExampleComponent",
 };
 </script>
 ```
@@ -80,14 +80,16 @@ export default {
 
 ```ts
 export default defineConfig({
-  plugins: [vue({
-    template: {
-      compilerOptions: {
-        isCustomElement: (tag) => tag.indexOf('-') >= 0
-      }
-    }
-  })],
-})
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.indexOf("-") >= 0,
+        },
+      },
+    }),
+  ],
+});
 ```
 
 ## Additional Configuration
