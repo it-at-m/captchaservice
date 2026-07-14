@@ -49,10 +49,10 @@ Bei Problemen helfen die Entwicklertools des Browsers weiter:
 
 Die Standardwerte in `widget/src/config/captcha.ts` passen zum lokalen Backend-Profil (`application-local.yml`):
 
-| Einstellung | Standard | Backend-Konfiguration |
-| ----------- | -------- | --------------------- |
-| Site-Key | `test` | `captcha.sites.test` |
-| Site-Secret | `test` | `captcha.sites.test.secret` |
+| Einstellung    | Standard    | Backend-Konfiguration                 |
+| -------------- | ----------- | ------------------------------------- |
+| Site-Key       | `test`      | `captcha.sites.test`                  |
+| Site-Secret    | `test`      | `captcha.sites.test.secret`           |
 | Client-Adresse | `127.0.0.1` | Feld `clientAddress` in jedem Request |
 
 Anpassungen sind in `widget/.env.local` möglich:
