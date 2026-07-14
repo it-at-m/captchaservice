@@ -13,6 +13,7 @@ This handbook is the main entry point on [GitHub Pages](https://it-at-m.github.i
 - [Releases](./overview/releases.md) — versioning and how artifacts are published
 - [Prerequisites](./getting-started/prerequisites.md)
 - [Quick Start](./getting-started/quick-start.md) — get the service running locally
+- [Widget Demo](./getting-started/widget-demo.md) — test CaptchaService with the ALTCHA widget in the browser
 - [Environment Variables](./configuration/environment-variables.md)
 - [Site Configuration](./configuration/sites.md) — multi-tenant sites, secrets and difficulty maps
 - [Create Challenge](./api/challenge.md) and [Verify Solution](./api/verify.md)

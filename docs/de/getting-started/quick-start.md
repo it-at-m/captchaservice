@@ -37,8 +37,13 @@ curl http://localhost:39146/actuator/health
 
 Erwartet wird `200 OK` mit einem kleinen JSON-Body, dessen Feld `status` `"UP"` enthält. Die übrigen Management-Endpunkte stehen unter [Monitoring](../operations/monitoring.md).
 
+## 5. Im Browser testen (optional)
+
+Challenge-Anlage und Lösungsprüfung lassen sich im Browser mit der [Widget-Demo](./widget-demo.md) nachvollziehen. Dafür werden der laufende Stack, das Backend und die Vue-App unter `widget/` gemeinsam genutzt.
+
 ## Nächste Schritte
 
+- [Widget-Demo](./widget-demo.md) — CaptchaService per ALTCHA-Widget im Browser testen
 - [Umgebungsvariablen](../configuration/environment-variables.md) — Flags, die von außen überschrieben werden können.
 - [Site-Konfiguration](../configuration/sites.md) — Sites, Geheimnisse und Schwierigkeits-Maps festlegen.
 - [Challenge anlegen](../api/challenge.md) und [Lösung prüfen](../api/verify.md) — die beiden Endpunkte, die Clients aufrufen.
