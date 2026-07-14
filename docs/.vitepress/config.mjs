@@ -79,6 +79,7 @@ const sidebarLabels = {
     gettingStarted: "Getting Started",
     prerequisites: "Prerequisites",
     quickStart: "Quick Start",
+    widgetDemo: "Widget Demo",
     configuration: "Configuration",
     environmentVariables: "Environment Variables",
     siteConfiguration: "Site Configuration",
@@ -104,6 +105,7 @@ const sidebarLabels = {
     gettingStarted: "Erste Schritte",
     prerequisites: "Voraussetzungen",
     quickStart: "Schnellstart",
+    widgetDemo: "Widget-Demo",
     configuration: "Konfiguration",
     environmentVariables: "Umgebungsvariablen",
     siteConfiguration: "Site-Konfiguration",
@@ -147,6 +149,10 @@ const buildSidebar = (prefix, lang) => {
         {
           text: t.quickStart,
           link: `${prefix}/getting-started/quick-start`,
+        },
+        {
+          text: t.widgetDemo,
+          link: `${prefix}/getting-started/widget-demo`,
         },
       ],
     },

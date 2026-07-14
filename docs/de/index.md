@@ -13,6 +13,7 @@ Dieses Handbuch ist der zentrale Einstiegspunkt auf [GitHub Pages](https://it-at
 - [Releases](./overview/releases.md) — Versionierung und Veröffentlichung von Artefakten
 - [Voraussetzungen](./getting-started/prerequisites.md)
 - [Schnellstart](./getting-started/quick-start.md) — den Dienst lokal in Betrieb nehmen
+- [Widget-Demo](./getting-started/widget-demo.md) — CaptchaService per ALTCHA-Widget im Browser testen
 - [Umgebungsvariablen](./configuration/environment-variables.md)
 - [Site-Konfiguration](./configuration/sites.md) — mandantenfähige Sites, Geheimnisse und Schwierigkeits-Maps
 - [Challenge anlegen](./api/challenge.md) und [Lösung prüfen](./api/verify.md)
