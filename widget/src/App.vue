@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue';
-import 'altcha';
-import 'altcha/i18n/de';
-import { State } from 'altcha/types';
-import type { WidgetAttributes, WidgetMethods } from 'altcha/types';
+import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
+
+import "altcha";
+import "altcha/i18n/de";
+
+import type { WidgetAttributes, WidgetMethods } from "altcha/types";
+
+import { State } from "altcha/types";
 
 import {
   CAPTCHA_CHALLENGE_URL,
@@ -11,10 +14,12 @@ import {
   CAPTCHA_SITE_KEY,
   CAPTCHA_SITE_SECRET,
   CAPTCHA_VERIFY_URL,
-} from './config/captcha';
-import { createCaptchaFetch } from './utils/captchaFetch';
+} from "./config/captcha";
+import { createCaptchaFetch } from "./utils/captchaFetch";
 
-const altchaWidget = ref<(HTMLElement & WidgetAttributes & WidgetMethods) | null>(null);
+const altchaWidget = ref<
+  (HTMLElement & WidgetAttributes & WidgetMethods) | null
+>(null);
 const captchaVerified = ref(false);
 
 const configuration = computed(() =>
@@ -25,7 +30,7 @@ const configuration = computed(() =>
 );
 
 const onStateChange = (ev: CustomEvent | Event) => {
-  if (!('detail' in ev)) return;
+  if (!("detail" in ev)) return;
   captchaVerified.value = ev.detail.state === State.VERIFIED;
 };
 
@@ -34,7 +39,7 @@ onMounted(async () => {
   const widget = altchaWidget.value;
   if (widget?.configure) {
     await widget.configure({
-      language: 'de',
+      language: "de",
       fetch: createCaptchaFetch({
         siteKey: CAPTCHA_SITE_KEY,
         siteSecret: CAPTCHA_SITE_SECRET,
@@ -44,11 +49,11 @@ onMounted(async () => {
       }),
     });
   }
-  altchaWidget.value?.addEventListener('statechange', onStateChange);
+  altchaWidget.value?.addEventListener("statechange", onStateChange);
 });
 
 onUnmounted(() => {
-  altchaWidget.value?.removeEventListener('statechange', onStateChange);
+  altchaWidget.value?.removeEventListener("statechange", onStateChange);
 });
 </script>
 
@@ -59,6 +64,11 @@ onUnmounted(() => {
       :challenge="CAPTCHA_CHALLENGE_URL"
       :configuration="configuration"
     />
-    <button type="submit" :disabled="!captchaVerified">Weiter</button>
+    <button
+      type="submit"
+      :disabled="!captchaVerified"
+    >
+      Weiter
+    </button>
   </form>
 </template>

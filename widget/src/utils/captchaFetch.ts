@@ -1,4 +1,4 @@
-import type { Challenge, Solution } from 'altcha/types';
+import type { Challenge, Solution } from "altcha/types";
 
 type AltchaPayload = {
   challenge: Challenge;
@@ -21,7 +21,9 @@ export type CaptchaFetchOptions = {
   verifyUrl: string;
 };
 
-function decodeAltchaPayload(payload: string | undefined): AltchaPayload | undefined {
+function decodeAltchaPayload(
+  payload: string | undefined
+): AltchaPayload | undefined {
   if (!payload) return undefined;
 
   try {
@@ -31,8 +33,10 @@ function decodeAltchaPayload(payload: string | undefined): AltchaPayload | undef
   }
 }
 
-function extractAltchaPayload(body: BodyInit | null | undefined): string | undefined {
-  if (typeof body !== 'string') return undefined;
+function extractAltchaPayload(
+  body: BodyInit | null | undefined
+): string | undefined {
+  if (typeof body !== "string") return undefined;
 
   try {
     return (JSON.parse(body) as AltchaVerifyRequestBody).payload;
@@ -43,7 +47,10 @@ function extractAltchaPayload(body: BodyInit | null | undefined): string | undef
 
 function isSameUrl(requestUrl: string, configuredUrl: string): boolean {
   try {
-    return new URL(requestUrl, location.origin).href === new URL(configuredUrl, location.origin).href;
+    return (
+      new URL(requestUrl, location.origin).href ===
+      new URL(configuredUrl, location.origin).href
+    );
   } catch {
     return requestUrl === configuredUrl;
   }
@@ -54,8 +61,8 @@ async function fetchChallenge(
   options: CaptchaFetchOptions
 ): Promise<Response> {
   const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       siteKey: options.siteKey,
       siteSecret: options.siteSecret,
@@ -63,7 +70,7 @@ async function fetchChallenge(
     }),
   });
 
-  if (!response.headers.get('content-type')?.includes('json')) {
+  if (!response.headers.get("content-type")?.includes("json")) {
     return response;
   }
 
@@ -84,8 +91,8 @@ async function fetchVerify(
   const payload = decodeAltchaPayload(altchaPayloadString);
 
   const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       siteKey: options.siteKey,
       siteSecret: options.siteSecret,
@@ -94,7 +101,7 @@ async function fetchVerify(
     }),
   });
 
-  if (!response.headers.get('content-type')?.includes('json')) {
+  if (!response.headers.get("content-type")?.includes("json")) {
     return response;
   }
 
@@ -111,7 +118,7 @@ async function fetchVerify(
 
 export function createCaptchaFetch(options: CaptchaFetchOptions): typeof fetch {
   return async (url, init) => {
-    const requestUrl = typeof url === 'string' ? url : url.toString();
+    const requestUrl = typeof url === "string" ? url : url.toString();
 
     if (isSameUrl(requestUrl, options.challengeUrl)) {
       return fetchChallenge(requestUrl, options);
