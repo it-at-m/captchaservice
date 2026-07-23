@@ -1,9 +1,6 @@
 package de.muenchen.captchaservice.backend.service.metrics;
 
-import de.muenchen.captchaservice.backend.data.SourceAddress;
-import de.muenchen.captchaservice.backend.repository.CaptchaRequestRepository;
 import de.muenchen.captchaservice.backend.repository.InvalidatedPayloadRepository;
-import de.muenchen.captchaservice.backend.service.difficulty.DifficultyService;
 import de.muenchen.captchaservice.backend.util.LogSanitizer;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
@@ -26,23 +23,19 @@ public class MetricsService {
     }
 
     private final MeterRegistry meterRegistry;
-    private final DifficultyService difficultyService;
     private final InvalidatedPayloadRepository invalidatedPayloadRepository;
-    private final CaptchaRequestRepository captchaRequestRepository;
 
-    public MetricsService(final MeterRegistry meterRegistry, final DifficultyService difficultyService,
-            final InvalidatedPayloadRepository invalidatedPayloadRepository, final CaptchaRequestRepository captchaRequestRepository) {
+    public MetricsService(final MeterRegistry meterRegistry, final InvalidatedPayloadRepository invalidatedPayloadRepository) {
         this.meterRegistry = meterRegistry;
-        this.difficultyService = difficultyService;
         this.invalidatedPayloadRepository = invalidatedPayloadRepository;
-        this.captchaRequestRepository = captchaRequestRepository;
     }
 
-    public void recordCaptchaEvent(final String siteKey, final SourceAddress sourceAddress, final CaptchaEventType eventType) {
-        final int difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
-        final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
-        final long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
-
+    /**
+     * Records a captcha event using precomputed difficulty context so metrics tagging
+     * does not issue additional database queries under load.
+     */
+    public void recordCaptchaEvent(final String siteKey, final CaptchaEventType eventType, final int difficulty, final boolean isWhitelisted,
+            final long sameSourceAddressRequestCount) {
         Counter.builder("captcha.events")
                 .tag("site_key", siteKey)
                 .tag("difficulty", String.valueOf(difficulty))
@@ -54,15 +47,12 @@ public class MetricsService {
                 .increment();
     }
 
-    public void recordClientSolveTime(final String siteKey, final SourceAddress sourceAddress, final Long solveTime) {
+    public void recordClientSolveTime(final String siteKey, final Long solveTime, final int difficulty, final boolean isWhitelisted,
+            final long sameSourceAddressRequestCount) {
         if (solveTime == null || solveTime < 0) {
             log.warn("Invalid solve time value: {} for site: {}", solveTime, LogSanitizer.sanitize(siteKey));
             return;
         }
-
-        final int difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
-        final boolean isWhitelisted = difficultyService.isSourceAddressWhitelisted(siteKey, sourceAddress);
-        final long sameSourceAddressRequestCount = getSameSourceAddressRequestCount(sourceAddress);
 
         DistributionSummary.builder("captcha.client.solve.time")
                 .tag("site_key", siteKey)
@@ -73,10 +63,6 @@ public class MetricsService {
                 .baseUnit("milliseconds")
                 .register(meterRegistry)
                 .record(solveTime);
-    }
-
-    private long getSameSourceAddressRequestCount(final SourceAddress sourceAddress) {
-        return captchaRequestRepository.countBySourceAddressHashIgnoreCaseAndExpiresAtGreaterThanEqual(sourceAddress.getHash(), Instant.now());
     }
 
     public void initializeInvalidatedPayloadsGauge() {
