@@ -1,6 +1,6 @@
 # Widget-Demo
 
-Im Verzeichnis [`widget/`](https://github.com/it-at-m/captchaservice/tree/main/showcase/widget) liegt eine schlanke Vue-Anwendung mit dem [ALTCHA-Widget](https://altcha.org/docs/v2/widget-integration/). Sie spricht direkt mit dem CaptchaService und eignet sich, um lokal zu prüfen, ob das Anlegen von Challenges und das Prüfen von Lösungen in der Praxis funktionieren — ohne curl oder Postman.
+Im Verzeichnis [`widget/`](https://github.com/it-at-m/captchaservice/tree/main/widget) liegt eine schlanke Vue-Anwendung mit dem [ALTCHA-Widget](https://altcha.org/docs/v2/widget-integration/). Sie spricht direkt mit dem CaptchaService und eignet sich, um lokal zu prüfen, ob das Anlegen von Challenges und das Prüfen von Lösungen in der Praxis funktionieren — ohne curl oder Postman.
 
 ## Voraussetzungen
 
@@ -10,11 +10,9 @@ Vom Repository-Root aus:
 
 ```bash
 cd stack
-{docker|podman} compose up -d
-```
+podman compose up -d
 
-```bash
-cd backend
+cd ../backend
 bash runLocalNoSecurity.sh
 ```
 
