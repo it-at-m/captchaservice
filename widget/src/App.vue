@@ -58,17 +58,25 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <form action="#">
-    <altcha-widget
-      ref="altchaWidget"
-      :challenge="CAPTCHA_CHALLENGE_URL"
-      :configuration="configuration"
-    />
-    <button
-      type="submit"
-      :disabled="!captchaVerified"
-    >
-      Weiter
-    </button>
-  </form>
+  <main>
+    <h1>ALTCHA Widget-Demo</h1>
+    <p class="hint">
+      Nach erfolgreicher Prüfung wird Weiter freigeschaltet; ein Klick lädt die
+      Seite neu.
+    </p>
+
+    <form action="#">
+      <altcha-widget
+        ref="altchaWidget"
+        :challenge="CAPTCHA_CHALLENGE_URL"
+        :configuration="configuration"
+      />
+      <button
+        type="submit"
+        :disabled="!captchaVerified"
+      >
+        Weiter
+      </button>
+    </form>
+  </main>
 </template>
