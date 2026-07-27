@@ -19,6 +19,25 @@ body {
   padding: 2rem;
 }
 
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
 form {
   display: flex;
   flex-direction: column;
