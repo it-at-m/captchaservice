@@ -1,7 +1,7 @@
 {
   "_comment": "TEMPORARY TRANSITIVE DEPENDENCY OVERRIDES FOR SECURITY FIXES",
   "overrides": {
-    "nanoid": "3.3.17"
+    "nanoid": "3.3.18"
   },
   "name": "captcha-widget",
   "version": "0.0.0",
