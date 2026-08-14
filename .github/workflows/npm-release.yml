@@ -74,3 +74,14 @@ jobs:
         with:
           artifact-name: ${{ needs.release.outputs.ARTIFACT_NAME }}
           tag-name: ${{ inputs.app-path }}-${{ needs.release.outputs.ARTIFACT_VERSION }}
+
+  # GITHUB_TOKEN-created releases do not trigger workflow `release` events, so notify
+  # explicitly after the GitHub release exists.
+  notify-webex:
+    needs:
+      - release
+      - create-github-release
+    uses: ./.github/workflows/release-webex-notify.yml
+    with:
+      version: ${{ inputs.app-path }}-${{ needs.release.outputs.ARTIFACT_VERSION }}
+    secrets: inherit
