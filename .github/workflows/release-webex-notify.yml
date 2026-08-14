@@ -15,6 +15,11 @@ on:
         description: "Release version or tag (e.g. backend-1.2.3 or 1.2.3)"
         required: true
         type: string
+    secrets:
+      WEBEX_BOT_TOKEN:
+        required: true
+      WEBEX_ROOM_ID:
+        required: true
 
 jobs:
   notify:
@@ -38,15 +43,16 @@ jobs:
           set -euo pipefail
 
           if [ "$EVENT_NAME" = "release" ]; then
+            BODY_DELIM="BODY_$(openssl rand -hex 16)"
             {
               echo "name=${RELEASE_NAME}"
               echo "tag=${RELEASE_TAG}"
               echo "url=${RELEASE_URL}"
               echo "author=${RELEASE_AUTHOR}"
               echo "prerelease=${RELEASE_PRERELEASE}"
-              echo "body<<EOF"
+              echo "body<<${BODY_DELIM}"
               printf '%s\n' "${RELEASE_BODY:-}"
-              echo "EOF"
+              echo "${BODY_DELIM}"
             } >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -66,15 +72,16 @@ jobs:
             STRIPPED="${VERSION#v}"
             META="$(fetch_release "v${STRIPPED}")"
           fi
+          BODY_DELIM="BODY_$(openssl rand -hex 16)"
           {
             echo "name=$(jq -r '.name // .tagName' <<<"$META")"
             echo "tag=$(jq -r '.tagName' <<<"$META")"
             echo "url=$(jq -r '.url' <<<"$META")"
             echo "author=$(jq -r '.author.login // "unknown"' <<<"$META")"
             echo "prerelease=$(jq -r '.isPrerelease' <<<"$META")"
-            echo "body<<EOF"
+            echo "body<<${BODY_DELIM}"
             jq -r '.body // ""' <<<"$META"
-            echo "EOF"
+            echo "${BODY_DELIM}"
           } >> "$GITHUB_OUTPUT"
 
       - name: Notify Webex
@@ -126,7 +133,7 @@ jobs:
                 "[View release](" + $url + ")"
               )
             }' \
-            | curl -fsS -o /dev/null -X POST \
+            | curl -fsS --connect-timeout 10 --max-time 30 -o /dev/null -X POST \
               -H "Authorization: Bearer $WEBEX_BOT_TOKEN" \
               -H "Content-Type: application/json" \
               -d @- \
