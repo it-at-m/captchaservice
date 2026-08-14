@@ -8,12 +8,4 @@ jobs:
   pr-checklist:
     runs-on: ubuntu-latest
     steps:
-      # Call mheap directly so we can skip bot-comment checkboxes (CodeRabbit
-      # finishing-touch items). The lhm wrapper does not expose skipComments.
-      - name: Require completed PR-body checklist
-        if: ${{ github.event.pull_request.draft == false && github.event.pull_request.user.login != 'dependabot[bot]' && github.event.pull_request.user.login != 'renovate[bot]' }}
-        uses: mheap/require-checklist-action@9c8100a52aa9726d4648e61aa92415f6c843c990 # v2.6.1
-        with:
-          requireChecklist: false
-          skipComments: true
-          skipDescriptionRegex: .*\(optional\).*
+      - uses: it-at-m/lhm_actions/action-templates/actions/action-pr-checklist@e9a8422d740d4e9eaef25cfeeb3a5790da97a7aa # v1.2.4
