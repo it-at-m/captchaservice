@@ -72,3 +72,14 @@ jobs:
           artifact-name: ${{ needs.release-maven-artifact.outputs.ARTIFACT_NAME }}
           tag-name: ${{ inputs.app-path }}-${{ github.event.inputs.releaseVersion }}
           artifact-path: ${{ github.event.inputs.app-path }}/target/*.jar
+
+  # GITHUB_TOKEN-created releases do not trigger workflow `release` events, so notify
+  # explicitly after the GitHub release exists.
+  notify-webex:
+    needs: release-maven-github
+    uses: ./.github/workflows/release-webex-notify.yml
+    with:
+      version: ${{ inputs.app-path }}-${{ github.event.inputs.releaseVersion }}
+    secrets:
+      WEBEX_BOT_TOKEN: ${{ secrets.WEBEX_BOT_TOKEN }}
+      WEBEX_ROOM_ID: ${{ secrets.WEBEX_ROOM_ID }}
