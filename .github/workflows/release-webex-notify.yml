@@ -38,12 +38,12 @@ jobs:
           set -euo pipefail
 
           if [ "$EVENT_NAME" = "release" ]; then
-            echo "name=${RELEASE_NAME}" >> "$GITHUB_OUTPUT"
-            echo "tag=${RELEASE_TAG}" >> "$GITHUB_OUTPUT"
-            echo "url=${RELEASE_URL}" >> "$GITHUB_OUTPUT"
-            echo "author=${RELEASE_AUTHOR}" >> "$GITHUB_OUTPUT"
-            echo "prerelease=${RELEASE_PRERELEASE}" >> "$GITHUB_OUTPUT"
             {
+              echo "name=${RELEASE_NAME}"
+              echo "tag=${RELEASE_TAG}"
+              echo "url=${RELEASE_URL}"
+              echo "author=${RELEASE_AUTHOR}"
+              echo "prerelease=${RELEASE_PRERELEASE}"
               echo "body<<EOF"
               printf '%s\n' "${RELEASE_BODY:-}"
               echo "EOF"
@@ -66,12 +66,12 @@ jobs:
             STRIPPED="${VERSION#v}"
             META="$(fetch_release "v${STRIPPED}")"
           fi
-          echo "name=$(jq -r '.name // .tagName' <<<"$META")" >> "$GITHUB_OUTPUT"
-          echo "tag=$(jq -r '.tagName' <<<"$META")" >> "$GITHUB_OUTPUT"
-          echo "url=$(jq -r '.url' <<<"$META")" >> "$GITHUB_OUTPUT"
-          echo "author=$(jq -r '.author.login // "unknown"' <<<"$META")" >> "$GITHUB_OUTPUT"
-          echo "prerelease=$(jq -r '.isPrerelease' <<<"$META")" >> "$GITHUB_OUTPUT"
           {
+            echo "name=$(jq -r '.name // .tagName' <<<"$META")"
+            echo "tag=$(jq -r '.tagName' <<<"$META")"
+            echo "url=$(jq -r '.url' <<<"$META")"
+            echo "author=$(jq -r '.author.login // "unknown"' <<<"$META")"
+            echo "prerelease=$(jq -r '.isPrerelease' <<<"$META")"
             echo "body<<EOF"
             jq -r '.body // ""' <<<"$META"
             echo "EOF"
