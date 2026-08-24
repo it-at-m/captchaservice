@@ -20,7 +20,7 @@
     "fix": "prettier . --write --cache && eslint . --fix --cache --concurrency auto"
   },
   "dependencies": {
-    "altcha": "3.2.1",
+    "altcha": "3.2.2",
     "vue": "3.5.41"
   },
   "devDependencies": {
