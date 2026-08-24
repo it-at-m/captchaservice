@@ -19,7 +19,7 @@
     "@muenchen/prettier-codeformat": "1.0.2",
     "esbuild": "0.28.2",
     "markdown-it": "14.3.0",
-    "mermaid": "11.16.1",
+    "mermaid": "11.17.0",
     "prettier": "3.9.6",
     "vitepress": "1.6.4"
   },
