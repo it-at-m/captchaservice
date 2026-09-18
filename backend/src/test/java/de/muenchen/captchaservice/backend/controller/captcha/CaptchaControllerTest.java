@@ -143,7 +143,7 @@ class CaptchaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-        assertEquals(1, captchaRequestRepository.countBySourceAddressHashIgnoreCase(DigestUtils.sha256Hex(TEST_CLIENT_ADDRESS)));
+        assertEquals(1, captchaRequestRepository.countBySourceAddressHash(DigestUtils.sha256Hex(TEST_CLIENT_ADDRESS)));
     }
 
     @Test
@@ -158,7 +158,7 @@ class CaptchaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-        assertEquals(1, captchaRequestRepository.countBySourceAddressHashIgnoreCase(DigestUtils.sha256Hex("ea28:fb8:e3f6:2836:0:0:0:0")));
+        assertEquals(1, captchaRequestRepository.countBySourceAddressHash(DigestUtils.sha256Hex("ea28:fb8:e3f6:2836:0:0:0:0")));
     }
 
     @Test
