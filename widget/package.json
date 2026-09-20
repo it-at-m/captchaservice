@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "altcha": "3.2.2",
-    "vue": "3.5.42"
+    "vue": "3.5.43"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
