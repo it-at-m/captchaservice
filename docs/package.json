@@ -20,7 +20,7 @@
     "esbuild": "0.28.2",
     "markdown-it": "14.3.1",
     "mermaid": "11.17.2",
-    "prettier": "3.9.6",
+    "prettier": "3.9.8",
     "vitepress": "1.6.4"
   },
   "overrides": {
