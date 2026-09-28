@@ -30,7 +30,7 @@
     "@vitejs/plugin-vue": "6.0.9",
     "@vue/eslint-config-prettier": "10.2.0",
     "@vue/eslint-config-typescript": "14.9.0",
-    "eslint": "10.10.0",
+    "eslint": "10.11.0",
     "eslint-plugin-vue": "10.11.0",
     "prettier": "3.9.8",
     "typescript": "6.0.3",
