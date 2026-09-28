@@ -22,21 +22,21 @@ jobs:
           - app-path: backend
 
     steps:
-      - uses: it-at-m/lhm_actions/action-templates/actions/action-checkout@54b32c7d11363cad45838c9a3d8a8560b93f0e8c # v1.5.4
+      - uses: it-at-m/lhm_actions/action-templates/actions/action-checkout@e967c9de8fb0197faf7a294d153efa76de5cec27 # v1.6.0
       - id: node # required for steps.* syntax
         if: ${{ hashFiles(format('./{0}/package.json', matrix.app-path)) != '' }}
-        uses: it-at-m/lhm_actions/action-templates/actions/action-npm-build@54b32c7d11363cad45838c9a3d8a8560b93f0e8c # v1.5.4
+        uses: it-at-m/lhm_actions/action-templates/actions/action-npm-build@e967c9de8fb0197faf7a294d153efa76de5cec27 # v1.6.0
         with:
           app-path: ${{ matrix.app-path }}
           node-version: "24"
       - id: maven # required for steps.* syntax
         if: ${{ hashFiles(format('./{0}/pom.xml', matrix.app-path)) != '' }}
-        uses: it-at-m/lhm_actions/action-templates/actions/action-maven-build@54b32c7d11363cad45838c9a3d8a8560b93f0e8c # v1.5.4
+        uses: it-at-m/lhm_actions/action-templates/actions/action-maven-build@e967c9de8fb0197faf7a294d153efa76de5cec27 # v1.6.0
         with:
           app-path: ${{ matrix.app-path }}
           java-version: "21"
       - if: ${{ github.ref == 'refs/heads/main' && (steps.node.outcome == 'success' || steps.maven.outcome == 'success') }}
-        uses: it-at-m/lhm_actions/action-templates/actions/action-build-image@54b32c7d11363cad45838c9a3d8a8560b93f0e8c # v1.5.4
+        uses: it-at-m/lhm_actions/action-templates/actions/action-build-image@e967c9de8fb0197faf7a294d153efa76de5cec27 # v1.6.0
         with:
           path: ${{ matrix.app-path }}
           image-name: ${{ matrix.app-path }}
