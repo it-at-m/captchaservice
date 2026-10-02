@@ -66,7 +66,7 @@ class ExpiredDataServiceTest {
 
         assertEquals(2, invalidatedPayloadRepository.count());
         assertEquals(2, captchaRequestRepository.count());
-        assertEquals(2, captchaRequestRepository.countBySourceAddressHashIgnoreCase(notExpiredHash));
+        assertEquals(2, captchaRequestRepository.countBySourceAddressHash(notExpiredHash));
         assertEquals(2, invalidatedPayloadRepository.countByPayloadHash(notExpiredHash));
     }
 

@@ -6,6 +6,7 @@ import de.muenchen.captchaservice.backend.data.SourceAddress;
 import de.muenchen.captchaservice.backend.entity.InvalidatedPayload;
 import de.muenchen.captchaservice.backend.repository.InvalidatedPayloadRepository;
 import de.muenchen.captchaservice.backend.service.difficulty.DifficultyService;
+import de.muenchen.captchaservice.backend.service.difficulty.SourceAddressDifficulty;
 import de.muenchen.captchaservice.backend.service.metrics.MetricsService;
 import de.muenchen.captchaservice.backend.service.metrics.MetricsService.CaptchaEventType;
 import java.time.Instant;
@@ -34,13 +35,15 @@ public class CaptchaService {
     }
 
     public Altcha.Challenge createChallenge(final String siteKey, final SourceAddress sourceAddress) {
-        final int difficulty = difficultyService.getDifficultyForSourceAddress(siteKey, sourceAddress);
+        final SourceAddressDifficulty difficultyContext = difficultyService.resolveDifficulty(siteKey, sourceAddress);
         difficultyService.registerRequest(siteKey, sourceAddress);
-        metricsService.recordCaptchaEvent(siteKey, sourceAddress, CaptchaEventType.CHALLENGE_REQUEST);
+        // Visit count for metrics includes the request just registered.
+        metricsService.recordCaptchaEvent(siteKey, CaptchaEventType.CHALLENGE_REQUEST, difficultyContext.difficulty(), difficultyContext.whitelisted(),
+                difficultyContext.visitCount() + 1);
         final Altcha.CreateChallengeOptions options = new Altcha.CreateChallengeOptions()
                 .algorithm("SHA-256")
                 .hmacSignatureSecret(captchaProperties.hmacKey())
-                .cost(difficulty)
+                .cost(difficultyContext.difficulty())
                 .expiresInSeconds(captchaProperties.captchaTimeoutSeconds());
         try {
             return Altcha.createChallenge(options);
@@ -57,20 +60,26 @@ public class CaptchaService {
         try {
             final Altcha.VerifySolutionResult result = Altcha.verifySolution(payload.challenge(), payload.solution(), captchaProperties.hmacKey(),
                     Altcha.kdf("SHA-256"));
+            final SourceAddressDifficulty difficultyContext = difficultyService.resolveDifficulty(siteKey, sourceAddress);
             if (result.verified()) {
-                metricsService.recordCaptchaEvent(siteKey, sourceAddress, CaptchaEventType.VERIFY_SUCCESS);
+                metricsService.recordCaptchaEvent(siteKey, CaptchaEventType.VERIFY_SUCCESS, difficultyContext.difficulty(), difficultyContext.whitelisted(),
+                        difficultyContext.visitCount());
 
                 if (payload.solution().time() != null) {
-                    metricsService.recordClientSolveTime(siteKey, sourceAddress, payload.solution().time());
+                    metricsService.recordClientSolveTime(siteKey, payload.solution().time(), difficultyContext.difficulty(), difficultyContext.whitelisted(),
+                            difficultyContext.visitCount());
                 }
 
                 invalidatePayload(payload);
             } else {
-                metricsService.recordCaptchaEvent(siteKey, sourceAddress, CaptchaEventType.VERIFY_FAILURE);
+                metricsService.recordCaptchaEvent(siteKey, CaptchaEventType.VERIFY_FAILURE, difficultyContext.difficulty(), difficultyContext.whitelisted(),
+                        difficultyContext.visitCount());
             }
             return result.verified();
         } catch (Exception e) {
-            metricsService.recordCaptchaEvent(siteKey, sourceAddress, CaptchaEventType.VERIFY_ERROR);
+            final SourceAddressDifficulty difficultyContext = difficultyService.resolveDifficulty(siteKey, sourceAddress);
+            metricsService.recordCaptchaEvent(siteKey, CaptchaEventType.VERIFY_ERROR, difficultyContext.difficulty(), difficultyContext.whitelisted(),
+                    difficultyContext.visitCount());
             String payloadHash = "unavailable";
             try {
                 payloadHash = getPayloadHash(payload);
@@ -92,8 +101,13 @@ public class CaptchaService {
     public boolean isPayloadInvalidated(final String siteKey, final Altcha.Payload payload) {
         final CaptchaSite site = captchaProperties.sites().get(siteKey);
         final String payloadHash = getPayloadHash(payload);
-        final long payloadHashCount = invalidatedPayloadRepository.countByPayloadHashIgnoreCaseAndExpiresAtGreaterThanEqual(payloadHash, Instant.now());
-        return payloadHashCount >= site.maxVerifiesPerPayload();
+        final Instant now = Instant.now();
+        final int maxVerifiesPerPayload = site.maxVerifiesPerPayload();
+        if (maxVerifiesPerPayload <= 1) {
+            return invalidatedPayloadRepository.existsByPayloadHashAndExpiresAtGreaterThanEqual(payloadHash, now);
+        }
+        final long payloadHashCount = invalidatedPayloadRepository.countByPayloadHashAndExpiresAtGreaterThanEqual(payloadHash, now);
+        return payloadHashCount >= maxVerifiesPerPayload;
     }
 
     private static String getPayloadHash(final Altcha.Payload payload) {

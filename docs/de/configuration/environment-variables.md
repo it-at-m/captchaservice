@@ -7,6 +7,10 @@ CaptchaService wird über die üblichen Spring-Boot-Mechanismen konfiguriert (`a
 | `SPRING_DATASOURCE_URL`                 | PostgreSQL-Verbindungs-URL                    | `jdbc:postgresql://localhost:5432/captchaservice` |
 | `SPRING_DATASOURCE_USERNAME`            | Datenbank-Benutzername                        | -                                                 |
 | `SPRING_DATASOURCE_PASSWORD`            | Datenbank-Passwort                            | -                                                 |
+| `HIKARI_MAXIMUM_POOL_SIZE`              | Größe des JDBC-Connection-Pools               | `20`                                              |
+| `HIKARI_MINIMUM_IDLE`                   | Minimale Idle-Verbindungen im Pool            | `5`                                               |
+| `HIKARI_CONNECTION_TIMEOUT`             | Wartezeit auf freie Verbindung (ms)           | `5000`                                            |
+| `HIKARI_LEAK_DETECTION_THRESHOLD`       | Connection-Leak-Log nach (ms)                 | `60000`                                           |
 | `CAPTCHA_HMAC_KEY`                      | HMAC-Schlüssel zum Signieren von Challenges   | -                                                 |
 | `CAPTCHA_CAPTCHA_TIMEOUT_SECONDS`       | Gültigkeitsdauer einer Challenge in Sekunden  | `300`                                             |
 | `CAPTCHA_SOURCE_ADDRESS_WINDOW_SECONDS` | Beobachtungsfenster für Quell-IPs in Sekunden | `3600`                                            |
@@ -16,5 +20,6 @@ CaptchaService wird über die üblichen Spring-Boot-Mechanismen konfiguriert (`a
 - **`CAPTCHA_HMAC_KEY` ist Pflicht.** Ein langer, zufälliger Wert (z. B. `openssl rand -base64 48`) im Secret-Manager ablegen. Wird er rotiert, werden alle bereits ausgestellten Challenges ungültig.
 - **Datenbank-Zugangsdaten** sind in der Produktion ebenfalls Pflicht. Der lokale Compose-Stack setzt sinnvolle Defaults, damit die Anwendung lokal ohne weitere Konfiguration startet.
 - Die beiden `CAPTCHA_*`-Zeitfenster steuern, wie lange eine ausgestellte Challenge gültig ist und wie lange eine Quell-IP in die adaptive Schwierigkeit einfließt. Die Defaults (5 Minuten / 1 Stunde) sind ein guter Startpunkt.
+- Bei hoher paralleler Challenge-/Verify-Last `HIKARI_MAXIMUM_POOL_SIZE` erhöhen, wenn `hikaricp_connections_pending` oder Connection-Timeouts auftreten. Ein kurzes `HIKARI_CONNECTION_TIMEOUT` bricht schnell ab, statt Servlet-Threads 30 Sekunden zu blockieren.
 
 Die Site-spezifischen Schlüssel, Geheimnisse und Schwierigkeits-Maps stehen in der [Site-Konfiguration](./sites.md).
