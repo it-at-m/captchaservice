@@ -55,7 +55,7 @@ public class MetricsService {
     }
 
     public void recordClientSolveTime(final String siteKey, final SourceAddress sourceAddress, final Double solveTime) {
-        if (solveTime == null || solveTime < 0) {
+        if (solveTime == null || !Double.isFinite(solveTime) || solveTime < 0) {
             log.warn("Invalid solve time value: {} for site: {}", solveTime, LogSanitizer.sanitize(siteKey));
             return;
         }
