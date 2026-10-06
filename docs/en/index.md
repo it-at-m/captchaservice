@@ -76,10 +76,3 @@ CaptchaService in action on the public `zmscitizenview` appointment-booking page
 Munich contact: it@M – opensource@muenchen.de
 
 CaptchaService was built at **it@M**, the IT service provider of the Landeshauptstadt München. See [Project History](./overview/project-history.md) for the full story.
-
-<table border="0" cellpadding="0" cellspacing="0">
-  <tr>
-    <td style="padding-right: 30px;"><img src="https://assets.muenchen.de/logos/itm/itM_Basislogo_gelb_schwarz-500.png" align="center" style="height: 30px; width: auto; object-fit: contain;"></td>
-    <td><img src="https://assets.muenchen.de/logos/lhm/logo-lhm-muenchen.svg" align="center" style="height: 30px; width: auto; object-fit: contain;"></td>
-  </tr>
-</table>
