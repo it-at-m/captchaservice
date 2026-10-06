@@ -76,10 +76,3 @@ CaptchaService im Einsatz auf der öffentlichen Terminbuchungsseite `zmscitizenv
 Kontakt München: it@M – opensource@muenchen.de
 
 CaptchaService wurde bei **it@M**, dem IT-Dienstleister der Landeshauptstadt München, entwickelt. Die vollständige Geschichte steht in der [Projektgeschichte](./overview/project-history.md).
-
-<table border="0" cellpadding="0" cellspacing="0">
-  <tr>
-    <td style="padding-right: 30px;"><img src="https://assets.muenchen.de/logos/itm/itM_Basislogo_gelb_schwarz-500.png" align="center" style="height: 30px; width: auto; object-fit: contain;"></td>
-    <td><img src="https://assets.muenchen.de/logos/lhm/logo-lhm-muenchen.svg" align="center" style="height: 30px; width: auto; object-fit: contain;"></td>
-  </tr>
-</table>
