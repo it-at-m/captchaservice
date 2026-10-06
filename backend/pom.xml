@@ -87,7 +87,7 @@
         <!-- TEMPORARY TRANSITIVE DEPENDENCY OVERRIDES FOR SECURITY FIXES -->
         <!-- Preferably override properties defined in spring-boot-starter -> spring-boot-dependencies POM -->
         <jackson-2-bom.version>2.21.6</jackson-2-bom.version> <!-- CVE-2026-68497, CVE-2026-19032, CVE-2026-83557 -->
-        <jackson-bom.version>3.1.6</jackson-bom.version> <!-- CVE-2026-68497, CVE-2026-19032, CVE-2026-83557 -->
+        <jackson-bom.version>3.1.7</jackson-bom.version> <!-- CVE-2026-89407, CVE-2026-89425, CVE-2026-91776, CVE-2026-91777 -->
         <tomcat.version>11.0.25</tomcat.version> <!-- CVE-2026-65182, CVE-2026-65905, CVE-2026-68525 -->
     </properties>
 
@@ -261,7 +261,7 @@
         <dependency>
             <groupId>org.altcha</groupId>
             <artifactId>altcha</artifactId>
-            <version>2.0.3</version>
+            <version>2.1.1</version>
         </dependency>
         <dependency>
             <groupId>commons-net</groupId>
