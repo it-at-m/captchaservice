@@ -227,8 +227,8 @@ class CaptchaControllerTest {
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
             // Successful request
             mock.when(() -> Altcha.verifySolution(
-                    any(),
-                    any(),
+                    eq(payload.challenge()),
+                    eq(payload.solution()),
                     eq(TEST_HMAC_KEY),
                     any()))
                     .thenReturn(verifyResult);
@@ -241,8 +241,8 @@ class CaptchaControllerTest {
 
             // Expired request
             mock.when(() -> Altcha.verifySolution(
-                    any(),
-                    any(),
+                    eq(payload.challenge()),
+                    eq(payload.solution()),
                     eq(TEST_HMAC_KEY),
                     any()))
                     .thenReturn(verifyResult);
@@ -318,8 +318,8 @@ class CaptchaControllerTest {
 
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
             mock.when(() -> Altcha.verifySolution(
-                    any(),
-                    any(),
+                    eq(payload.challenge()),
+                    eq(payload.solution()),
                     eq(TEST_HMAC_KEY),
                     any()))
                     .thenReturn(verifyResult);
@@ -366,8 +366,8 @@ class CaptchaControllerTest {
 
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
             mock.when(() -> Altcha.verifySolution(
-                    any(),
-                    any(),
+                    eq(payload.challenge()),
+                    eq(payload.solution()),
                     eq(TEST_HMAC_KEY),
                     any()))
                     .thenReturn(verifyResult);
@@ -401,8 +401,8 @@ class CaptchaControllerTest {
 
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
             mock.when(() -> Altcha.verifySolution(
-                    any(),
-                    any(),
+                    eq(payload.challenge()),
+                    eq(payload.solution()),
                     eq(TEST_HMAC_KEY),
                     any()))
                     .thenThrow(new RuntimeException("Simulated error"));
@@ -435,8 +435,8 @@ class CaptchaControllerTest {
 
         try (MockedStatic<Altcha> mock = Mockito.mockStatic(Altcha.class)) {
             mock.when(() -> Altcha.verifySolution(
-                    any(),
-                    any(),
+                    eq(payload.challenge()),
+                    eq(payload.solution()),
                     eq(TEST_HMAC_KEY),
                     any()))
                     .thenReturn(verifyResult);
