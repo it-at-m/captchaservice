@@ -75,7 +75,7 @@ class CaptchaControllerTest {
     }
 
     public static Altcha.Solution createTestSolution() {
-        return new Altcha.Solution(1, "solution", 500L);
+        return new Altcha.Solution(1, "solution", 500.0);
     }
 
     public static Altcha.Payload createTestPayload() {
