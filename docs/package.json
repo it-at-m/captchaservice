@@ -5,7 +5,7 @@
     "katex": "0.18.2",
     "smol-toml": "1.9.0",
     "vitepress": {
-      "vite": "6.4.3"
+      "vite": "6.4.4"
     }
   },
   "name": "captchaservice-docs",
