@@ -1,0 +1,23 @@
+import vue from "@vitejs/plugin-vue";
+import { defineConfig } from "vite";
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag.indexOf("-") >= 0,
+        },
+      },
+    }),
+  ],
+  server: {
+    proxy: {
+      "/api/v1/captcha": {
+        target: "http://localhost:39146",
+        changeOrigin: true,
+      },
+    },
+  },
+});

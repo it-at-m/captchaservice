@@ -31,10 +31,10 @@ Leerer Platzhalter. Git führt immer zuerst `pre-commit`, dann `commit-msg` aus;
 Alle Prüfungen laufen in diesem Hook, in **Fail-Fast**-Reihenfolge:
 
 1. **Commit-Message** — Subject-Zeile aus der Message-Datei, die Git an diesen Hook übergibt
-2. **Doku-Formatierung** — Prettier-Check in `docs/`, wenn gestagte Dateien unter `docs/` liegen (`npm run format:check`)
+2. **Doku-Formatierung** — Prettier-Check in `docs/`, wenn gestagte Dateien unter `docs/` liegen (`npm run lint`)
 3. **Java-Code-Stil** — Spotless-Check über Maven, wenn gestagte `*.java`-Dateien vorhanden sind
 
-**Verhalten**
+### Verhalten
 
 - Commit-Message und Doku-Checks **blockieren** den Commit bei Fehlern
 - Spotless läuft nur bei gestagten Java-Dateien; wenn Maven lokal nicht installiert ist, wird Spotless mit einer Warnung übersprungen
@@ -52,7 +52,7 @@ Die Ticket-Nummer ist **optional** — `CAPTCHA-123` oder nur `CAPTCHA` (Großbu
 
 **Gültige Projekte:** `CAPTCHA`, `GH`
 
-**Merge-Commits**
+### Merge-Commits
 
 Gits Standard-Merge-Subjects (z. B. `Merge branch 'main' into feature-branch`) werden **automatisch akzeptiert**, damit `git merge` ohne Umbenennung der Message abgeschlossen werden kann.
 
@@ -62,7 +62,7 @@ Gits Standard-Merge-Subjects (z. B. `Merge branch 'main' into feature-branch`) w
 
 ```bash
 cd docs
-npm run format
+npm run fix
 ```
 
 ### Spotless schlägt fehl

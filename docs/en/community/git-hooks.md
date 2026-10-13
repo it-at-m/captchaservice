@@ -31,10 +31,10 @@ No-op placeholder. Git always runs `pre-commit` before `commit-msg`; the real ch
 All checks run in this hook, in **fail-fast** order:
 
 1. **Commit message** — subject line from the message file Git passes to this hook
-2. **Docs formatting** — Prettier check in `docs/` when staged files are under `docs/` (`npm run format:check`)
+2. **Docs formatting** — Prettier check in `docs/` when staged files are under `docs/` (`npm run lint`)
 3. **Java code style** — Spotless check via Maven when staged `*.java` files are present
 
-**Behavior**
+### Behavior
 
 - Commit message and docs checks **block** the commit on failure
 - Spotless runs only when Java files are staged; if Maven is not installed locally, Spotless is skipped with a warning
@@ -52,7 +52,7 @@ The ticket number is **optional** — use `CAPTCHA-123` or just `CAPTCHA` (upper
 
 **Valid projects:** `CAPTCHA`, `GH`
 
-**Merge commits**
+### Merge commits
 
 Git’s default merge subjects (for example `Merge branch 'main' into feature-branch`) are **allowed automatically** so `git merge` can finish without renaming the message.
 
@@ -62,7 +62,7 @@ Git’s default merge subjects (for example `Merge branch 'main' into feature-br
 
 ```bash
 cd docs
-npm run format
+npm run fix
 ```
 
 ### Spotless fails

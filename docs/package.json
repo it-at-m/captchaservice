@@ -1,32 +1,32 @@
 {
+  "_comment": "TEMPORARY TRANSITIVE DEPENDENCY OVERRIDES FOR SECURITY FIXES",
+  "overrides": {
+    "js-yaml": "5.4.3",
+    "katex": "0.18.10",
+    "smol-toml": "1.9.0",
+    "vitepress": {
+      "vite": "6.4.4"
+    }
+  },
   "name": "captchaservice-docs",
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=22.19 <=24"
+    "node": ">=24.11 <=25",
+    "npm": ">=11.6 <12"
   },
   "scripts": {
-    "docs:dev": "vitepress dev .",
-    "docs:build": "vitepress build .",
-    "docs:preview": "vitepress preview .",
-    "dev": "vitepress dev .",
-    "build": "vitepress build .",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "lint": "prettier --check ."
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "lint": "prettier . --check --cache && markdownlint .",
+    "fix": "prettier . --write --cache && markdownlint -f ."
   },
   "devDependencies": {
     "@muenchen/prettier-codeformat": "1.0.2",
-    "esbuild": "0.28.1",
-    "markdown-it": "14.3.0",
-    "mermaid": "11.16.0",
-    "prettier": "3.9.4",
-    "vitepress": "1.6.4"
-  },
-  "overrides": {
-    "dompurify": "3.4.12",
-    "vitepress": {
-      "vite": "6.4.3"
-    }
+    "markdownlint-cli": "0.49.1",
+    "mermaid": "11.17.2",
+    "prettier": "3.9.9",
+    "vitepress": "1.6.4",
+    "vitepress-plugin-mermaid": "2.0.17"
   }
 }

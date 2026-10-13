@@ -47,9 +47,9 @@ public class MetricsService {
                 .increment();
     }
 
-    public void recordClientSolveTime(final String siteKey, final Long solveTime, final int difficulty, final boolean isWhitelisted,
+    public void recordClientSolveTime(final String siteKey, final Double solveTime, final int difficulty, final boolean isWhitelisted,
             final long sameSourceAddressRequestCount) {
-        if (solveTime == null || solveTime < 0) {
+        if (solveTime == null || !Double.isFinite(solveTime) || solveTime < 0) {
             log.warn("Invalid solve time value: {} for site: {}", solveTime, LogSanitizer.sanitize(siteKey));
             return;
         }

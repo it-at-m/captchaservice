@@ -76,5 +76,9 @@ captcha:
     test:
       secret: test
       difficulty-map:
-        - min-visits: 1
-          cost: 1000
+        - min-visits: 0
+          cost: 1_000
+        - min-visits: 4
+          cost: 5_000
+        - min-visits: 9
+          cost: 10_000

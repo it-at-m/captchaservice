@@ -37,8 +37,13 @@ curl http://localhost:39146/actuator/health
 
 You should get a `200 OK` with a small JSON body whose top-level `status` field is `"UP"`. See [Monitoring](../operations/monitoring.md) for the rest of the management endpoints.
 
+## 5. Test with the widget demo (optional)
+
+To verify challenge creation and verification in the browser, continue with the [Widget Demo](./widget-demo.md). It uses the running stack and backend together with the Vue app in `widget/`.
+
 ## Next steps
 
+- [Widget Demo](./widget-demo.md) — end-to-end browser test with the ALTCHA widget
 - [Environment Variables](../configuration/environment-variables.md) — flags you can override from the outside.
 - [Site Configuration](../configuration/sites.md) — define your sites, secrets and difficulty maps.
 - [Create Challenge](../api/challenge.md) and [Verify Solution](../api/verify.md) — the two endpoints clients call.

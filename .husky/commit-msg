@@ -15,9 +15,9 @@ validate_commit_message "$commit_msg" || exit 1
 
 if echo "$staged_files" | grep -q '^docs/'; then
   echo "Running docs formatting check..."
-  if ! (cd docs && npm run format:check); then
+  if ! (cd docs && npm run lint); then
     printf "${RED}✗ Docs Prettier check failed. Please fix the errors before committing.${NC}\n"
-    echo "  cd docs && npm run format"
+    echo "  cd docs && npm run fix"
     echo "  (Run 'cd docs && npm install' first if dependencies are missing.)"
     exit 1
   fi

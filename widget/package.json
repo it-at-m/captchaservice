@@ -1,0 +1,40 @@
+{
+  "_comment": "TEMPORARY TRANSITIVE DEPENDENCY OVERRIDES FOR SECURITY FIXES",
+  "overrides": {
+    "nanoid": "3.3.20"
+  },
+  "name": "captcha-widget",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.11 <25",
+    "npm": ">=11.6 <13"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --build --noCheck && vite build",
+    "preview": "vite preview",
+    "lint": "prettier . --check --cache && eslint . --cache --concurrency auto && vue-tsc --build --noEmit",
+    "fix": "prettier . --write --cache && eslint . --fix --cache --concurrency auto"
+  },
+  "dependencies": {
+    "altcha": "3.3.0",
+    "vue": "3.5.43"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@muenchen/prettier-codeformat": "1.0.2",
+    "@types/node": "24.11.2",
+    "@vitejs/plugin-vue": "6.0.9",
+    "@vue/eslint-config-prettier": "10.2.0",
+    "@vue/eslint-config-typescript": "14.9.0",
+    "eslint": "10.12.0",
+    "eslint-plugin-vue": "10.11.1",
+    "prettier": "3.9.9",
+    "typescript": "6.0.3",
+    "vite": "8.3.4",
+    "vue-tsc": "3.3.12"
+  }
+}

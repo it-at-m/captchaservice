@@ -13,6 +13,7 @@ This handbook is the main entry point on [GitHub Pages](https://it-at-m.github.i
 - [Releases](./overview/releases.md) — versioning and how artifacts are published
 - [Prerequisites](./getting-started/prerequisites.md)
 - [Quick Start](./getting-started/quick-start.md) — get the service running locally
+- [Widget Demo](./getting-started/widget-demo.md) — test CaptchaService with the ALTCHA widget in the browser
 - [Environment Variables](./configuration/environment-variables.md)
 - [Site Configuration](./configuration/sites.md) — multi-tenant sites, secrets and difficulty maps
 - [Create Challenge](./api/challenge.md) and [Verify Solution](./api/verify.md)
@@ -72,13 +73,6 @@ CaptchaService in action on the public `zmscitizenview` appointment-booking page
 
 [Overview](https://opensource.muenchen.de/)
 
-Munich contact: it@M – opensource@muenchen.de
+Munich contact: it@M – <opensource@muenchen.de>
 
 CaptchaService was built at **it@M**, the IT service provider of the Landeshauptstadt München. See [Project History](./overview/project-history.md) for the full story.
-
-<table border="0" cellpadding="0" cellspacing="0">
-  <tr>
-    <td style="padding-right: 30px;"><img src="https://assets.muenchen.de/logos/itm/itM_Basislogo_gelb_schwarz-500.png" align="center" style="height: 30px; width: auto; object-fit: contain;"></td>
-    <td><img src="https://assets.muenchen.de/logos/lhm/logo-lhm-muenchen.svg" align="center" style="height: 30px; width: auto; object-fit: contain;"></td>
-  </tr>
-</table>

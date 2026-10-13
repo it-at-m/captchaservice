@@ -13,6 +13,7 @@ Dieses Handbuch ist der zentrale Einstiegspunkt auf [GitHub Pages](https://it-at
 - [Releases](./overview/releases.md) — Versionierung und Veröffentlichung von Artefakten
 - [Voraussetzungen](./getting-started/prerequisites.md)
 - [Schnellstart](./getting-started/quick-start.md) — den Dienst lokal in Betrieb nehmen
+- [Widget-Demo](./getting-started/widget-demo.md) — CaptchaService per ALTCHA-Widget im Browser testen
 - [Umgebungsvariablen](./configuration/environment-variables.md)
 - [Site-Konfiguration](./configuration/sites.md) — mandantenfähige Sites, Geheimnisse und Schwierigkeits-Maps
 - [Challenge anlegen](./api/challenge.md) und [Lösung prüfen](./api/verify.md)
@@ -72,13 +73,6 @@ CaptchaService im Einsatz auf der öffentlichen Terminbuchungsseite `zmscitizenv
 
 [Übersicht](https://opensource.muenchen.de/)
 
-Kontakt München: it@M – opensource@muenchen.de
+Kontakt München: it@M – <opensource@muenchen.de>
 
 CaptchaService wurde bei **it@M**, dem IT-Dienstleister der Landeshauptstadt München, entwickelt. Die vollständige Geschichte steht in der [Projektgeschichte](./overview/project-history.md).
-
-<table border="0" cellpadding="0" cellspacing="0">
-  <tr>
-    <td style="padding-right: 30px;"><img src="https://assets.muenchen.de/logos/itm/itM_Basislogo_gelb_schwarz-500.png" align="center" style="height: 30px; width: auto; object-fit: contain;"></td>
-    <td><img src="https://assets.muenchen.de/logos/lhm/logo-lhm-muenchen.svg" align="center" style="height: 30px; width: auto; object-fit: contain;"></td>
-  </tr>
-</table>

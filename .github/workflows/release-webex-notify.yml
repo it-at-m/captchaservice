@@ -1,0 +1,145 @@
+name: 📣 Notify Webex on new release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version or tag (e.g. backend-1.2.3 or 1.2.3)"
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      version:
+        description: "Release version or tag (e.g. backend-1.2.3 or 1.2.3)"
+        required: true
+        type: string
+    secrets:
+      WEBEX_BOT_TOKEN:
+        required: true
+      WEBEX_ROOM_ID:
+        required: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Resolve release metadata
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+          RELEASE_NAME: ${{ github.event.release.name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          RELEASE_AUTHOR: ${{ github.event.release.author.login }}
+          RELEASE_PRERELEASE: ${{ github.event.release.prerelease }}
+          RELEASE_BODY: ${{ github.event.release.body }}
+        run: |
+          set -euo pipefail
+
+          if [ "$EVENT_NAME" = "release" ]; then
+            BODY_DELIM="BODY_$(openssl rand -hex 16)"
+            {
+              echo "name=${RELEASE_NAME}"
+              echo "tag=${RELEASE_TAG}"
+              echo "url=${RELEASE_URL}"
+              echo "author=${RELEASE_AUTHOR}"
+              echo "prerelease=${RELEASE_PRERELEASE}"
+              echo "body<<${BODY_DELIM}"
+              printf '%s\n' "${RELEASE_BODY:-}"
+              echo "${BODY_DELIM}"
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          VERSION="${INPUT_VERSION:-}"
+          if [ -z "$VERSION" ]; then
+            echo "version input is required" >&2
+            exit 1
+          fi
+
+          fetch_release() {
+            gh release view "$1" --repo "${{ github.repository }}" --json name,tagName,url,isPrerelease,author,body
+          }
+
+          # Prefer the given tag as-is (e.g. backend-1.2.3), then ATAF-style v-prefixed tags.
+          if ! META="$(fetch_release "$VERSION" 2>/dev/null)"; then
+            STRIPPED="${VERSION#v}"
+            META="$(fetch_release "v${STRIPPED}")"
+          fi
+          BODY_DELIM="BODY_$(openssl rand -hex 16)"
+          {
+            echo "name=$(jq -r '.name // .tagName' <<<"$META")"
+            echo "tag=$(jq -r '.tagName' <<<"$META")"
+            echo "url=$(jq -r '.url' <<<"$META")"
+            echo "author=$(jq -r '.author.login // "unknown"' <<<"$META")"
+            echo "prerelease=$(jq -r '.isPrerelease' <<<"$META")"
+            echo "body<<${BODY_DELIM}"
+            jq -r '.body // ""' <<<"$META"
+            echo "${BODY_DELIM}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Notify Webex
+        env:
+          WEBEX_BOT_TOKEN: ${{ secrets.WEBEX_BOT_TOKEN }}
+          WEBEX_ROOM_ID: ${{ secrets.WEBEX_ROOM_ID }}
+          RELEASE_NAME: ${{ steps.release.outputs.name }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          RELEASE_URL: ${{ steps.release.outputs.url }}
+          RELEASE_AUTHOR: ${{ steps.release.outputs.author }}
+          RELEASE_PRERELEASE: ${{ steps.release.outputs.prerelease }}
+          RELEASE_BODY: ${{ steps.release.outputs.body }}
+        run: |
+          set -euo pipefail
+          if [ -z "${WEBEX_BOT_TOKEN:-}" ] || [ -z "${WEBEX_ROOM_ID:-}" ]; then
+            echo "WEBEX_BOT_TOKEN and WEBEX_ROOM_ID secrets are required" >&2
+            exit 1
+          fi
+
+          # Keep the Webex message short; truncate long release notes.
+          BODY_SNIPPET="$(printf '%s' "$RELEASE_BODY" | head -c 1200)"
+          if [ "${#RELEASE_BODY}" -gt 1200 ]; then
+            BODY_SNIPPET="${BODY_SNIPPET}…"
+          fi
+
+          KIND="Release"
+          if [ "$RELEASE_PRERELEASE" = "true" ]; then
+            KIND="Pre-release"
+          fi
+
+          TITLE="${RELEASE_NAME:-$RELEASE_TAG}"
+
+          jq -n \
+            --arg roomId "$WEBEX_ROOM_ID" \
+            --arg repo "${{ github.repository }}" \
+            --arg kind "$KIND" \
+            --arg title "$TITLE" \
+            --arg tag "$RELEASE_TAG" \
+            --arg author "$RELEASE_AUTHOR" \
+            --arg body "$BODY_SNIPPET" \
+            --arg url "$RELEASE_URL" \
+            '{
+              roomId: $roomId,
+              markdown: (
+                "**New " + $kind + " published in " + $repo + "**\n\n" +
+                "**" + $title + "** (`" + $tag + "`)\n\n" +
+                "**Author:** " + $author + "\n\n" +
+                (if ($body | length) > 0 then $body + "\n\n" else "" end) +
+                "[View release](" + $url + ")"
+              )
+            }' \
+            | curl -fsS --connect-timeout 10 --max-time 30 -o /dev/null -X POST \
+              -H "Authorization: Bearer $WEBEX_BOT_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d @- \
+              "https://webexapis.com/v1/messages"
+
+          echo "Webex notification sent:"
+          echo "  ${KIND}: ${TITLE} (${RELEASE_TAG})"
+          echo "  Author: ${RELEASE_AUTHOR}"
+          echo "  ${RELEASE_URL}"
