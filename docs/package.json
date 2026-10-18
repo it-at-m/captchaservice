@@ -3,7 +3,7 @@
   "overrides": {
     "js-yaml": "5.4.3",
     "katex": "0.18.10",
-    "smol-toml": "1.9.0",
+    "smol-toml": "1.9.1",
     "vitepress": {
       "vite": "6.4.4"
     }
