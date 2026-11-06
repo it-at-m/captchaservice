@@ -38,18 +38,17 @@ public class DifficultyService {
         log.debug("Registered request for source address with hash {}", sourceAddressHash);
     }
 
-    public int getDifficultyForSourceAddress(final String siteKey, final SourceAddress sourceAddress) {
-        if (isSourceAddressWhitelisted(siteKey, sourceAddress)) {
-            return 1;
+    public SourceAddressDifficulty resolveDifficulty(final String siteKey, final SourceAddress sourceAddress) {
+        final boolean whitelisted = isSourceAddressWhitelisted(siteKey, sourceAddress);
+        final long sourceVisitCount = getActiveVisitCount(sourceAddress);
+        if (whitelisted) {
+            return new SourceAddressDifficulty(1, true, sourceVisitCount);
         }
         final CaptchaSite captchaSite = captchaProperties.sites().get(siteKey);
         if (captchaSite == null) {
             throw new IllegalArgumentException("siteKey not found");
         }
-        final String sourceAddressHash = sourceAddress.getHash();
         final String siteKeyForLog = LogSanitizer.sanitize(siteKey);
-        final long sourceVisitCount = captchaRequestRepository.countBySourceAddressHashIgnoreCaseAndExpiresAtGreaterThanEqual(sourceAddressHash,
-                Instant.now());
         final Optional<DifficultyItem> difficultyItem = captchaSite
                 .difficultyMap()
                 .stream()
@@ -58,11 +57,19 @@ public class DifficultyService {
                 .findFirst();
         if (difficultyItem.isEmpty()) {
             log.error("No difficulty found site {} with {} visits", siteKeyForLog, sourceVisitCount);
-            return 1_000_000;
+            return new SourceAddressDifficulty(1_000_000, false, sourceVisitCount);
         }
         final int difficulty = difficultyItem.get().cost();
-        log.debug("Difficulty {} for {} in {} after {} visits", difficulty, sourceAddressHash, siteKeyForLog, sourceVisitCount);
-        return difficulty;
+        log.debug("Difficulty {} for {} in {} after {} visits", difficulty, sourceAddress.getHash(), siteKeyForLog, sourceVisitCount);
+        return new SourceAddressDifficulty(difficulty, false, sourceVisitCount);
+    }
+
+    public int getDifficultyForSourceAddress(final String siteKey, final SourceAddress sourceAddress) {
+        return resolveDifficulty(siteKey, sourceAddress).difficulty();
+    }
+
+    public long getActiveVisitCount(final SourceAddress sourceAddress) {
+        return captchaRequestRepository.countBySourceAddressHashAndExpiresAtGreaterThanEqual(sourceAddress.getHash(), Instant.now());
     }
 
     public boolean isSourceAddressWhitelisted(final String siteKey, final SourceAddress sourceAddress) {
