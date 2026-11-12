@@ -6,7 +6,7 @@
     "minimatch": "11.0.5",
     "smol-toml": "1.9.1",
     "vitepress": {
-      "vite": "6.4.5"
+      "vite": "6.4.6"
     }
   },
   "name": "captchaservice-docs",
