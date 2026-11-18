@@ -2,8 +2,6 @@
   "_comment": "TEMPORARY TRANSITIVE DEPENDENCY OVERRIDES FOR SECURITY FIXES",
   "overrides": {
     "js-yaml": "5.4.3",
-    "katex": "0.18.10",
-    "minimatch": "11.0.8",
     "smol-toml": "1.9.1",
     "vitepress": {
       "vite": "6.4.6"
