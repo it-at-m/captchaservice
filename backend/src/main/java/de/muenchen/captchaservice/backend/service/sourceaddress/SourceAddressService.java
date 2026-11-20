@@ -5,6 +5,8 @@ import de.muenchen.captchaservice.backend.configuration.captcha.CaptchaPropertie
 import de.muenchen.captchaservice.backend.configuration.captcha.CaptchaSite;
 import de.muenchen.captchaservice.backend.data.SourceAddress;
 import de.muenchen.captchaservice.backend.util.networkaddresscalculator.NetworkAddressCalculator;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,9 +20,9 @@ public class SourceAddressService {
         final CaptchaSite site = captchaProperties.sites().get(siteKey);
         final String networkAddressString;
         final InetAddress addr = InetAddresses.forString(sourceAddress);
-        if (addr instanceof java.net.Inet4Address) {
+        if (addr instanceof Inet4Address) {
             networkAddressString = NetworkAddressCalculator.getNetworkAddress(sourceAddress, site.sourceAddressIpv4NetSize());
-        } else if (addr instanceof java.net.Inet6Address) {
+        } else if (addr instanceof Inet6Address) {
             networkAddressString = NetworkAddressCalculator.getNetworkAddress(sourceAddress, site.sourceAddressIpv6NetSize());
         } else {
             throw new IllegalArgumentException("Unsupported IP address type: " + addr.getClass().getName());
