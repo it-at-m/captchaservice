@@ -360,6 +360,11 @@ export default {
   themeConfig: {
     ...sharedThemeConfig,
   },
+  vite: {
+    optimizeDeps: {
+      include: ["fastdom", "fastdom/extensions/fastdom-promised.js"],
+    },
+  },
   locales: {
     root: {
       label: "English",
