@@ -1,50 +1,56 @@
 name: refarch-stack
 
+x-healthcheck: &healthcheck
+  interval: 30s
+  timeout: 60s
+  retries: 3
+  start_period: 60s
+
+x-security-settings: &security_settings
+  security_opt:
+    - no-new-privileges:true
+
 services:
   postgres:
-    image: postgres:18.1-alpine3.21@sha256:44d837eb4c2ed263474a95f0cc24745413c50924df60dd73ed6c4c3e36b84259
+    image: postgres:18.4-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin
+      POSTGRES_DB: postgres
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"
-    healthcheck: &healthcheck
+    healthcheck:
+      <<: *healthcheck
       test: ["CMD-SHELL", "pg_isready -d postgres -U admin"]
-      interval: 30s
-      timeout: 60s
-      retries: 3
-      start_period: 60s
-    security_opt: &security_settings
-      - no-new-privileges:true
+    <<: *security_settings
 
   pg-admin:
     image: dpage/pgadmin4:9.19.0@sha256:3591b3d02910dcd817dec6fcaa681c278ba6966945283dd0ea0042731c330c83
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-      - PGADMIN_CONFIG_SERVER_MODE=False
-      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
-      - PGADMIN_REPLACE_SERVERS_ON_STARTUP=True
-      - PGADMIN_DISABLE_POSTFIX=True
-      - PGADMIN_LISTEN_PORT=5050
-      - PGADMIN_CONFIG_UPGRADE_CHECK_ENABLED=False
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 5050
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_REPLACE_SERVERS_ON_STARTUP: "True"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+      PGADMIN_DISABLE_POSTFIX: "True"
+      PGADMIN_CONFIG_UPGRADE_CHECK_ENABLED: "False"
     ports:
       - "5050:5050"
     depends_on:
       - postgres
-    healthcheck:
-      <<: *healthcheck
-      test: ["CMD", "wget", "-O", "-", "http://localhost:5050/misc/ping"]
-    security_opt: *security_settings
     volumes:
-      - './pgadmin/servers.json:/pgadmin4/servers.json:ro'
-      - './pgadmin/preferences.json:/pgadmin4/preferences.json:ro'
-      - './pgadmin/pgpass:/tmp/pgpass.mounted:ro'
-      - './pgadmin/data:/tmp/data'
+      - ./pgadmin/servers.json:/pgadmin4/servers.json:ro
+      - ./pgadmin/preferences.json:/pgadmin4/preferences.json:ro
+      - ./pgadmin/pgpass:/tmp/pgpass.mounted:ro
+      - ./pgadmin/data:/tmp/data
     entrypoint: >
       /bin/sh -c "
         cp -f /tmp/pgpass.mounted /tmp/pgpass;
         chmod 600 /tmp/pgpass;
         /entrypoint.sh
       "
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-O", "-", "http://localhost:5050/misc/ping"]
+    <<: *security_settings
