@@ -40,7 +40,7 @@ CaptchaService ist die quelloffene Bot-Schutzschicht vor den öffentlichen **ZMS
 
 ### Technologien
 
-- [Java 21](https://www.oracle.com/java/)
+- [Java 25](https://www.oracle.com/java/)
 - [Spring Boot 3.x](https://spring.io/projects/spring-boot)
 - [ALTCHA](https://altcha.org/) — Proof-of-Work-CAPTCHA-Bibliothek
 - [PostgreSQL 16+](https://www.postgresql.org/)

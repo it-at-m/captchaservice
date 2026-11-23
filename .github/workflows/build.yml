@@ -34,7 +34,7 @@ jobs:
         uses: it-at-m/lhm_actions/action-templates/actions/action-maven-build@9bde6576151908ace5f517ca623fea3b98600cb7 # v1.6.5
         with:
           app-path: ${{ matrix.app-path }}
-          java-version: "21"
+          java-version: "25"
       - if: ${{ github.ref == 'refs/heads/main' && (steps.node.outcome == 'success' || steps.maven.outcome == 'success') }}
         uses: it-at-m/lhm_actions/action-templates/actions/action-build-image@9bde6576151908ace5f517ca623fea3b98600cb7 # v1.6.5
         with:

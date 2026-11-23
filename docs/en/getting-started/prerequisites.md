@@ -2,7 +2,7 @@
 
 | Requirement               | Version                                              |
 | ------------------------- | ---------------------------------------------------- |
-| Java                      | 21 or later                                          |
+| Java                      | 25 or later                                          |
 | Maven                     | 3.8+                                                 |
 | PostgreSQL                | 16+                                                  |
 | Docker / Podman + Compose | recent stable (only for the local development stack) |

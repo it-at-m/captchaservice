@@ -40,7 +40,7 @@ CaptchaService is the open-source bot-protection layer in front of the public **
 
 ### Built With
 
-- [Java 21](https://www.oracle.com/java/)
+- [Java 25](https://www.oracle.com/java/)
 - [Spring Boot 3.x](https://spring.io/projects/spring-boot)
 - [ALTCHA](https://altcha.org/) — proof-of-work CAPTCHA library
 - [PostgreSQL 16+](https://www.postgresql.org/)
